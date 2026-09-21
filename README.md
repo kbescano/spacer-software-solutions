@@ -15,7 +15,7 @@ Everything on the page lives in [`src/data/site.ts`](src/data/site.ts).
 - **Business email / Facebook page** — `site.email` and `site.socials`. The email is still a placeholder.
 - **Case studies** — the `projects` array (Primegen and Clinic today). Each project has an optional `website` and an optional `portal` "facet", which powers the Website / Portal switcher. Facet status is `live`, `private` (confidential) or `demo`. To add another project, append an object to `projects`, then add its artwork to the registry at the bottom of [`Mockups.tsx`](src/components/Mockups.tsx), keyed by the same `slug`.
 - **Services / process** — the `services` and `steps` arrays.
-- **Demo links** — every facet's `cta.href` is `null` for the demos, so the button opens an email request. Set it to a live demo URL (ConstructX for Primegen's portal, the clinic website and portal demos) to turn it into an "Open demo" button.
+- **Demo links** — demos are request-only on purpose: every demo facet's `cta.href` is `null`, so the button opens an email request and the links are sent by hand. Public demo URLs are deliberately not published on the site.
 - **Illustrations** — [`Mockups.tsx`](src/components/Mockups.tsx). These are original artwork, not client screenshots or data.
 - **Colours** — CSS variables at the top of [`src/app/globals.css`](src/app/globals.css).
 

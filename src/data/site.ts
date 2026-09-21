@@ -15,9 +15,9 @@ export const site = {
   socials: [] as { label: string; href: string }[],
 };
 
-/** Subject line used when a visitor asks for the portal demo. */
+/** Subject line used when a visitor asks for a demo. */
 export const demoRequestHref = `mailto:${site.email}?subject=${encodeURIComponent(
-  "Portal demo request",
+  "Demo request",
 )}`;
 
 export const nav = [
@@ -131,7 +131,7 @@ export const projects: Project[] = [
     slug: "clinic",
     title: "Clinic",
     client: "S3 product demo",
-    industry: "Healthcare & appointment-based services",
+    industry: "Aesthetic clinics & appointment-based services",
     summary:
       "A booking website for patients and a staff portal for the clinic, built as a demo of what S3 delivers for appointment-based businesses: patients book online, and staff run the whole day from one schedule.",
     tags: ["Next.js", "Payload CMS", "PostgreSQL"],
@@ -142,9 +142,9 @@ export const projects: Project[] = [
       statusLabel: "Demo",
       headline: "Booking that feels effortless.",
       description:
-        "A calm, fast website where patients browse services and specialists, then book in a couple of taps.",
+        "A calm, fast website where patients browse treatments and specialists, then book in a couple of taps.",
       features: [
-        "Service catalog with pricing, duration and photos",
+        "Treatment catalog with pricing, duration and photos",
         "Specialist profiles",
         "Online booking — several services in one request, no sign-up needed",
         "Booking confirmation and status lookup",

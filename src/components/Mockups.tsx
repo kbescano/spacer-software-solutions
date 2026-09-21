@@ -284,7 +284,7 @@ function ClinicWebsite() {
       <div className="absolute inset-0 flex flex-col bg-[#f6f3ee] text-[#1f1a17]">
         {/* nav */}
         <div className="flex items-center justify-between px-4 py-3 md:px-6">
-          <span className="font-serif text-[10px] tracking-[0.28em] uppercase md:text-xs">Clinic</span>
+          <span className="font-serif text-[10px] tracking-[0.28em] uppercase md:text-xs">Premium Clinic</span>
           <div className="hidden gap-4 text-[9px] text-[#6b6259] sm:flex">
             <span>Services</span>
             <span>Specialists</span>
@@ -302,9 +302,9 @@ function ClinicWebsite() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15, duration: 0.7 }}
             >
-              Care that fits
+              The Art of
               <br />
-              <em className="text-[#6b6259]">your schedule.</em>
+              <em className="text-[#6b6259]">Rejuvenation.</em>
             </motion.h4>
             <motion.p
               className="max-w-[15rem] text-[8px] leading-relaxed text-[#6b6259] md:text-[10px]"
@@ -312,7 +312,7 @@ function ClinicWebsite() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.35, duration: 0.7 }}
             >
-              Choose a service, pick a time, and you’re booked — confirmation and reminders arrive by email.
+              Clinical treatments and advanced dermal care — pick a time and you’re booked, with reminders by email.
             </motion.p>
             <div className="flex gap-2">
               <span className="rounded-full bg-[#1f1a17] px-2.5 py-1.5 text-[8px] text-white md:text-[9px]">Book an appointment</span>
@@ -364,9 +364,9 @@ function ClinicWebsite() {
         {/* services */}
         <div className="grid grid-cols-3 gap-2 border-t border-[#e4ddd3] px-4 py-2.5 md:px-6 md:py-3">
           {[
-            ["General consultation", "30 min"],
-            ["Check-up", "45 min"],
-            ["Follow-up visit", "20 min"],
+            ["Clinical treatments", "Book online"],
+            ["Advanced dermal", "Book online"],
+            ["Skin consultation", "Book online"],
           ].map(([name, mins]) => (
             <div key={name} className="min-w-0">
               <div className="truncate font-serif text-[9px] md:text-[11px]">{name}</div>
@@ -391,9 +391,9 @@ const clinicStats = [
 ];
 const appointments = [
   { time: "09:00", who: "Patient A", what: "Consultation", status: "Completed" },
-  { time: "10:30", who: "Patient B", what: "Check-up", status: "Completed" },
-  { time: "13:00", who: "Patient C", what: "Follow-up", status: "Confirmed", cycle: true },
-  { time: "15:30", who: "Patient D", what: "Consultation", status: "Confirmed" },
+  { time: "10:30", who: "Patient B", what: "Facial treatment", status: "Completed" },
+  { time: "13:00", who: "Patient C", what: "Skin analysis", status: "Confirmed", cycle: true },
+  { time: "15:30", who: "Patient D", what: "Follow-up", status: "Confirmed" },
 ];
 
 const chipTone: Record<string, string> = {
@@ -420,7 +420,7 @@ function ClinicPortal() {
         <div className="flex flex-col gap-1 border-r border-line bg-bg/40 p-2 md:p-3">
           <div className="mb-2 flex items-center gap-1.5">
             <span className="h-3.5 w-3.5 rounded-full bg-cyan/70" />
-            <span className="text-[9px] font-semibold md:text-[10px]">Clinic</span>
+            <span className="truncate text-[9px] font-semibold md:text-[10px]">Premium Clinic</span>
           </div>
           {clinicNav.map((n, i) => (
             <span

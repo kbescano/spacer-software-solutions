@@ -111,7 +111,7 @@ export function Contact() {
             href={demoRequestHref}
             className="group label inline-flex items-center gap-2 text-muted transition-colors hover:text-fg"
           >
-            <RollText>Request the portal demo</RollText>
+            <RollText>Request a demo</RollText>
             <span className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
               ↗
             </span>
