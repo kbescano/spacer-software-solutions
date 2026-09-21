@@ -18,11 +18,11 @@ export function Services() {
         </span>
       </h2>
 
-      <div className="mt-16 grid gap-px overflow-hidden rounded-3xl border border-line bg-line md:mt-24 md:grid-cols-3">
+      <div className="mt-16 grid gap-px overflow-hidden rounded-3xl border border-line bg-line md:mt-24 lg:grid-cols-3">
         {services.map((item, i) => (
           <motion.article
             key={item.title}
-            className="group relative flex min-h-[24rem] flex-col justify-between overflow-hidden bg-bg p-8 md:min-h-[32rem] md:p-10"
+            className="group relative flex min-h-[22rem] flex-col justify-between overflow-hidden bg-bg p-8 md:p-10 lg:min-h-[32rem]"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "0px 0px -10% 0px" }}

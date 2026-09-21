@@ -46,13 +46,13 @@ function FacetPanel({ facet, slug }: { facet: Facet; slug: string }) {
   return (
     <motion.div
       role="tabpanel"
-      className="mt-8 grid gap-10 md:grid-cols-12 md:gap-14"
+      className="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-14"
       initial={{ opacity: 0, y: 28 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -18 }}
       transition={{ duration: 0.55, ease: EASE }}
     >
-      <div className="md:col-span-5">
+      <div className="lg:col-span-5">
         <h4 className="text-[clamp(1.75rem,3vw,2.75rem)] leading-[1.05] font-semibold tracking-[-0.03em] text-balance">
           {facet.headline}
         </h4>
@@ -95,7 +95,7 @@ function FacetPanel({ facet, slug }: { facet: Facet; slug: string }) {
         </div>
       </div>
 
-      <div className="md:col-span-7">
+      <div className="lg:col-span-7">
         <ProjectMock slug={slug} kind={facet.kind} />
         <p className="label mt-4 text-center text-[0.65rem] text-muted">{facet.caption}</p>
       </div>
@@ -116,22 +116,22 @@ function CaseStudy({ project, index }: { project: Project; index: number }) {
     <article aria-labelledby={`${project.slug}-title`}>
       <Line />
 
-      <div className="grid gap-10 py-10 md:grid-cols-12 md:py-14">
-        <div className="md:col-span-7">
-          <span className="label text-muted">
-            <span className="text-accent-bright">0{index + 1}</span> — Case study
-          </span>
-          <h3
-            id={`${project.slug}-title`}
-            className="display mt-5 text-[clamp(3.25rem,12vw,12rem)] uppercase"
-          >
-            <Split as="span">{project.title}</Split>
-          </h3>
-        </div>
+      <div className="py-10 md:py-14">
+        <span className="label text-muted">
+          <span className="text-accent-bright">0{index + 1}</span> — Case study
+        </span>
+        <h3
+          id={`${project.slug}-title`}
+          className="display mt-5 text-[clamp(3.25rem,13vw,13rem)] uppercase"
+        >
+          <Split as="span">{project.title}</Split>
+        </h3>
 
-        <FadeUp delay={0.15} className="space-y-8 md:col-span-5 md:pt-12">
-          <p className="text-lg leading-relaxed text-muted">{project.summary}</p>
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-5">
+        <FadeUp delay={0.15} className="mt-8 grid gap-8 md:mt-12 md:grid-cols-12 md:gap-10">
+          <p className="text-lg leading-relaxed text-muted md:col-span-7 md:max-w-xl">
+            {project.summary}
+          </p>
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-5 md:col-span-5">
             {[
               ["Client", project.client],
               ["Industry", project.industry],

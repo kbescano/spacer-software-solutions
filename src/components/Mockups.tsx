@@ -16,7 +16,7 @@ function Frame({
   children: ReactNode;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-line bg-elevated shadow-[0_40px_120px_-40px_rgba(47,91,255,0.55)]">
+    <div className="@container relative overflow-hidden rounded-2xl border border-line bg-elevated shadow-[0_40px_120px_-40px_rgba(47,91,255,0.55)]">
       <div className="flex items-center gap-3 border-b border-line bg-bg/60 px-4 py-3">
         <div className="flex gap-1.5" aria-hidden>
           <i className="h-2.5 w-2.5 rounded-full bg-fg/15" />
@@ -28,7 +28,7 @@ function Frame({
         </div>
         <div className="flex min-w-[3.5rem] justify-end">{badge}</div>
       </div>
-      <div className="relative aspect-[16/11]">{children}</div>
+      <div className="relative aspect-[6/5] @md:aspect-[4/3] @lg:aspect-[16/11]">{children}</div>
     </div>
   );
 }
@@ -44,14 +44,14 @@ function PrimegenWebsite() {
 
   return (
     <Frame url="primegentradingcorporation.com">
-      <div className="flex h-full flex-col gap-3 p-4 md:gap-4 md:p-6">
+      <div className="flex h-full flex-col gap-3 p-4 @lg:gap-4 @lg:p-6">
         {/* nav */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="h-4 w-4 rounded bg-accent" />
             <span className="h-1.5 w-12 rounded bg-fg/30" />
           </div>
-          <div className="hidden items-center gap-4 sm:flex">
+          <div className="hidden items-center gap-4 @md:flex">
             {["Products", "Deliveries", "Calculator", "About"].map((l) => (
               <span key={l} className="text-[9px] text-muted">
                 {l}
@@ -77,7 +77,7 @@ function PrimegenWebsite() {
               <span className="text-outline [-webkit-text-stroke-width:1px]">trust</span>
             </motion.h4>
             <motion.p
-              className="max-w-[16rem] text-[9px] leading-relaxed text-muted md:text-[11px]"
+              className="max-w-[16rem] text-[9px] leading-relaxed text-muted @lg:text-[11px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.35, duration: 0.7 }}
@@ -86,7 +86,7 @@ function PrimegenWebsite() {
               scheduled deliveries, direct supplier pricing.
             </motion.p>
             <motion.span
-              className="w-fit rounded-full bg-accent px-3 py-1.5 text-[9px] font-semibold text-white md:text-[10px]"
+              className="w-fit rounded-full bg-accent px-3 py-1.5 text-[9px] font-semibold text-white @lg:text-[10px]"
               animate={
                 reduce
                   ? undefined
@@ -110,17 +110,17 @@ function PrimegenWebsite() {
         </div>
 
         {/* products */}
-        <div className="grid grid-cols-4 gap-2 md:gap-3">
+        <div className="grid grid-cols-4 gap-2 @lg:gap-3">
           {products.map((p, i) => (
             <motion.div
               key={p}
-              className="rounded-lg border border-line bg-surface/70 px-2 py-2 md:px-3 md:py-3"
+              className="rounded-lg border border-line bg-surface/70 px-2 py-2 @lg:px-3 @lg:py-3"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 + i * 0.08, duration: 0.5 }}
             >
               <div className="mb-2 h-1 w-6 rounded bg-accent-bright/70" />
-              <span className="text-[8px] text-fg/80 md:text-[10px]">{p}</span>
+              <span className="text-[8px] leading-tight text-fg/80 @lg:text-[10px]">{p}</span>
             </motion.div>
           ))}
         </div>
@@ -155,7 +155,7 @@ const sidebar = ["Dashboard", "Quotations", "Orders", "Supplier POs", "Deliverie
 const columns = ["Inquiry", "Quoted", "Ordered", "Delivered"];
 const cardCounts = [4, 3, 3, 2];
 const stats = [
-  { label: "Open inquiries", value: "24" },
+  { label: "Inquiries", value: "24" },
   { label: "Quotes sent", value: "18" },
   { label: "Orders", value: "9" },
 ];
@@ -176,17 +176,17 @@ function PrimegenPortal() {
         </span>
       }
     >
-      <div className="grid h-full grid-cols-[5.5rem_1fr] md:grid-cols-[7rem_1fr]">
+      <div className="grid h-full grid-cols-1 @md:grid-cols-[6rem_1fr] @lg:grid-cols-[7rem_1fr]">
         {/* sidebar */}
-        <div className="flex flex-col gap-1 border-r border-line bg-bg/40 p-2 md:p-3">
+        <div className="hidden flex-col gap-1 border-r border-line bg-bg/40 p-2 @md:flex @lg:p-3">
           <div className="mb-2 flex items-center gap-1.5">
             <span className="h-3.5 w-3.5 rounded bg-accent" />
-            <span className="text-[9px] font-semibold md:text-[10px]">ConstructX</span>
+            <span className="text-[9px] font-semibold @lg:text-[10px]">ConstructX</span>
           </div>
           {sidebar.map((s, i) => (
             <span
               key={s}
-              className={`truncate rounded-md px-1.5 py-1 text-[8px] md:text-[10px] ${
+              className={`truncate rounded-md px-1.5 py-1 text-[8px] @lg:text-[10px] ${
                 i === 1 ? "bg-accent/25 text-fg" : "text-muted"
               }`}
             >
@@ -196,12 +196,12 @@ function PrimegenPortal() {
         </div>
 
         {/* main */}
-        <div className="flex min-w-0 flex-col gap-2.5 p-3 md:gap-3.5 md:p-4">
+        <div className="flex min-w-0 flex-col gap-2.5 p-3 @lg:gap-3.5 @lg:p-4">
           <div className="flex items-center justify-between gap-2">
-            <span className="truncate text-[10px] font-semibold md:text-xs">Quotation pipeline</span>
+            <span className="truncate text-[10px] font-semibold @lg:text-xs">Quotation pipeline</span>
             <div className="flex shrink-0 gap-1.5">
-              <span className="rounded-full border border-line px-2 py-0.5 text-[8px] text-muted md:text-[9px]">Admin</span>
-              <span className="rounded-full bg-cyan/15 px-2 py-0.5 text-[8px] text-cyan md:text-[9px]">Sample data</span>
+              <span className="rounded-full border border-line px-2 py-0.5 text-[8px] text-muted @lg:text-[9px]">Admin</span>
+              <span className="rounded-full bg-cyan/15 px-2 py-0.5 text-[8px] text-cyan @lg:text-[9px]">Sample data</span>
             </div>
           </div>
 
@@ -209,13 +209,13 @@ function PrimegenPortal() {
             {stats.map((s, i) => (
               <motion.div
                 key={s.label}
-                className="rounded-lg border border-line bg-surface/70 p-2 md:p-2.5"
+                className="rounded-lg border border-line bg-surface/70 p-2 @lg:p-2.5"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 + i * 0.08 }}
               >
-                <div className="display text-base md:text-xl">{s.value}</div>
-                <div className="mt-1 truncate text-[8px] text-muted md:text-[9px]">{s.label}</div>
+                <div className="display text-base @lg:text-xl">{s.value}</div>
+                <div className="mt-1 truncate text-[8px] text-muted @lg:text-[9px]">{s.label}</div>
               </motion.div>
             ))}
           </div>
@@ -223,8 +223,8 @@ function PrimegenPortal() {
           {/* pipeline */}
           <div className="relative grid flex-1 grid-cols-4 gap-2">
             {columns.map((c, ci) => (
-              <div key={c} className="flex flex-col gap-1.5 rounded-lg border border-line/70 bg-bg/40 p-1.5 md:p-2">
-                <span className="truncate text-[8px] tracking-wide text-muted uppercase md:text-[9px]">{c}</span>
+              <div key={c} className="flex flex-col gap-1.5 rounded-lg border border-line/70 bg-bg/40 p-1.5 @lg:p-2">
+                <span className="truncate text-[8px] tracking-tight text-muted uppercase @lg:tracking-wide @lg:text-[9px]">{c}</span>
                 {Array.from({ length: cardCounts[ci] }, (_, k) => k).map((k) => (
                   <motion.div
                     key={k}
@@ -244,7 +244,7 @@ function PrimegenPortal() {
             {!reduce && (
               <motion.div
                 aria-hidden
-                className="pointer-events-none absolute top-[1.6rem] w-[calc(25%-0.4rem)] rounded-md border border-accent-bright bg-accent/80 p-1.5 shadow-[0_0_24px_rgba(111,149,255,0.6)] md:top-[1.9rem]"
+                className="pointer-events-none absolute top-[1.6rem] w-[calc(25%-0.4rem)] rounded-md border border-accent-bright bg-accent/80 p-1.5 shadow-[0_0_24px_rgba(111,149,255,0.6)] @lg:top-[1.9rem]"
                 initial={{ left: "0%", opacity: 0 }}
                 animate={{
                   left: ["0%", "25%", "50%", "75%", "75%"],
@@ -283,18 +283,18 @@ function ClinicWebsite() {
     <Frame url="demo · clinic website">
       <div className="absolute inset-0 flex flex-col bg-[#f6f3ee] text-[#1f1a17]">
         {/* nav */}
-        <div className="flex items-center justify-between px-4 py-3 md:px-6">
-          <span className="font-serif text-[10px] tracking-[0.28em] uppercase md:text-xs">Premium Clinic</span>
-          <div className="hidden gap-4 text-[9px] text-[#6b6259] sm:flex">
+        <div className="flex items-center justify-between px-4 py-3 @lg:px-6">
+          <span className="font-serif text-[10px] tracking-[0.28em] uppercase @lg:text-xs">Premium Clinic</span>
+          <div className="hidden gap-4 text-[9px] text-[#6b6259] @md:flex">
             <span>Services</span>
             <span>Specialists</span>
             <span>Contact</span>
           </div>
-          <span className="rounded-full bg-[#1f1a17] px-3 py-1 text-[8px] text-white md:text-[9px]">Book now</span>
+          <span className="rounded-full bg-[#1f1a17] px-3 py-1 text-[8px] text-white @lg:text-[9px]">Book now</span>
         </div>
 
         {/* hero + booking card */}
-        <div className="grid flex-1 grid-cols-5 gap-3 px-4 pb-3 md:gap-4 md:px-6">
+        <div className="grid flex-1 grid-cols-5 gap-3 px-4 pb-3 @lg:gap-4 @lg:px-6">
           <div className="col-span-3 flex flex-col justify-center gap-2.5">
             <motion.h4
               className="font-serif text-[clamp(1.25rem,3.8vw,2.5rem)] leading-[1.05] font-light tracking-tight"
@@ -307,7 +307,7 @@ function ClinicWebsite() {
               <em className="text-[#6b6259]">Rejuvenation.</em>
             </motion.h4>
             <motion.p
-              className="max-w-[15rem] text-[8px] leading-relaxed text-[#6b6259] md:text-[10px]"
+              className="max-w-[15rem] text-[8px] leading-relaxed text-[#6b6259] @lg:text-[10px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.35, duration: 0.7 }}
@@ -315,13 +315,13 @@ function ClinicWebsite() {
               Clinical treatments and advanced dermal care — pick a time and you’re booked, with reminders by email.
             </motion.p>
             <div className="flex gap-2">
-              <span className="rounded-full bg-[#1f1a17] px-2.5 py-1.5 text-[8px] text-white md:text-[9px]">Book an appointment</span>
-              <span className="rounded-full border border-[#d9d1c5] px-2.5 py-1.5 text-[8px] md:text-[9px]">Our services</span>
+              <span className="rounded-full bg-[#1f1a17] px-2.5 py-1.5 text-[8px] text-white @lg:text-[9px]">Book an appointment</span>
+              <span className="rounded-full border border-[#d9d1c5] px-2.5 py-1.5 text-[8px] @lg:text-[9px]">Our services</span>
             </div>
           </div>
 
-          <div className="relative col-span-2 self-center rounded-xl border border-[#e4ddd3] bg-white p-2.5 shadow-sm md:p-3">
-            <div className="text-[7px] tracking-[0.2em] text-[#6b6259] uppercase md:text-[8px]">Choose a time</div>
+          <div className="relative col-span-2 self-center rounded-xl border border-[#e4ddd3] bg-white p-2.5 shadow-sm @lg:p-3">
+            <div className="text-[7px] tracking-[0.2em] text-[#6b6259] uppercase @lg:text-[8px]">Choose a time</div>
             <div className="mt-2 grid grid-cols-2 gap-1.5">
               {slots.map((slot, i) => {
                 const anim =
@@ -336,7 +336,7 @@ function ClinicWebsite() {
                 return (
                   <motion.span
                     key={slot}
-                    className="rounded-md border border-[#e4ddd3] py-1.5 text-center text-[8px] md:text-[9px]"
+                    className="rounded-md border border-[#e4ddd3] py-1.5 text-center text-[8px] @lg:text-[9px]"
                     style={{
                       backgroundColor: staticPick ? PICKED.bg : NEUTRAL.bg,
                       color: staticPick ? PICKED.fg : NEUTRAL.fg,
@@ -350,7 +350,7 @@ function ClinicWebsite() {
               })}
             </div>
             <motion.div
-              className="mt-2 flex items-center justify-center gap-1 rounded-md bg-[#e8f1ea] py-1.5 text-[8px] font-medium text-[#2f6b45] md:text-[9px]"
+              className="mt-2 flex items-center justify-center gap-1 rounded-md bg-[#e8f1ea] py-1.5 text-[8px] font-medium text-[#2f6b45] @lg:text-[9px]"
               style={reduce ? { opacity: 1 } : undefined}
               initial={{ opacity: 0 }}
               animate={reduce ? undefined : { opacity: [0, 0, 1, 1, 0, 0], y: [4, 4, 0, 0, 0, 4] }}
@@ -362,15 +362,15 @@ function ClinicWebsite() {
         </div>
 
         {/* services */}
-        <div className="grid grid-cols-3 gap-2 border-t border-[#e4ddd3] px-4 py-2.5 md:px-6 md:py-3">
+        <div className="grid grid-cols-3 gap-2 border-t border-[#e4ddd3] px-4 py-2.5 @lg:px-6 @lg:py-3">
           {[
             ["Clinical treatments", "Book online"],
             ["Advanced dermal", "Book online"],
             ["Skin consultation", "Book online"],
           ].map(([name, mins]) => (
             <div key={name} className="min-w-0">
-              <div className="truncate font-serif text-[9px] md:text-[11px]">{name}</div>
-              <div className="text-[7px] text-[#6b6259] md:text-[9px]">{mins}</div>
+              <div className="truncate font-serif text-[9px] @lg:text-[11px]">{name}</div>
+              <div className="text-[7px] text-[#6b6259] @lg:text-[9px]">{mins}</div>
             </div>
           ))}
         </div>
@@ -385,7 +385,7 @@ function ClinicWebsite() {
 
 const clinicNav = ["Schedule", "Patients", "Analytics", "Reports", "Import"];
 const clinicStats = [
-  { label: "Booked today", value: "12" },
+  { label: "Booked", value: "12" },
   { label: "Completed", value: "7" },
   { label: "Completion", value: "58%" },
 ];
@@ -404,7 +404,7 @@ const chipTone: Record<string, string> = {
 
 function Chip({ status }: { status: string }) {
   return (
-    <span className={`rounded-full px-2 py-0.5 text-[7px] md:text-[9px] ${chipTone[status]}`}>{status}</span>
+    <span className={`rounded-full px-2 py-0.5 text-[7px] @lg:text-[9px] ${chipTone[status]}`}>{status}</span>
   );
 }
 
@@ -416,16 +416,16 @@ function ClinicPortal() {
       url="portal · demo environment"
       badge={<span className="text-[9px] text-accent-bright">Staff</span>}
     >
-      <div className="grid h-full grid-cols-[5.5rem_1fr] md:grid-cols-[7rem_1fr]">
-        <div className="flex flex-col gap-1 border-r border-line bg-bg/40 p-2 md:p-3">
+      <div className="grid h-full grid-cols-1 @md:grid-cols-[6rem_1fr] @lg:grid-cols-[7rem_1fr]">
+        <div className="hidden flex-col gap-1 border-r border-line bg-bg/40 p-2 @md:flex @lg:p-3">
           <div className="mb-2 flex items-center gap-1.5">
             <span className="h-3.5 w-3.5 rounded-full bg-cyan/70" />
-            <span className="truncate text-[9px] font-semibold md:text-[10px]">Premium Clinic</span>
+            <span className="truncate text-[9px] font-semibold @lg:text-[10px]">Premium Clinic</span>
           </div>
           {clinicNav.map((n, i) => (
             <span
               key={n}
-              className={`truncate rounded-md px-1.5 py-1 text-[8px] md:text-[10px] ${
+              className={`truncate rounded-md px-1.5 py-1 text-[8px] @lg:text-[10px] ${
                 i === 0 ? "bg-accent/25 text-fg" : "text-muted"
               }`}
             >
@@ -434,10 +434,10 @@ function ClinicPortal() {
           ))}
         </div>
 
-        <div className="flex min-w-0 flex-col gap-2.5 p-3 md:gap-3.5 md:p-4">
+        <div className="flex min-w-0 flex-col gap-2.5 p-3 @lg:gap-3.5 @lg:p-4">
           <div className="flex items-center justify-between gap-2">
-            <span className="truncate text-[10px] font-semibold md:text-xs">Clinical schedule</span>
-            <div className="flex shrink-0 rounded-full border border-line p-0.5 text-[8px] md:text-[9px]">
+            <span className="truncate text-[10px] font-semibold @lg:text-xs">Clinical schedule</span>
+            <div className="flex shrink-0 rounded-full border border-line p-0.5 text-[8px] @lg:text-[9px]">
               <span className="rounded-full bg-accent/30 px-2 py-0.5">Today</span>
               <span className="px-2 py-0.5 text-muted">Next 7 days</span>
             </div>
@@ -447,13 +447,13 @@ function ClinicPortal() {
             {clinicStats.map((st, i) => (
               <motion.div
                 key={st.label}
-                className="rounded-lg border border-line bg-surface/70 p-2 md:p-2.5"
+                className="rounded-lg border border-line bg-surface/70 p-2 @lg:p-2.5"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 + i * 0.08 }}
               >
-                <div className="display text-base md:text-xl">{st.value}</div>
-                <div className="mt-1 truncate text-[8px] text-muted md:text-[9px]">{st.label}</div>
+                <div className="display text-base @lg:text-xl">{st.value}</div>
+                <div className="mt-1 truncate text-[8px] text-muted @lg:text-[9px]">{st.label}</div>
               </motion.div>
             ))}
           </div>
@@ -462,14 +462,14 @@ function ClinicPortal() {
             {appointments.map((a, i) => (
               <motion.div
                 key={a.time}
-                className="grid grid-cols-[2.6rem_1fr_auto] items-center gap-2 rounded-md border border-line/70 bg-surface/50 px-2 py-1.5 md:grid-cols-[3.2rem_1fr_1fr_auto]"
+                className="grid grid-cols-[2.6rem_1fr_auto] items-center gap-2 rounded-md border border-line/70 bg-surface/50 px-2 py-1.5 @lg:grid-cols-[3.2rem_1fr_1fr_auto]"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + i * 0.09 }}
               >
-                <span className="text-[8px] text-muted tabular-nums md:text-[10px]">{a.time}</span>
-                <span className="truncate text-[8px] md:text-[10px]">{a.who}</span>
-                <span className="hidden truncate text-[10px] text-muted md:block">{a.what}</span>
+                <span className="text-[8px] text-muted tabular-nums @lg:text-[10px]">{a.time}</span>
+                <span className="truncate text-[8px] @lg:text-[10px]">{a.who}</span>
+                <span className="hidden truncate text-[10px] text-muted @lg:block">{a.what}</span>
                 {a.cycle && !reduce ? (
                   <span className="grid">
                     <motion.span

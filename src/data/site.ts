@@ -100,7 +100,7 @@ export const projects: Project[] = [
         "Clear contact and sales lines",
       ],
       cta: {
-        label: "Visit primegentradingcorporation.com",
+        label: "Visit the live website",
         href: "https://www.primegentradingcorporation.com/",
       },
       caption: "Illustration of the public website",

@@ -23,7 +23,7 @@ function CopyEmail() {
     <button
       type="button"
       onClick={copy}
-      className="label relative inline-flex h-10 items-center overflow-hidden rounded-full border border-line px-5 text-muted transition-colors hover:border-accent-bright hover:text-fg"
+      className="label relative inline-flex h-10 shrink-0 items-center self-start overflow-hidden rounded-full border border-line px-5 whitespace-nowrap text-muted transition-colors hover:border-accent-bright hover:text-fg lg:self-auto"
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span
@@ -63,7 +63,7 @@ export function Contact() {
       <div className="relative">
         <SectionLabel index="04">Contact</SectionLabel>
 
-        <div className="mt-8 flex flex-col gap-12 md:flex-row md:items-end md:justify-between">
+        <div className="mt-8 flex flex-col gap-12 lg:flex-row lg:items-end lg:justify-between">
           <h2 className="display text-[clamp(3.25rem,11vw,11rem)] uppercase">
             <Split as="span">Ready to</Split>
             <br />
@@ -78,7 +78,7 @@ export function Contact() {
             </span>
           </h2>
 
-          <Magnetic strength={0.3} className="self-start md:mb-6 md:self-end">
+          <Magnetic strength={0.3} className="self-start lg:mb-6 lg:self-end">
             <a
               href={`mailto:${site.email}?subject=${encodeURIComponent("Project inquiry")}`}
               className="group relative flex h-36 w-36 items-center justify-center rounded-full bg-accent text-center text-white transition-colors duration-500 hover:bg-accent-bright md:h-52 md:w-52"
@@ -93,12 +93,12 @@ export function Contact() {
 
         <div className="mt-20 md:mt-28">
           <Line />
-          <div className="flex flex-col gap-6 py-8 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-6 py-8 lg:flex-row lg:items-center lg:justify-between">
             <a
               href={`mailto:${site.email}`}
-              className="group relative w-fit text-[clamp(1.5rem,4.4vw,4.5rem)] font-semibold tracking-[-0.04em]"
+              className="group relative w-fit max-w-full min-w-0 text-[clamp(1.25rem,4.4vw,4.5rem)] font-semibold tracking-[-0.04em] [overflow-wrap:anywhere]"
             >
-              {site.email}
+              {site.email.split("@")[0]}@<wbr />{site.email.split("@")[1]}
               <span className="ease-expo absolute -bottom-1 left-0 h-[3px] w-full origin-right scale-x-0 bg-accent-bright transition-transform duration-700 group-hover:origin-left group-hover:scale-x-100" />
             </a>
             <CopyEmail />

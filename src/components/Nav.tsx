@@ -69,7 +69,7 @@ export function Nav() {
     <>
       <motion.header
         className={`fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${
-          scrolled && !open
+          scrolled
             ? "border-b border-line bg-bg/70 backdrop-blur-xl"
             : "border-b border-transparent"
         }`}
@@ -146,11 +146,11 @@ export function Nav() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 z-40 flex flex-col justify-between bg-bg/95 px-6 pt-28 pb-10 backdrop-blur-2xl md:hidden"
-            initial={{ clipPath: "circle(0% at calc(100% - 44px) 40px)" }}
-            animate={{ clipPath: "circle(150% at calc(100% - 44px) 40px)" }}
-            exit={{ clipPath: "circle(0% at calc(100% - 44px) 40px)" }}
-            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+            className="fixed inset-0 z-40 flex h-dvh flex-col justify-between overscroll-contain bg-bg px-6 pt-28 pb-10 md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
           >
             <nav className="flex flex-col gap-2" aria-label="Mobile">
               {[...nav, { label: "Contact", href: "#contact" }].map(
