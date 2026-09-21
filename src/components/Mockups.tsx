@@ -280,7 +280,7 @@ function ClinicWebsite() {
   const reduce = useReducedMotion();
 
   return (
-    <Frame url="demo · clinic website">
+    <Frame url="clinic-x-app.netlify.app">
       <div className="absolute inset-0 flex flex-col bg-[#f6f3ee] text-[#1f1a17]">
         {/* nav */}
         <div className="flex items-center justify-between px-4 py-3 @lg:px-6">

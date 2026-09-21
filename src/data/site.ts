@@ -138,8 +138,8 @@ export const projects: Project[] = [
     website: {
       kind: "website",
       label: "Website",
-      status: "demo",
-      statusLabel: "Demo",
+      status: "live",
+      statusLabel: "Live",
       headline: "Booking that feels effortless.",
       description:
         "A calm, fast website where patients browse treatments and specialists, then book in a couple of taps.",
@@ -151,7 +151,7 @@ export const projects: Project[] = [
         "Automatic email confirmation and reminders",
         "Contact details and office hours managed from the CMS",
       ],
-      cta: { label: "Request the live demo", href: null },
+      cta: { label: "Visit the live website", href: "https://clinic-x-app.netlify.app/" },
       caption: "Illustration of the public website",
     },
     portal: {
