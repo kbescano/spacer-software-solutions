@@ -713,6 +713,88 @@ function WeddingPortal() {
   );
 }
 
+
+/* ------------------------------------------------------------------ */
+/* PDF Form Filler — client-side tool                                  */
+/* ------------------------------------------------------------------ */
+
+const pdfFields = [
+  { label: "Full name", kind: "text" as const },
+  { label: "Date", kind: "text" as const },
+  { label: "I agree to the terms", kind: "check" as const },
+  { label: "Signature", kind: "text" as const },
+];
+
+function FieldRow({ label, kind, delay }: { label: string; kind: "text" | "check"; delay: number }) {
+  const reduce = useReducedMotion();
+  const cycle = [0, 0.15, 0.2, 0.9, 1];
+
+  return (
+    <div className="flex items-center gap-2 rounded-md border border-line bg-surface/60 px-2 py-1.5">
+      <span className="w-16 shrink-0 truncate text-[8px] text-muted @lg:w-24 @lg:text-[10px]">{label}</span>
+      {kind === "check" ? (
+        <motion.span
+          className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[3px] border border-accent-bright/60 text-[8px] text-cyan"
+          initial={{ opacity: 0 }}
+          animate={reduce ? { opacity: 1 } : { opacity: [0, 0, 1, 1, 0] }}
+          transition={{ duration: 8, repeat: Infinity, delay, times: cycle }}
+        >
+          ✓
+        </motion.span>
+      ) : (
+        <span className="relative h-3.5 flex-1 overflow-hidden rounded-[3px] bg-bg/60">
+          <motion.span
+            className="absolute inset-y-0 left-0 rounded-[3px] bg-accent-bright/70"
+            initial={{ width: "0%" }}
+            animate={reduce ? { width: "70%" } : { width: ["0%", "0%", "70%", "70%", "0%"] }}
+            transition={{ duration: 8, repeat: Infinity, delay, times: cycle }}
+          />
+        </span>
+      )}
+    </div>
+  );
+}
+
+function PdfFormFillerWebsite() {
+  const reduce = useReducedMotion();
+
+  return (
+    <Frame url="pdf-forms-filler.netlify.app">
+      <div className="grid h-full grid-cols-5 gap-3 p-4 @lg:gap-4 @lg:p-6">
+        {/* the "PDF" */}
+        <div className="col-span-2 flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-line bg-surface/40 p-3 text-center">
+          <svg viewBox="0 0 24 24" className="h-7 w-7 text-accent-bright @lg:h-9 @lg:w-9" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+            <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+            <path d="M14 3v5h5" />
+          </svg>
+          <span className="text-[8px] text-fg @lg:text-[10px]">form.pdf</span>
+          <span className="text-[7px] text-muted @lg:text-[9px]">4 fields detected</span>
+        </div>
+
+        {/* detected fields, filling in */}
+        <div className="col-span-3 flex flex-col gap-1.5 @lg:gap-2">
+          <span className="text-[8px] tracking-wide text-muted uppercase @lg:text-[10px]">Fill in the fields</span>
+          {pdfFields.map((f, i) => (
+            <FieldRow key={f.label} label={f.label} kind={f.kind} delay={i * 0.35} />
+          ))}
+          <motion.span
+            className="mt-1.5 w-fit rounded-full bg-accent px-2.5 py-1.5 text-[8px] font-semibold text-white @lg:text-[9px]"
+            animate={
+              reduce
+                ? undefined
+                : { boxShadow: ["0 0 0 0 rgba(111,149,255,0.6)", "0 0 0 8px rgba(111,149,255,0)"] }
+            }
+            transition={{ duration: 1.8, repeat: Infinity }}
+          >
+            Save &amp; generate PDF
+          </motion.span>
+          <span className="text-[7px] text-muted @lg:text-[9px]">Runs in your browser — nothing is uploaded</span>
+        </div>
+      </div>
+    </Frame>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /* Registry — each project picks its own artwork by slug               */
 /* ------------------------------------------------------------------ */
@@ -721,6 +803,7 @@ const mocks: Record<string, { website: () => ReactNode; portal: () => ReactNode 
   primegen: { website: () => <PrimegenWebsite />, portal: () => <PrimegenPortal /> },
   clinic: { website: () => <ClinicWebsite />, portal: () => <ClinicPortal /> },
   wedding: { website: () => <WeddingWebsite />, portal: () => <WeddingPortal /> },
+  "pdf-form-filler": { website: () => <PdfFormFillerWebsite />, portal: () => null },
 };
 
 export function ProjectMock({ slug, kind }: { slug: string; kind: "website" | "portal" }) {

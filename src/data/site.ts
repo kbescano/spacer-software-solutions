@@ -227,6 +227,35 @@ export const projects: Project[] = [
       caption: "Illustration — couple dashboard with sample data",
     },
   },
+  {
+    slug: "pdf-form-filler",
+    title: "PDF Forms",
+    client: "S3 product",
+    industry: "Productivity & document tools",
+    summary:
+      "A free, browser-only tool that fills out PDF forms: upload any fillable PDF — or a plain print-and-fill one — and it detects the fields, lets you type into them, and hands back a completed copy. Nothing is uploaded to a server.",
+    tags: ["Next.js", "pdf-lib", "pdf.js"],
+    website: {
+      kind: "website",
+      label: "Website",
+      status: "live",
+      statusLabel: "Live",
+      headline: "Any PDF, filled in seconds.",
+      description:
+        "A single tool, not a demo: real fillable PDFs go in, completed ones come out, entirely in the browser.",
+      features: [
+        "Upload any fillable PDF, or a plain print-and-fill one",
+        "Existing form fields are read automatically",
+        "Auto-detects fields on PDFs that don’t have any — checkboxes, blanks, labels",
+        "Review and correct detected fields before confirming",
+        "Fill everything in and save a completed copy",
+        "Optional flatten — bake values in as static, uneditable content",
+        "Runs entirely client-side: the PDF never leaves the browser",
+      ],
+      cta: { label: "Try the live tool", href: "https://pdf-forms-filler.netlify.app/" },
+      caption: "Illustration of the live tool",
+    },
+  },
 ];
 
 export const services = [

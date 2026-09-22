@@ -13,7 +13,7 @@ npm run build   # production build
 Everything on the page lives in [`src/data/site.ts`](src/data/site.ts).
 
 - **Business email / Facebook page** — `site.email` and `site.socials`. The email is still a placeholder.
-- **Case studies** — the `projects` array (Primegen, Clinic and Wedding today). Each project has an optional `website` and an optional `portal` "facet", which powers the Website / Portal switcher. Facet status is `live`, `private` (confidential) or `demo`. To add another project, append an object to `projects`, then add its artwork to the registry at the bottom of [`Mockups.tsx`](src/components/Mockups.tsx), keyed by the same `slug`.
+- **Case studies** — the `projects` array (Primegen, Clinic, Wedding and PDF Forms today). Each project has an optional `website` and an optional `portal` "facet", which powers the Website / Portal switcher. Facet status is `live`, `private` (confidential) or `demo`. To add another project, append an object to `projects`, then add its artwork to the registry at the bottom of [`Mockups.tsx`](src/components/Mockups.tsx), keyed by the same `slug`.
 - **Services / process** — the `services` and `steps` arrays.
 - **Demo links** — the clinic website demo is linked publicly. Portal demos (ConstructX, the clinic portal, the wedding dashboard) are request-only on purpose: their `cta.href` is `null`, so the button opens an email request and the links are sent by hand.
 - **Illustrations** — [`Mockups.tsx`](src/components/Mockups.tsx). These are original artwork, not client screenshots or data.
