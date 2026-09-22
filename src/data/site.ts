@@ -177,6 +177,57 @@ export const projects: Project[] = [
       caption: "Illustration — demo portal with sample data",
     },
   },
+  {
+    slug: "wedding",
+    title: "Wedding",
+    client: "S3 product demo",
+    industry: "Events & weddings",
+    summary:
+      "A guest-only wedding site and the couple’s control panel behind it: guests open a sealed invitation with a personal code, then share memories, leave messages, play a live quiz, RSVP and find their seat, while the couple run everything from one dashboard.",
+    tags: ["Next.js", "Payload CMS", "SQLite"],
+    website: {
+      kind: "website",
+      label: "Website",
+      status: "demo",
+      statusLabel: "Demo",
+      headline: "An invitation worth opening.",
+      description:
+        "A private, phone-first website for wedding guests. It stays sealed until a personal invitation code is used, and the couple can switch on open access to let anyone with the link look around.",
+      features: [
+        "Sealed invitation — real details are never sent to the browser until a valid code is used",
+        "Personal invitation codes and links, with no email or password",
+        "Photo memories wall and messages to the couple",
+        "Live quiz with a leaderboard, answers checked on the server",
+        "RSVP form and a seating finder",
+        "Open-access switch: anyone with the link can look around",
+        "Built for phones, with a bottom tab bar, and scales up to desktop",
+      ],
+      cta: { label: "Open the live demo", href: "https://wedding-x-app.netlify.app/" },
+      note: "This deploy is still being finished, so some pages may not work perfectly yet.",
+      caption: "Illustration of the guest website",
+    },
+    portal: {
+      kind: "portal",
+      label: "Portal",
+      status: "demo",
+      statusLabel: "Demo",
+      headline: "The couple’s control room.",
+      description:
+        "One dashboard where the couple manage the guest list, invitations, RSVPs, photos, messages, the quiz and the seating plan.",
+      features: [
+        "Wedding details in one place: names, date, venue, dress code, schedule",
+        "Guest list with personal links, QR codes and ready-made WhatsApp, email or text invitations",
+        "RSVP answers, table assignments and quiz tagging per guest",
+        "Moderate the photo and message walls",
+        "Write and run the live quiz",
+        "Publish the seating plan when it’s ready",
+        "Couple-only access, enforced on the server",
+      ],
+      cta: { label: "Request the live demo", href: null },
+      note: "The dashboard is couple-only by design, so it isn’t public. A demo with sample data is available on request.",
+      caption: "Illustration — couple dashboard with sample data",
+    },
+  },
 ];
 
 export const services = [

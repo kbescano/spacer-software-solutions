@@ -499,6 +499,220 @@ function ClinicPortal() {
   );
 }
 
+
+/* ------------------------------------------------------------------ */
+/* Wedding — guest website (ivory, forest, brass)                      */
+/* ------------------------------------------------------------------ */
+
+const IVORY = "#f6f0e4";
+const PAPER = "#fbf7ee";
+const FOREST = "#1e3b2e";
+const BRASS = "#b98a3e";
+const wTabs = ["Home", "Memories", "Messages", "Quiz", "RSVP"];
+
+function WeddingWebsite() {
+  const reduce = useReducedMotion();
+  const loop = { duration: 9, repeat: Infinity, ease: "linear" as const };
+  // sealed -> code entered -> unlocked -> sealed again
+  const times = [0, 0.3, 0.42, 0.85, 0.93, 1];
+
+  return (
+    <Frame url="demo · wedding website">
+      <div className="absolute inset-0 flex flex-col" style={{ background: IVORY, color: "#17241d" }}>
+        {/* top bar */}
+        <div className="flex items-center justify-between px-4 py-2.5 @lg:px-6 @lg:py-3">
+          <span className="font-serif text-[10px] tracking-[0.3em] uppercase @lg:text-xs" style={{ color: FOREST }}>
+            N <span style={{ color: BRASS }}>&amp;</span> N
+          </span>
+          <div className="hidden gap-4 text-[9px] @md:flex" style={{ color: "#5b685f" }}>
+            {wTabs.map((t) => (
+              <span key={t}>{t}</span>
+            ))}
+          </div>
+        </div>
+
+        {/* invitation card */}
+        <div className="relative mx-4 flex flex-1 items-center justify-center @lg:mx-8">
+          <div
+            className="relative w-full max-w-[19rem] overflow-hidden rounded-lg border px-4 py-4 text-center shadow-sm @lg:max-w-md @lg:py-10"
+            style={{ background: PAPER, borderColor: "rgba(185,138,62,0.45)" }}
+          >
+            <motion.div
+              style={reduce ? undefined : { filter: "blur(6px)" }}
+              animate={
+                reduce
+                  ? undefined
+                  : { filter: ["blur(6px)", "blur(6px)", "blur(0px)", "blur(0px)", "blur(6px)", "blur(6px)"] }
+              }
+              transition={{ ...loop, times }}
+            >
+              <div className="text-[7px] tracking-[0.3em] uppercase @lg:text-[10px]" style={{ color: BRASS }}>
+                You’re invited
+              </div>
+              <div className="mt-1.5 font-serif text-xl leading-tight @lg:mt-2 @lg:text-4xl" style={{ color: FOREST }}>
+                Name <span style={{ color: BRASS }}>&amp;</span> Name
+              </div>
+              <div className="mx-auto mt-2 h-px w-10" style={{ background: BRASS }} />
+              <div className="mt-2 text-[8px] @lg:mt-3 @lg:text-xs" style={{ color: "#5b685f" }}>
+                Saturday · Venue · 4:00 PM
+              </div>
+            </motion.div>
+
+            {/* wax seal + code, fades away when "unlocked" */}
+            <motion.div
+              className="absolute inset-0 flex flex-col items-center justify-center gap-2"
+              style={reduce ? { opacity: 0 } : undefined}
+              animate={reduce ? undefined : { opacity: [1, 1, 0, 0, 1, 1] }}
+              transition={{ ...loop, times }}
+            >
+              <span
+                className="flex h-8 w-8 items-center justify-center rounded-full font-serif text-[10px] text-white shadow-md @lg:h-14 @lg:w-14 @lg:text-sm"
+                style={{ background: `radial-gradient(circle at 35% 30%, #c99a4d, ${BRASS} 60%, #8f6528)` }}
+              >
+                N&amp;N
+              </span>
+              <span
+                className="rounded-full border px-3 py-1 text-[8px] tracking-[0.25em] @lg:px-4 @lg:py-1.5 @lg:text-[11px]"
+                style={{ borderColor: "rgba(30,59,46,0.3)", color: FOREST, background: "rgba(255,255,255,0.7)" }}
+              >
+                ••••-••••
+              </span>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* bottom tab bar, as on phones */}
+        <div className="grid grid-cols-5 border-t px-2 py-1.5 text-center text-[7px] @lg:text-[9px]" style={{ borderColor: "rgba(30,59,46,0.15)", color: "#5b685f" }}>
+          {wTabs.map((t, i) => (
+            <span key={t} style={i === 0 ? { color: FOREST, fontWeight: 600 } : undefined}>
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+    </Frame>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Wedding — couple dashboard                                          */
+/* ------------------------------------------------------------------ */
+
+const wNav = ["Wedding", "Guests", "Photos", "Messages", "Quiz", "Seating"];
+const guests = [
+  { name: "Guest A", table: "Table 1", rsvp: "Attending" },
+  { name: "Guest B", table: "Table 2", rsvp: "Attending" },
+  { name: "Guest C", table: "Table 2", rsvp: "Pending", cycle: true },
+  { name: "Guest D", table: "Table 4", rsvp: "Declined" },
+];
+const rsvpTone: Record<string, string> = {
+  Attending: "bg-[#3f7a55]/25 text-[#8fd3a8]",
+  Pending: "bg-fg/10 text-muted",
+  Declined: "bg-[#9b3b2e]/25 text-[#e8a397]",
+};
+
+function Toggle({ on, animate }: { on: boolean; animate?: boolean }) {
+  const reduce = useReducedMotion();
+  const cycling = animate && !reduce;
+  return (
+    <span className="relative inline-block h-3 w-6 shrink-0 rounded-full" style={{ background: on ? BRASS : "rgba(255,255,255,0.15)" }}>
+      <motion.span
+        className="absolute top-0.5 left-0.5 h-2 w-2 rounded-full bg-white"
+        style={{ x: on ? 12 : 0 }}
+        animate={cycling ? { x: [0, 0, 12, 12, 0] } : undefined}
+        transition={{ duration: 7, repeat: Infinity, times: [0, 0.35, 0.4, 0.9, 1] }}
+      />
+    </span>
+  );
+}
+
+function WeddingPortal() {
+  const reduce = useReducedMotion();
+
+  return (
+    <Frame url="demo · couple dashboard" badge={<span className="text-[9px] text-accent-bright">Couple</span>}>
+      <div className="grid h-full grid-cols-1 @md:grid-cols-[6rem_1fr] @lg:grid-cols-[7rem_1fr]">
+        <div className="hidden flex-col gap-1 border-r border-line bg-bg/40 p-2 @md:flex @lg:p-3">
+          <div className="mb-2 flex items-center gap-1.5">
+            <span className="h-3.5 w-3.5 rounded-full" style={{ background: BRASS }} />
+            <span className="truncate text-[9px] font-semibold @lg:text-[10px]">Wedding</span>
+          </div>
+          {wNav.slice(1).map((n, i) => (
+            <span key={n} className={`truncate rounded-md px-1.5 py-1 text-[8px] @lg:text-[10px] ${i === 0 ? "bg-accent/25 text-fg" : "text-muted"}`}>
+              {n}
+            </span>
+          ))}
+        </div>
+
+        <div className="flex min-w-0 flex-col gap-2 p-3 @lg:gap-3 @lg:p-4">
+          <div className="flex items-center justify-between gap-2">
+            <span className="truncate text-[10px] font-semibold @lg:text-xs">Guests & access</span>
+            <span className="shrink-0 rounded-full bg-cyan/15 px-2 py-0.5 text-[8px] text-cyan @lg:text-[9px]">Sample data</span>
+          </div>
+
+          {/* switches */}
+          <div className="grid gap-1.5 rounded-lg border border-line bg-surface/60 p-2 @lg:p-2.5">
+            {[
+              { label: "Open access", on: true, cycle: false },
+              { label: "Quiz live", on: false, cycle: true },
+              { label: "Publish seating plan", on: true, cycle: false },
+            ].map((t) => (
+              <div key={t.label} className="flex items-center justify-between gap-2 text-[8px] @lg:text-[10px]">
+                <span className="truncate">{t.label}</span>
+                <Toggle on={t.on} animate={t.cycle} />
+              </div>
+            ))}
+          </div>
+
+          {/* guests */}
+          <div className="flex flex-1 flex-col gap-1.5">
+            {guests.map((g, i) => (
+              <motion.div
+                key={g.name}
+                className="grid grid-cols-[1fr_auto] items-center gap-2 rounded-md border border-line/70 bg-surface/50 px-2 py-1.5 @lg:grid-cols-[1fr_1fr_auto_auto]"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.25 + i * 0.09 }}
+              >
+                <span className="truncate text-[8px] @lg:text-[10px]">{g.name}</span>
+                <span className="hidden truncate text-[10px] text-muted @lg:block">{g.table}</span>
+                {/* QR hint */}
+                <span className="hidden grid-cols-3 gap-px @lg:grid" aria-hidden>
+                  {[1, 0, 1, 0, 1, 0, 1, 1, 0].map((b, k) => (
+                    <i key={k} className={`h-[3px] w-[3px] ${b ? "bg-fg/70" : "bg-transparent"}`} />
+                  ))}
+                </span>
+                {g.cycle && !reduce ? (
+                  <span className="grid">
+                    <motion.span
+                      className="col-start-1 row-start-1 justify-self-end"
+                      animate={{ opacity: [1, 1, 0, 0, 1] }}
+                      transition={{ duration: 6, repeat: Infinity, times: [0, 0.4, 0.45, 0.95, 1] }}
+                    >
+                      <span className={`rounded-full px-2 py-0.5 text-[7px] @lg:text-[9px] ${rsvpTone.Pending}`}>Pending</span>
+                    </motion.span>
+                    <motion.span
+                      className="col-start-1 row-start-1 justify-self-end"
+                      animate={{ opacity: [0, 0, 1, 1, 0] }}
+                      transition={{ duration: 6, repeat: Infinity, times: [0, 0.4, 0.45, 0.95, 1] }}
+                    >
+                      <span className={`rounded-full px-2 py-0.5 text-[7px] @lg:text-[9px] ${rsvpTone.Attending}`}>Attending</span>
+                    </motion.span>
+                  </span>
+                ) : (
+                  <span className={`rounded-full px-2 py-0.5 text-[7px] @lg:text-[9px] ${rsvpTone[g.cycle ? "Attending" : g.rsvp]}`}>
+                    {g.cycle ? "Attending" : g.rsvp}
+                  </span>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Frame>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /* Registry — each project picks its own artwork by slug               */
 /* ------------------------------------------------------------------ */
@@ -506,6 +720,7 @@ function ClinicPortal() {
 const mocks: Record<string, { website: () => ReactNode; portal: () => ReactNode }> = {
   primegen: { website: () => <PrimegenWebsite />, portal: () => <PrimegenPortal /> },
   clinic: { website: () => <ClinicWebsite />, portal: () => <ClinicPortal /> },
+  wedding: { website: () => <WeddingWebsite />, portal: () => <WeddingPortal /> },
 };
 
 export function ProjectMock({ slug, kind }: { slug: string; kind: "website" | "portal" }) {
