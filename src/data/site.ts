@@ -188,8 +188,8 @@ export const projects: Project[] = [
     website: {
       kind: "website",
       label: "Website",
-      status: "demo",
-      statusLabel: "Demo",
+      status: "live",
+      statusLabel: "Live",
       headline: "An invitation worth opening.",
       description:
         "A private, phone-first website for wedding guests. It stays sealed until a personal invitation code is used, and the couple can switch on open access to let anyone with the link look around.",
@@ -202,7 +202,7 @@ export const projects: Project[] = [
         "Open-access switch: anyone with the link can look around",
         "Built for phones, with a bottom tab bar, and scales up to desktop",
       ],
-      cta: { label: "Open the live demo", href: "https://wedding-x-app.netlify.app/" },
+      cta: { label: "Visit the live website", href: "https://wedding-x-app.netlify.app/" },
       caption: "Illustration of the guest website",
     },
     portal: {
