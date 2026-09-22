@@ -203,7 +203,6 @@ export const projects: Project[] = [
         "Built for phones, with a bottom tab bar, and scales up to desktop",
       ],
       cta: { label: "Open the live demo", href: "https://wedding-x-app.netlify.app/" },
-      note: "This deploy is still being finished, so some pages may not work perfectly yet.",
       caption: "Illustration of the guest website",
     },
     portal: {
