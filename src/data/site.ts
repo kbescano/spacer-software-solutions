@@ -1,5 +1,13 @@
 // All copy lives here. Edit this file and the whole site updates.
 
+// No domain yet — this is a reserved, non-resolving placeholder (RFC 2606) so
+// metadata never points at a real address we don't own. Once you buy the
+// domain, set NEXT_PUBLIC_SITE_URL (no trailing slash) and every URL below —
+// canonical, Open Graph, the sitemap, robots.txt — updates automatically.
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://spacer-software-solutions.example"
+).replace(/\/$/, "");
+
 export const site = {
   name: "Spacer Software Solutions",
   short: "S3",
@@ -7,6 +15,19 @@ export const site = {
   tagline: "Websites & portals that run your business.",
   intro:
     "We build the public website your customers see — and the private portal your team runs on. Quotes, orders, appointments, reports: one team, one system.",
+  // Written for the <meta name="description"> / Open Graph tag, not the page —
+  // shorter and more concrete than `intro`, and kept near Google's ~155-char cutoff.
+  // Update this whenever the case studies in `projects` change.
+  metaDescription:
+    "S3 builds fast websites and the private portals behind them — for suppliers, clinics, weddings and more. See live projects, plus a free PDF tool.",
+  keywords: [
+    "custom website development",
+    "client portal development",
+    "business web application",
+    "Next.js developer",
+    "Payload CMS developer",
+    "booking and appointment website",
+  ],
   // TODO: replace with the real business email
   email: "inquiry@spacersoftwaresolutions.com",
   year: new Date().getFullYear(),
