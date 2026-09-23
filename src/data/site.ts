@@ -1,11 +1,10 @@
 // All copy lives here. Edit this file and the whole site updates.
 
-// No domain yet — this is a reserved, non-resolving placeholder (RFC 2606) so
-// metadata never points at a real address we don't own. Once you buy the
-// domain, set NEXT_PUBLIC_SITE_URL (no trailing slash) and every URL below —
-// canonical, Open Graph, the sitemap, robots.txt — updates automatically.
+// The real domain. NEXT_PUBLIC_SITE_URL can still override this (e.g. a
+// staging deploy) — canonical, Open Graph, the sitemap and robots.txt all
+// follow whichever one is active, no other code changes needed.
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || "https://spacer-software-solutions.example"
+  process.env.NEXT_PUBLIC_SITE_URL || "https://spacersoftwaresolutions.com"
 ).replace(/\/$/, "");
 
 export const site = {
@@ -13,13 +12,18 @@ export const site = {
   short: "S3",
   role: "Websites & portals for growing businesses",
   tagline: "Websites & portals that run your business.",
+  // Consolidated from the case studies in `projects` — a verb per public
+  // site (get a quote, book a visit, RSVP) and a noun per portal (orders,
+  // schedules, messages, reports), kept generic: no client names here.
+  // Re-check this line whenever `projects` changes meaningfully.
   intro:
-    "We build the public website your customers see — and the private portal your team runs on. Quotes, orders, appointments, reports: one team, one system.",
+    "We build the site people use — to get a quote, book a visit, or RSVP — and the private portal your team runs the business on. Orders, schedules, messages, reports: one team, one system.",
   // Written for the <meta name="description"> / Open Graph tag, not the page —
-  // shorter and more concrete than `intro`, and kept near Google's ~155-char cutoff.
-  // Update this whenever the case studies in `projects` change.
+  // shorter and more concrete than `intro`, and kept near Google's ~155-char
+  // cutoff. Consolidates the current case studies in `projects` — update this
+  // whenever that list changes meaningfully.
   metaDescription:
-    "S3 builds fast websites and the private portals behind them — for suppliers, clinics, weddings and more. See live projects, plus a free PDF tool.",
+    "S3 builds fast websites and the private portals behind them — live work for a supplier, a clinic and a wedding, plus a free PDF tool.",
   keywords: [
     "custom website development",
     "client portal development",
@@ -27,6 +31,7 @@ export const site = {
     "Next.js developer",
     "Payload CMS developer",
     "booking and appointment website",
+    "wedding website design",
   ],
   // TODO: replace with the real business email
   email: "inquiry@spacersoftwaresolutions.com",

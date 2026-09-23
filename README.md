@@ -31,16 +31,12 @@ and Twitter cards, a generated 1200×630 share image
 (the `<script type="application/ld+json">` in
 [`layout.tsx`](src/app/layout.tsx)).
 
-**No domain yet**, so everything above points at
-`https://spacer-software-solutions.example` — a reserved address (RFC 2606)
-that will never resolve, chosen so nothing points at a domain S3 doesn't
-actually own. Once you buy the real domain:
-
-1. Set `NEXT_PUBLIC_SITE_URL=https://your-real-domain.com` (no trailing
-   slash) wherever the site is hosted.
-2. Redeploy. `SITE_URL` in [`site.ts`](src/data/site.ts) picks it up
-   automatically, and the canonical URL, Open Graph URL, sitemap and
-   robots.txt all update with it — no other code changes needed.
+`SITE_URL` in [`site.ts`](src/data/site.ts) defaults to the real domain,
+**https://spacersoftwaresolutions.com**, so canonical, Open Graph, the
+sitemap and robots.txt all point there already. `NEXT_PUBLIC_SITE_URL` can
+still override it — set that env var on a staging deploy (or any other
+environment that shouldn't use the production domain) and it takes over with
+no code changes.
 
 - **Meta description** — `site.metaDescription`, kept near Google's ~155-char
   display limit and written to mention the actual range of work (websites,
