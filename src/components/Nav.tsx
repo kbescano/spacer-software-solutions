@@ -21,7 +21,10 @@ export function Nav() {
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState<string | null>(null);
+  // "Work" is the default until the IntersectionObserver below fires, so the
+  // nav doesn't sit with nothing highlighted while the visitor is still up
+  // in the hero.
+  const [active, setActive] = useState<string | null>("work");
 
   // Hide on scroll down, reveal on scroll up
   useMotionValueEvent(scrollY, "change", (y) => {
