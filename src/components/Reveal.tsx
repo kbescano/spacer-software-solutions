@@ -194,7 +194,18 @@ export function Magnetic({
 /* RollText — label that rolls up on hover (pure CSS)                  */
 /* ------------------------------------------------------------------ */
 
-export function RollText({ children }: { children: string }) {
+export function RollText({
+  children,
+  revealClassName = "text-accent-bright",
+}: {
+  children: string;
+  /** Color class for the incoming (hover) copy. Default `text-accent-bright`
+   * works on a background that stays fixed. On a button whose own background
+   * animates *to* accent-bright on hover (e.g. `hover:bg-accent-bright`),
+   * pass `"text-white"` (or similar) instead — otherwise the reveal text is
+   * the same color as the background it lands on and disappears. */
+  revealClassName?: string;
+}) {
   return (
     <span className="relative inline-block overflow-hidden align-bottom">
       <span className="ease-expo block transition-transform duration-500 group-hover:-translate-y-full">
@@ -202,7 +213,7 @@ export function RollText({ children }: { children: string }) {
       </span>
       <span
         aria-hidden
-        className="ease-expo absolute top-0 left-0 block translate-y-full text-accent-bright transition-transform duration-500 group-hover:translate-y-0"
+        className={`ease-expo absolute top-0 left-0 block translate-y-full transition-transform duration-500 group-hover:translate-y-0 ${revealClassName}`}
       >
         {children}
       </span>

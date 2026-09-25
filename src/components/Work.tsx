@@ -86,7 +86,7 @@ function FacetPanel({ facet, slug }: { facet: Facet; slug: string }) {
               {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
               className="group label inline-flex items-center gap-3 rounded-full bg-accent px-7 py-4 text-white transition-colors duration-300 hover:bg-accent-bright"
             >
-              <RollText>{facet.cta.label}</RollText>
+              <RollText revealClassName="text-white">{facet.cta.label}</RollText>
               <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
                 ↗
               </span>

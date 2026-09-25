@@ -270,7 +270,7 @@ function PrimegenPortal() {
 
 const slots = ["9:00 AM", "10:30 AM", "1:00 PM", "3:30 PM"];
 const NEUTRAL = { bg: "#faf8f5", fg: "#1f1a17" };
-const PICKED = { bg: "#1f1a17", fg: "#ffffff" };
+const PICKED = { bg: "#1f1a17", fg: "#fffff0" };
 
 /** Keyframe times for "selected between a and b" over one loop. */
 const window_ = (a: number, b: number) => [0, a, a + 0.02, b, b + 0.02, 1];

@@ -234,9 +234,9 @@ export function Hero() {
                   e.preventDefault();
                   scrollTo("#work");
                 }}
-                className="group label inline-flex rounded-full bg-accent px-7 py-4 text-white transition-colors duration-300 hover:bg-accent-bright"
+                className="group label inline-flex rounded-full bg-accent px-7 py-4 font-bold text-white transition-colors duration-300 hover:bg-accent-bright"
               >
-                <RollText>See our work</RollText>
+                <RollText revealClassName="text-white">See our work</RollText>
               </a>
             </Magnetic>
             <Magnetic>

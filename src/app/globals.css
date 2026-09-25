@@ -4,12 +4,15 @@
   --bg: #040816;
   --bg-elevated: #070d24;
   --surface: #0a1233;
-  --line: rgba(122, 156, 255, 0.16);
-  --fg: #eaf0ff;
+  --line: rgba(108, 207, 212, 0.16);
+  /* Was a cool blue-white (#eaf0ff) — unified with the ivory palette so
+     headlines/primary text match the logo badge and buttons exactly. */
+  --fg: #fffff0;
   --muted: #7f8db8;
-  --accent: #2f5bff;
-  --accent-bright: #6f95ff;
-  --cyan: #58d6ff;
+  --accent: #031d44;
+  --accent-bright: #6ccfd4;
+  --cyan: #6ccfd4;
+  --white: #fffff0;
   color-scheme: dark;
 }
 
@@ -23,6 +26,10 @@
   --color-accent: var(--accent);
   --color-accent-bright: var(--accent-bright);
   --color-cyan: var(--cyan);
+  /* Overrides Tailwind's built-in white (#fff) — every text-white,
+     bg-white, border-white, fill-white class site-wide (including inside
+     the Mockups.tsx illustrations) now resolves to the brand ivory. */
+  --color-white: var(--white);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -40,7 +47,7 @@ body {
 
 ::selection {
   background: var(--accent);
-  color: #fff;
+  color: var(--white);
 }
 
 /* Film grain over everything — adds depth to the flat navy */

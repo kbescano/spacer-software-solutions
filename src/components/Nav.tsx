@@ -8,6 +8,7 @@ import {
   useScroll,
 } from "motion/react";
 import { nav, site } from "@/data/site";
+import { Logo } from "./Logo";
 import { useLoading, useScrollControls } from "./Providers";
 import { EASE, RollText } from "./Reveal";
 
@@ -84,9 +85,7 @@ export function Nav() {
             className="group relative z-[60] flex items-center gap-3 font-bold tracking-tight"
             aria-label={`${site.name} — back to top`}
           >
-            <span className="display flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-sm tracking-tight text-white transition-colors duration-300 group-hover:bg-accent-bright">
-              {site.short}
-            </span>
+            <Logo className="h-9 w-9 transition-transform duration-300 group-hover:scale-[1.08]" />
             <span className="hidden min-[430px]:inline">
               <RollText>{site.name}</RollText>
             </span>

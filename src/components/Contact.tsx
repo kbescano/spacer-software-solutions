@@ -84,7 +84,7 @@ export function Contact() {
               className="group relative flex h-36 w-36 items-center justify-center rounded-full bg-accent text-center text-white transition-colors duration-500 hover:bg-accent-bright md:h-52 md:w-52"
             >
               <span className="label text-[0.8rem] leading-tight">
-                <RollText>Get in touch</RollText>
+                <RollText revealClassName="text-white">Get in touch</RollText>
                 <span className="mt-1 block text-xl">↗</span>
               </span>
             </a>
