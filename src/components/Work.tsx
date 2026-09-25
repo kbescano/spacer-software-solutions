@@ -4,7 +4,16 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { demoRequestHref, projects, type Facet, type Project } from "@/data/site";
 import { ProjectMock } from "./Mockups";
-import { EASE, FadeUp, Line, Magnetic, RollText, SectionLabel, Split } from "./Reveal";
+import {
+  EASE,
+  FadeUp,
+  Line,
+  Magnetic,
+  Parallax,
+  RollText,
+  SectionLabel,
+  Split,
+} from "./Reveal";
 
 function StatusChip({ facet }: { facet: Facet }) {
   if (facet.status === "live") {
@@ -96,7 +105,9 @@ function FacetPanel({ facet, slug }: { facet: Facet; slug: string }) {
       </div>
 
       <div className="lg:col-span-7">
-        <ProjectMock slug={slug} kind={facet.kind} />
+        <Parallax strength={36}>
+          <ProjectMock slug={slug} kind={facet.kind} />
+        </Parallax>
         <p className="label mt-4 text-center text-[0.65rem] text-muted">{facet.caption}</p>
       </div>
     </motion.div>

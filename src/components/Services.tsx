@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { services } from "@/data/site";
-import { EASE, SectionLabel, Split } from "./Reveal";
+import { EASE, SectionLabel, Split, Tilt } from "./Reveal";
 
 export function Services() {
   return (
@@ -20,9 +20,9 @@ export function Services() {
 
       <div className="mt-16 grid gap-px overflow-hidden rounded-3xl border border-line bg-line md:mt-24 lg:grid-cols-3">
         {services.map((item, i) => (
+          <Tilt key={item.title} max={5} glareClassName="rounded-none" className="h-full">
           <motion.article
-            key={item.title}
-            className="group relative flex min-h-[22rem] flex-col justify-between overflow-hidden bg-bg p-8 md:p-10 lg:min-h-[32rem]"
+            className="group relative flex h-full min-h-[22rem] flex-col justify-between overflow-hidden bg-bg p-8 md:p-10 lg:min-h-[32rem]"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "0px 0px -10% 0px" }}
@@ -60,6 +60,7 @@ export function Services() {
               </ul>
             </div>
           </motion.article>
+          </Tilt>
         ))}
       </div>
     </section>

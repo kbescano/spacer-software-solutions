@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring } from "motion/react";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  useVelocity,
+} from "motion/react";
 import { useMediaQuery } from "@/lib/hooks";
 
 type Mode = "default" | "link" | "label" | "none";
@@ -20,6 +26,15 @@ export function Cursor() {
   const y = useMotionValue(-100);
   const ringX = useSpring(x, { stiffness: 260, damping: 26, mass: 0.5 });
   const ringY = useSpring(y, { stiffness: 260, damping: 26, mass: 0.5 });
+
+  // Elastic squash-and-stretch: the ring smears along whichever axis the
+  // pointer is moving fastest on, then springs back to a circle at rest.
+  const vx = useVelocity(x);
+  const vy = useVelocity(y);
+  const rawScaleX = useTransform(() => 1 + Math.min(Math.abs(vx.get()) / 1200, 0.6));
+  const rawScaleY = useTransform(() => 1 + Math.min(Math.abs(vy.get()) / 1200, 0.6));
+  const ringScaleX = useSpring(rawScaleX, { stiffness: 320, damping: 18 });
+  const ringScaleY = useSpring(rawScaleY, { stiffness: 320, damping: 18 });
 
   useEffect(() => {
     if (!fine) return;
@@ -72,7 +87,8 @@ export function Cursor() {
         style={{ x: ringX, y: ringY }}
       >
         <motion.div
-          className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full border border-accent-bright/70"
+          className="flex items-center justify-center rounded-full border border-accent-bright/70"
+          style={{ x: "-50%", y: "-50%", scaleX: ringScaleX, scaleY: ringScaleY }}
           animate={{
             width: ringSize,
             height: ringSize,

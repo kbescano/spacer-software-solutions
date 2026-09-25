@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
+import { Tilt } from "./Reveal";
 
 /* Illustrated stand-ins for the real products. Original artwork — no client
    imagery or data. Swap for real screenshots once the client approves them. */
@@ -16,20 +17,22 @@ function Frame({
   children: ReactNode;
 }) {
   return (
-    <div className="@container relative overflow-hidden rounded-2xl border border-line bg-elevated shadow-[0_40px_120px_-40px_rgba(47,91,255,0.55)]">
-      <div className="flex items-center gap-3 border-b border-line bg-bg/60 px-4 py-3">
-        <div className="flex gap-1.5" aria-hidden>
-          <i className="h-2.5 w-2.5 rounded-full bg-fg/15" />
-          <i className="h-2.5 w-2.5 rounded-full bg-fg/15" />
-          <i className="h-2.5 w-2.5 rounded-full bg-fg/15" />
+    <Tilt max={6} className="@container">
+      <div className="relative overflow-hidden rounded-2xl border border-line bg-elevated shadow-[0_40px_120px_-40px_rgba(47,91,255,0.55)]">
+        <div className="flex items-center gap-3 border-b border-line bg-bg/60 px-4 py-3">
+          <div className="flex gap-1.5" aria-hidden>
+            <i className="h-2.5 w-2.5 rounded-full bg-fg/15" />
+            <i className="h-2.5 w-2.5 rounded-full bg-fg/15" />
+            <i className="h-2.5 w-2.5 rounded-full bg-fg/15" />
+          </div>
+          <div className="mx-auto flex h-6 w-full max-w-[17rem] items-center justify-center truncate rounded-full bg-surface px-3 text-[10px] text-muted">
+            {url}
+          </div>
+          <div className="flex min-w-[3.5rem] justify-end">{badge}</div>
         </div>
-        <div className="mx-auto flex h-6 w-full max-w-[17rem] items-center justify-center truncate rounded-full bg-surface px-3 text-[10px] text-muted">
-          {url}
-        </div>
-        <div className="flex min-w-[3.5rem] justify-end">{badge}</div>
+        <div className="relative aspect-[6/5] @md:aspect-[4/3] @lg:aspect-[16/11]">{children}</div>
       </div>
-      <div className="relative aspect-[6/5] @md:aspect-[4/3] @lg:aspect-[16/11]">{children}</div>
-    </div>
+    </Tilt>
   );
 }
 

@@ -8,10 +8,10 @@
   /* Was a cool blue-white (#eaf0ff) — unified with the ivory palette so
      headlines/primary text match the logo badge and buttons exactly. */
   --fg: #fffff0;
-  --muted: #177e89;
+  --muted: #0d4e67;
   --accent: #031d44;
   --accent-bright: #6ccfd4;
-  --cyan: #177e89;
+  --cyan: #0d4e67;
   --white: #fffff0;
   color-scheme: dark;
 }

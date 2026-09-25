@@ -50,15 +50,20 @@ function Row({
   const half = (
     <div className="flex shrink-0 items-center" aria-hidden>
       {[...items, ...items].map((item, i) => (
-        <span key={i} className="flex items-center">
+        <span
+          key={i}
+          className="group/word ease-expo flex items-center transition-transform duration-500 hover:scale-105"
+        >
           <span
-            className={`display px-6 text-[clamp(3rem,8vw,8rem)] whitespace-nowrap uppercase md:px-10 ${
-              outline ? "text-outline" : ""
+            className={`display px-6 text-[clamp(3rem,8vw,8rem)] whitespace-nowrap uppercase transition-colors duration-500 md:px-10 ${
+              outline ? "text-outline" : "group-hover/word:text-accent-bright"
             }`}
           >
             {item}
           </span>
-          <span className="text-[clamp(1.5rem,3vw,3rem)] text-accent-bright">✦</span>
+          <span className="ease-expo text-[clamp(1.5rem,3vw,3rem)] text-accent-bright transition-transform duration-700 group-hover/word:rotate-180">
+            ✦
+          </span>
         </span>
       ))}
     </div>
