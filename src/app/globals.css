@@ -8,10 +8,18 @@
   /* Was a cool blue-white (#eaf0ff) — unified with the ivory palette so
      headlines/primary text match the logo badge and buttons exactly. */
   --fg: #fffff0;
-  --muted: #0d4e67;
+  /* Secondary/body-copy text color. WCAG AA needs >=4.5:1 for normal text —
+     this value drifted through a few darker teals (down to a 2.19:1 fail
+     against --bg) before landing here. #7f8db8 gives 6.09:1 on --bg, 5.86:1
+     on --bg-elevated, 5.58:1 on --surface and 5.07:1 on --accent — verified
+     with the WCAG relative-luminance formula, not eyeballed. Keep any future
+     change to this token >=4.5:1 against --bg. */
+  --muted: #7f8db8;
   --accent: #031d44;
   --accent-bright: #6ccfd4;
-  --cyan: #0d4e67;
+  /* Vivid status/"live" accent (dots, badges) — was accidentally sharing
+     --muted's broken value. 10.73:1 against --bg. */
+  --cyan: #2dd4bf;
   --white: #fffff0;
   color-scheme: dark;
 }

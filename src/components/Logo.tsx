@@ -3,11 +3,11 @@
 import { useId } from "react";
 import {
   S3_MARK_BACKING,
+  S3_MARK_BADGE_VIEWBOX,
   S3_MARK_GRADIENT_COORDS,
   S3_MARK_GRADIENT_STOPS,
   S3_MARK_PATH,
   S3_MARK_TRANSFORM,
-  S3_MARK_VIEWBOX,
 } from "@/lib/mark";
 
 /** The S3 mark on its cream backing — the mark's dark-navy end disappears
@@ -21,7 +21,7 @@ export function Logo({ className = "" }: { className?: string }) {
       className={`inline-flex shrink-0 items-center justify-center rounded-full p-1 ${className}`}
       style={{ background: S3_MARK_BACKING }}
     >
-      <svg viewBox={S3_MARK_VIEWBOX} className="h-full w-full" aria-hidden>
+      <svg viewBox={S3_MARK_BADGE_VIEWBOX} className="h-full w-full" aria-hidden>
         <defs>
           <linearGradient id={gradId} x1={x1} y1={y1} x2={x2} y2={y2}>
             {S3_MARK_GRADIENT_STOPS.map((s) => (

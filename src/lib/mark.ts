@@ -10,6 +10,16 @@
 
 export const S3_MARK_VIEWBOX = "0 0 1024 1024";
 
+// The traced mark only fills ~49% of S3_MARK_VIEWBOX's width and ~36% of its
+// height (measured via the rendered <path>'s getBBox(), mapped through
+// S3_MARK_TRANSFORM: local bbox x[2619,7620] y[3429.84,7150] -> final-space
+// x[261.9,762.0] y[309.0,681.0]) — the rest is dead ivory space baked into
+// the source trace. For contexts where the mark is the whole graphic (the
+// circular nav/Facebook badge), crop to this tighter box instead so it reads
+// at full size; the path/transform are untouched, this only changes which
+// slice of the same 1024x1024 canvas is shown. ~82% width fill, ~61% height.
+export const S3_MARK_BADGE_VIEWBOX = "207 190 610 610";
+
 // Applies potrace's internal decipoint coordinate system to plain SVG
 // user-space units. Keep this paired with S3_MARK_PATH — don't transform
 // the path data itself, transform the group it's drawn in.
