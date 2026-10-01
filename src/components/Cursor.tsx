@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   motion,
   useMotionValue,
+  useReducedMotion,
   useSpring,
   useTransform,
   useVelocity,
@@ -15,9 +16,17 @@ type Mode = "default" | "link" | "label" | "none";
 /**
  * Custom cursor: a precise dot plus a lagging ring that grows over links.
  * Opt in per element with data-cursor="Label" (shows text) or data-cursor="none".
+ *
+ * The follow-lag and velocity squash/stretch are driven by raw motion
+ * values (pointermove + useVelocity), not Motion's `animate`/`whileInView`
+ * props — so neither `MotionConfig reducedMotion="user"` nor the global
+ * `prefers-reduced-motion` CSS rule in globals.css (which only neuters CSS
+ * `@keyframes`) actually stops it. Gate it here explicitly instead, same as
+ * Preloader does for its own imperative animation.
  */
 export function Cursor() {
   const fine = useMediaQuery("(hover: hover) and (pointer: fine)");
+  const reduce = useReducedMotion();
   const [mode, setMode] = useState<Mode>("default");
   const [label, setLabel] = useState("");
   const [visible, setVisible] = useState(false);
@@ -37,7 +46,7 @@ export function Cursor() {
   const ringScaleY = useSpring(rawScaleY, { stiffness: 320, damping: 18 });
 
   useEffect(() => {
-    if (!fine) return;
+    if (!fine || reduce) return;
     document.documentElement.classList.add("has-custom-cursor");
 
     const move = (e: PointerEvent) => {
@@ -72,9 +81,9 @@ export function Cursor() {
       window.removeEventListener("pointerover", over);
       document.documentElement.removeEventListener("pointerleave", leave);
     };
-  }, [fine, x, y]);
+  }, [fine, reduce, x, y]);
 
-  if (!fine) return null;
+  if (!fine || reduce) return null;
 
   const ringSize = mode === "label" ? 92 : mode === "link" ? 64 : 36;
 

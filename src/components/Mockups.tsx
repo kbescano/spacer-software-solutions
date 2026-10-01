@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { Tilt } from "./Reveal";
+import { LockIcon, Tilt } from "./Reveal";
 
 /* Illustrated stand-ins for the real products. Original artwork — no client
    imagery or data. Swap for real screenshots once the client approves them. */
@@ -37,10 +37,117 @@ function Frame({
 }
 
 /* ------------------------------------------------------------------ */
+/* Shared portal UI — every "staff/admin dashboard" mock below is built   */
+/* from the same three pieces (sidebar nav, stat-card grid, a status chip */
+/* that cross-fades between two states); only the data/colors differ per  */
+/* project, so the mechanics live here once.                              */
+/* ------------------------------------------------------------------ */
+
+function PortalSidebar({
+  mark,
+  name,
+  items,
+  activeIndex,
+}: {
+  mark: ReactNode;
+  name: string;
+  items: string[];
+  activeIndex: number;
+}) {
+  return (
+    <div className="hidden flex-col gap-1 border-r border-line bg-bg/40 p-2 @md:flex @lg:p-3">
+      <div className="mb-2 flex items-center gap-1.5">
+        {mark}
+        <span className="truncate text-[9px] font-semibold @lg:text-[10px]">{name}</span>
+      </div>
+      {items.map((item, i) => (
+        <span
+          key={item}
+          className={`truncate rounded-md px-1.5 py-1 text-[8px] @lg:text-[10px] ${
+            i === activeIndex ? "bg-accent/25 text-fg" : "text-muted"
+          }`}
+        >
+          {item}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function StatGrid({ stats }: { stats: { label: string; value: string }[] }) {
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {stats.map((s, i) => (
+        <motion.div
+          key={s.label}
+          className="rounded-lg border border-line bg-surface/70 p-2 @lg:p-2.5"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 + i * 0.08 }}
+        >
+          <div className="display text-base @lg:text-xl">{s.value}</div>
+          <div className="mt-1 truncate text-[8px] text-muted @lg:text-[9px]">{s.label}</div>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+/** A pill badge for one status. `tone` is a Tailwind color-class string —
+ * each portal keeps its own status->tone map (different projects, different
+ * palettes) and passes the looked-up value in. */
+function Chip({ status, tone }: { status: string; tone: string }) {
+  return <span className={`rounded-full px-2 py-0.5 text-[7px] @lg:text-[9px] ${tone}`}>{status}</span>;
+}
+
+const CROSSFADE_TRANSITION = { duration: 6, repeat: Infinity, times: [0, 0.4, 0.45, 0.95, 1] };
+const CROSSFADE_OUT = { opacity: [1, 1, 0, 0, 1] };
+const CROSSFADE_IN = { opacity: [0, 0, 1, 1, 0] };
+
+/** Cross-fades between two children on a loop, both absolutely stacked so
+ * there's no layout jump — used wherever demo data "updates" in place
+ * (e.g. a status chip flipping from Pending to Confirmed). Purely
+ * decorative: hidden from the a11y tree and never hit-testable. */
+function Crossfade({ from, to }: { from: ReactNode; to: ReactNode }) {
+  return (
+    <span className="grid" aria-hidden>
+      <motion.span
+        className="pointer-events-none col-start-1 row-start-1 justify-self-end"
+        animate={CROSSFADE_OUT}
+        transition={CROSSFADE_TRANSITION}
+      >
+        {from}
+      </motion.span>
+      <motion.span
+        className="pointer-events-none col-start-1 row-start-1 justify-self-end"
+        animate={CROSSFADE_IN}
+        transition={CROSSFADE_TRANSITION}
+      >
+        {to}
+      </motion.span>
+    </span>
+  );
+}
+
+/** The "pulsing glow" a couple of primary CTAs use to draw the eye — same
+ * shape everywhere, only the shadow's spread radius differs by button size. */
+const PULSE_GLOW_TRANSITION = { duration: 1.8, repeat: Infinity };
+function pulseGlow(spreadPx: number) {
+  return { boxShadow: [`0 0 0 0 rgba(111,149,255,0.6)`, `0 0 0 ${spreadPx}px rgba(111,149,255,0)`] };
+}
+
+/* ------------------------------------------------------------------ */
 /* Public website                                                      */
 /* ------------------------------------------------------------------ */
 
 const products = ["Steel & Rebar", "Cement", "Pipes & Fittings", "Safety & PPE"];
+// Static — no prop/state dependency — so these are built once, not per render.
+const POINTER_ANIMATE = {
+  left: ["88%", "24%", "24%", "24%", "88%"],
+  top: ["82%", "62%", "62%", "62%", "82%"],
+  scale: [1, 1, 0.8, 1, 1],
+};
+const POINTER_TRANSITION = { duration: 6, repeat: Infinity, ease: "easeInOut" as const, times: [0, 0.35, 0.42, 0.5, 1] };
 
 function PrimegenWebsite() {
   const reduce = useReducedMotion();
@@ -90,12 +197,8 @@ function PrimegenWebsite() {
             </motion.p>
             <motion.span
               className="w-fit rounded-full bg-accent px-3 py-1.5 text-[9px] font-semibold text-white @lg:text-[10px]"
-              animate={
-                reduce
-                  ? undefined
-                  : { boxShadow: ["0 0 0 0 rgba(111,149,255,0.6)", "0 0 0 10px rgba(111,149,255,0)"] }
-              }
-              transition={{ duration: 1.8, repeat: Infinity }}
+              animate={reduce ? undefined : pulseGlow(10)}
+              transition={PULSE_GLOW_TRANSITION}
             >
               Request a quote →
             </motion.span>
@@ -136,12 +239,8 @@ function PrimegenWebsite() {
           viewBox="0 0 24 24"
           className="pointer-events-none absolute h-5 w-5 fill-white stroke-bg"
           initial={{ left: "88%", top: "82%" }}
-          animate={{
-            left: ["88%", "24%", "24%", "24%", "88%"],
-            top: ["82%", "62%", "62%", "62%", "82%"],
-            scale: [1, 1, 0.8, 1, 1],
-          }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", times: [0, 0.35, 0.42, 0.5, 1] }}
+          animate={POINTER_ANIMATE}
+          transition={POINTER_TRANSITION}
         >
           <path d="M5 3l14 7-6 2-2 6z" strokeWidth="1.2" strokeLinejoin="round" />
         </motion.svg>
@@ -157,11 +256,16 @@ function PrimegenWebsite() {
 const sidebar = ["Dashboard", "Quotations", "Orders", "Supplier POs", "Deliveries", "Reports"];
 const columns = ["Inquiry", "Quoted", "Ordered", "Delivered"];
 const cardCounts = [4, 3, 3, 2];
+// Precomputed once — cardCounts is fixed, so there's no need to rebuild an
+// index array for every column on every render.
+const cardIndices = cardCounts.map((n) => Array.from({ length: n }, (_, k) => k));
 const stats = [
   { label: "Inquiries", value: "24" },
   { label: "Quotes sent", value: "18" },
   { label: "Orders", value: "9" },
 ];
+const TRAVELING_CARD_ANIMATE = { left: ["0%", "25%", "50%", "75%", "75%"], opacity: [0, 1, 1, 1, 0] };
+const TRAVELING_CARD_TRANSITION = { duration: 7, repeat: Infinity, ease: "easeInOut" as const, times: [0, 0.25, 0.5, 0.75, 1] };
 
 function PrimegenPortal() {
   const reduce = useReducedMotion();
@@ -171,32 +275,18 @@ function PrimegenPortal() {
       url="portal · demo environment"
       badge={
         <span className="flex items-center gap-1 text-[9px] text-accent-bright">
-          <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-            <rect x="5" y="11" width="14" height="9" rx="2" />
-            <path d="M8 11V8a4 4 0 018 0v3" />
-          </svg>
+          <LockIcon />
           Private
         </span>
       }
     >
       <div className="grid h-full grid-cols-1 @md:grid-cols-[6rem_1fr] @lg:grid-cols-[7rem_1fr]">
-        {/* sidebar */}
-        <div className="hidden flex-col gap-1 border-r border-line bg-bg/40 p-2 @md:flex @lg:p-3">
-          <div className="mb-2 flex items-center gap-1.5">
-            <span className="h-3.5 w-3.5 rounded bg-accent" />
-            <span className="text-[9px] font-semibold @lg:text-[10px]">ConstructX</span>
-          </div>
-          {sidebar.map((s, i) => (
-            <span
-              key={s}
-              className={`truncate rounded-md px-1.5 py-1 text-[8px] @lg:text-[10px] ${
-                i === 1 ? "bg-accent/25 text-fg" : "text-muted"
-              }`}
-            >
-              {s}
-            </span>
-          ))}
-        </div>
+        <PortalSidebar
+          mark={<span className="h-3.5 w-3.5 rounded bg-accent" />}
+          name="ConstructX"
+          items={sidebar}
+          activeIndex={1}
+        />
 
         {/* main */}
         <div className="flex min-w-0 flex-col gap-2.5 p-3 @lg:gap-3.5 @lg:p-4">
@@ -208,27 +298,14 @@ function PrimegenPortal() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
-            {stats.map((s, i) => (
-              <motion.div
-                key={s.label}
-                className="rounded-lg border border-line bg-surface/70 p-2 @lg:p-2.5"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 + i * 0.08 }}
-              >
-                <div className="display text-base @lg:text-xl">{s.value}</div>
-                <div className="mt-1 truncate text-[8px] text-muted @lg:text-[9px]">{s.label}</div>
-              </motion.div>
-            ))}
-          </div>
+          <StatGrid stats={stats} />
 
           {/* pipeline */}
           <div className="relative grid flex-1 grid-cols-4 gap-2">
             {columns.map((c, ci) => (
               <div key={c} className="flex flex-col gap-1.5 rounded-lg border border-line/70 bg-bg/40 p-1.5 @lg:p-2">
                 <span className="truncate text-[8px] tracking-tight text-muted uppercase @lg:tracking-wide @lg:text-[9px]">{c}</span>
-                {Array.from({ length: cardCounts[ci] }, (_, k) => k).map((k) => (
+                {cardIndices[ci].map((k) => (
                   <motion.div
                     key={k}
                     className="rounded-md bg-surface p-1.5"
@@ -249,11 +326,8 @@ function PrimegenPortal() {
                 aria-hidden
                 className="pointer-events-none absolute top-[1.6rem] w-[calc(25%-0.4rem)] rounded-md border border-accent-bright bg-accent/80 p-1.5 shadow-[0_0_24px_rgba(111,149,255,0.6)] @lg:top-[1.9rem]"
                 initial={{ left: "0%", opacity: 0 }}
-                animate={{
-                  left: ["0%", "25%", "50%", "75%", "75%"],
-                  opacity: [0, 1, 1, 1, 0],
-                }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", times: [0, 0.25, 0.5, 0.75, 1] }}
+                animate={TRAVELING_CARD_ANIMATE}
+                transition={TRAVELING_CARD_TRANSITION}
               >
                 <div className="h-1 w-4/5 rounded bg-white/90" />
                 <div className="mt-1.5 h-1 w-1/2 rounded bg-white/50" />
@@ -266,7 +340,6 @@ function PrimegenPortal() {
   );
 }
 
-
 /* ------------------------------------------------------------------ */
 /* Clinic — public booking website (light, editorial)                  */
 /* ------------------------------------------------------------------ */
@@ -278,6 +351,11 @@ const PICKED = { bg: "#1f1a17", fg: "#fffff0" };
 /** Keyframe times for "selected between a and b" over one loop. */
 const window_ = (a: number, b: number) => [0, a, a + 0.02, b, b + 0.02, 1];
 const pulse = (on: string, off: string) => [off, off, on, on, off, off];
+// Every animated slot uses the same two keyframe shapes — compute once
+// instead of re-deriving identical arrays per slot, per render.
+const SLOT_PULSE = { backgroundColor: pulse(PICKED.bg, NEUTRAL.bg), color: pulse(PICKED.fg, NEUTRAL.fg) };
+const SLOT_WINDOW_FIRST = window_(0.1, 0.25);
+const SLOT_WINDOW_REST = window_(0.3, 0.85);
 
 function ClinicWebsite() {
   const reduce = useReducedMotion();
@@ -327,14 +405,7 @@ function ClinicWebsite() {
             <div className="text-[7px] tracking-[0.2em] text-[#6b6259] uppercase @lg:text-[8px]">Choose a time</div>
             <div className="mt-2 grid grid-cols-2 gap-1.5">
               {slots.map((slot, i) => {
-                const anim =
-                  reduce || i > 1
-                    ? undefined
-                    : {
-                        backgroundColor: pulse(PICKED.bg, NEUTRAL.bg),
-                        color: pulse(PICKED.fg, NEUTRAL.fg),
-                      };
-                const times = i === 0 ? window_(0.1, 0.25) : window_(0.3, 0.85);
+                const animated = !reduce && i <= 1;
                 const staticPick = reduce && i === 1;
                 return (
                   <motion.span
@@ -344,8 +415,12 @@ function ClinicWebsite() {
                       backgroundColor: staticPick ? PICKED.bg : NEUTRAL.bg,
                       color: staticPick ? PICKED.fg : NEUTRAL.fg,
                     }}
-                    animate={anim}
-                    transition={{ duration: 8, repeat: Infinity, ease: "linear", times }}
+                    animate={animated ? SLOT_PULSE : undefined}
+                    transition={
+                      animated
+                        ? { duration: 8, repeat: Infinity, ease: "linear", times: i === 0 ? SLOT_WINDOW_FIRST : SLOT_WINDOW_REST }
+                        : undefined
+                    }
                   >
                     {slot}
                   </motion.span>
@@ -405,12 +480,6 @@ const chipTone: Record<string, string> = {
   Pending: "bg-fg/10 text-muted",
 };
 
-function Chip({ status }: { status: string }) {
-  return (
-    <span className={`rounded-full px-2 py-0.5 text-[7px] @lg:text-[9px] ${chipTone[status]}`}>{status}</span>
-  );
-}
-
 function ClinicPortal() {
   const reduce = useReducedMotion();
 
@@ -420,22 +489,12 @@ function ClinicPortal() {
       badge={<span className="text-[9px] text-accent-bright">Staff</span>}
     >
       <div className="grid h-full grid-cols-1 @md:grid-cols-[6rem_1fr] @lg:grid-cols-[7rem_1fr]">
-        <div className="hidden flex-col gap-1 border-r border-line bg-bg/40 p-2 @md:flex @lg:p-3">
-          <div className="mb-2 flex items-center gap-1.5">
-            <span className="h-3.5 w-3.5 rounded-full bg-cyan/70" />
-            <span className="truncate text-[9px] font-semibold @lg:text-[10px]">Premium Clinic</span>
-          </div>
-          {clinicNav.map((n, i) => (
-            <span
-              key={n}
-              className={`truncate rounded-md px-1.5 py-1 text-[8px] @lg:text-[10px] ${
-                i === 0 ? "bg-accent/25 text-fg" : "text-muted"
-              }`}
-            >
-              {n}
-            </span>
-          ))}
-        </div>
+        <PortalSidebar
+          mark={<span className="h-3.5 w-3.5 rounded-full bg-cyan/70" />}
+          name="Premium Clinic"
+          items={clinicNav}
+          activeIndex={0}
+        />
 
         <div className="flex min-w-0 flex-col gap-2.5 p-3 @lg:gap-3.5 @lg:p-4">
           <div className="flex items-center justify-between gap-2">
@@ -446,20 +505,7 @@ function ClinicPortal() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
-            {clinicStats.map((st, i) => (
-              <motion.div
-                key={st.label}
-                className="rounded-lg border border-line bg-surface/70 p-2 @lg:p-2.5"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 + i * 0.08 }}
-              >
-                <div className="display text-base @lg:text-xl">{st.value}</div>
-                <div className="mt-1 truncate text-[8px] text-muted @lg:text-[9px]">{st.label}</div>
-              </motion.div>
-            ))}
-          </div>
+          <StatGrid stats={clinicStats} />
 
           <div className="flex flex-1 flex-col gap-1.5">
             {appointments.map((a, i) => (
@@ -474,24 +520,12 @@ function ClinicPortal() {
                 <span className="truncate text-[8px] @lg:text-[10px]">{a.who}</span>
                 <span className="hidden truncate text-[10px] text-muted @lg:block">{a.what}</span>
                 {a.cycle && !reduce ? (
-                  <span className="grid">
-                    <motion.span
-                      className="col-start-1 row-start-1 justify-self-end"
-                      animate={{ opacity: [1, 1, 0, 0, 1] }}
-                      transition={{ duration: 6, repeat: Infinity, times: [0, 0.4, 0.45, 0.95, 1] }}
-                    >
-                      <Chip status="Pending" />
-                    </motion.span>
-                    <motion.span
-                      className="col-start-1 row-start-1 justify-self-end"
-                      animate={{ opacity: [0, 0, 1, 1, 0] }}
-                      transition={{ duration: 6, repeat: Infinity, times: [0, 0.4, 0.45, 0.95, 1] }}
-                    >
-                      <Chip status="Confirmed" />
-                    </motion.span>
-                  </span>
+                  <Crossfade
+                    from={<Chip status="Pending" tone={chipTone.Pending} />}
+                    to={<Chip status="Confirmed" tone={chipTone.Confirmed} />}
+                  />
                 ) : (
-                  <Chip status={a.cycle ? "Confirmed" : a.status} />
+                  <Chip status={a.cycle ? "Confirmed" : a.status} tone={chipTone[a.cycle ? "Confirmed" : a.status]} />
                 )}
               </motion.div>
             ))}
@@ -502,7 +536,6 @@ function ClinicPortal() {
   );
 }
 
-
 /* ------------------------------------------------------------------ */
 /* Wedding — guest website (ivory, forest, brass)                      */
 /* ------------------------------------------------------------------ */
@@ -512,12 +545,12 @@ const PAPER = "#fbf7ee";
 const FOREST = "#1e3b2e";
 const BRASS = "#b98a3e";
 const wTabs = ["Home", "Memories", "Messages", "Quiz", "RSVP"];
+// sealed -> code entered -> unlocked -> sealed again
+const WEDDING_LOOP = { duration: 9, repeat: Infinity, ease: "linear" as const };
+const WEDDING_TIMES = [0, 0.3, 0.42, 0.85, 0.93, 1];
 
 function WeddingWebsite() {
   const reduce = useReducedMotion();
-  const loop = { duration: 9, repeat: Infinity, ease: "linear" as const };
-  // sealed -> code entered -> unlocked -> sealed again
-  const times = [0, 0.3, 0.42, 0.85, 0.93, 1];
 
   return (
     <Frame url="demo · wedding website">
@@ -547,7 +580,7 @@ function WeddingWebsite() {
                   ? undefined
                   : { filter: ["blur(6px)", "blur(6px)", "blur(0px)", "blur(0px)", "blur(6px)", "blur(6px)"] }
               }
-              transition={{ ...loop, times }}
+              transition={{ ...WEDDING_LOOP, times: WEDDING_TIMES }}
             >
               <div className="text-[7px] tracking-[0.3em] uppercase @lg:text-[10px]" style={{ color: BRASS }}>
                 You’re invited
@@ -566,7 +599,7 @@ function WeddingWebsite() {
               className="absolute inset-0 flex flex-col items-center justify-center gap-2"
               style={reduce ? { opacity: 0 } : undefined}
               animate={reduce ? undefined : { opacity: [1, 1, 0, 0, 1, 1] }}
-              transition={{ ...loop, times }}
+              transition={{ ...WEDDING_LOOP, times: WEDDING_TIMES }}
             >
               <span
                 className="flex h-8 w-8 items-center justify-center rounded-full font-serif text-[10px] text-white shadow-md @lg:h-14 @lg:w-14 @lg:text-sm"
@@ -613,9 +646,11 @@ const rsvpTone: Record<string, string> = {
   Pending: "bg-fg/10 text-muted",
   Declined: "bg-[#9b3b2e]/25 text-[#e8a397]",
 };
+// Identical for every guest row — not derived from guest data — so build it
+// once instead of per row, per render.
+const QR_HINT_PATTERN = [1, 0, 1, 0, 1, 0, 1, 1, 0];
 
-function Toggle({ on, animate }: { on: boolean; animate?: boolean }) {
-  const reduce = useReducedMotion();
+function Toggle({ on, animate, reduce }: { on: boolean; animate?: boolean; reduce?: boolean | null }) {
   const cycling = animate && !reduce;
   return (
     <span className="relative inline-block h-3 w-6 shrink-0 rounded-full" style={{ background: on ? BRASS : "rgba(255,255,255,0.15)" }}>
@@ -635,17 +670,12 @@ function WeddingPortal() {
   return (
     <Frame url="demo · couple dashboard" badge={<span className="text-[9px] text-accent-bright">Couple</span>}>
       <div className="grid h-full grid-cols-1 @md:grid-cols-[6rem_1fr] @lg:grid-cols-[7rem_1fr]">
-        <div className="hidden flex-col gap-1 border-r border-line bg-bg/40 p-2 @md:flex @lg:p-3">
-          <div className="mb-2 flex items-center gap-1.5">
-            <span className="h-3.5 w-3.5 rounded-full" style={{ background: BRASS }} />
-            <span className="truncate text-[9px] font-semibold @lg:text-[10px]">Wedding</span>
-          </div>
-          {wNav.slice(1).map((n, i) => (
-            <span key={n} className={`truncate rounded-md px-1.5 py-1 text-[8px] @lg:text-[10px] ${i === 0 ? "bg-accent/25 text-fg" : "text-muted"}`}>
-              {n}
-            </span>
-          ))}
-        </div>
+        <PortalSidebar
+          mark={<span className="h-3.5 w-3.5 rounded-full" style={{ background: BRASS }} />}
+          name="Wedding"
+          items={wNav.slice(1)}
+          activeIndex={0}
+        />
 
         <div className="flex min-w-0 flex-col gap-2 p-3 @lg:gap-3 @lg:p-4">
           <div className="flex items-center justify-between gap-2">
@@ -662,7 +692,7 @@ function WeddingPortal() {
             ].map((t) => (
               <div key={t.label} className="flex items-center justify-between gap-2 text-[8px] @lg:text-[10px]">
                 <span className="truncate">{t.label}</span>
-                <Toggle on={t.on} animate={t.cycle} />
+                <Toggle on={t.on} animate={t.cycle} reduce={reduce} />
               </div>
             ))}
           </div>
@@ -681,31 +711,17 @@ function WeddingPortal() {
                 <span className="hidden truncate text-[10px] text-muted @lg:block">{g.table}</span>
                 {/* QR hint */}
                 <span className="hidden grid-cols-3 gap-px @lg:grid" aria-hidden>
-                  {[1, 0, 1, 0, 1, 0, 1, 1, 0].map((b, k) => (
+                  {QR_HINT_PATTERN.map((b, k) => (
                     <i key={k} className={`h-[3px] w-[3px] ${b ? "bg-fg/70" : "bg-transparent"}`} />
                   ))}
                 </span>
                 {g.cycle && !reduce ? (
-                  <span className="grid">
-                    <motion.span
-                      className="col-start-1 row-start-1 justify-self-end"
-                      animate={{ opacity: [1, 1, 0, 0, 1] }}
-                      transition={{ duration: 6, repeat: Infinity, times: [0, 0.4, 0.45, 0.95, 1] }}
-                    >
-                      <span className={`rounded-full px-2 py-0.5 text-[7px] @lg:text-[9px] ${rsvpTone.Pending}`}>Pending</span>
-                    </motion.span>
-                    <motion.span
-                      className="col-start-1 row-start-1 justify-self-end"
-                      animate={{ opacity: [0, 0, 1, 1, 0] }}
-                      transition={{ duration: 6, repeat: Infinity, times: [0, 0.4, 0.45, 0.95, 1] }}
-                    >
-                      <span className={`rounded-full px-2 py-0.5 text-[7px] @lg:text-[9px] ${rsvpTone.Attending}`}>Attending</span>
-                    </motion.span>
-                  </span>
+                  <Crossfade
+                    from={<Chip status="Pending" tone={rsvpTone.Pending} />}
+                    to={<Chip status="Attending" tone={rsvpTone.Attending} />}
+                  />
                 ) : (
-                  <span className={`rounded-full px-2 py-0.5 text-[7px] @lg:text-[9px] ${rsvpTone[g.cycle ? "Attending" : g.rsvp]}`}>
-                    {g.cycle ? "Attending" : g.rsvp}
-                  </span>
+                  <Chip status={g.cycle ? "Attending" : g.rsvp} tone={rsvpTone[g.cycle ? "Attending" : g.rsvp]} />
                 )}
               </motion.div>
             ))}
@@ -715,7 +731,6 @@ function WeddingPortal() {
     </Frame>
   );
 }
-
 
 /* ------------------------------------------------------------------ */
 /* PDF Form Filler — client-side tool                                  */
@@ -727,11 +742,19 @@ const pdfFields = [
   { label: "I agree to the terms", kind: "check" as const },
   { label: "Signature", kind: "text" as const },
 ];
+const FIELD_CYCLE_TIMES = [0, 0.15, 0.2, 0.9, 1];
 
-function FieldRow({ label, kind, delay }: { label: string; kind: "text" | "check"; delay: number }) {
-  const reduce = useReducedMotion();
-  const cycle = [0, 0.15, 0.2, 0.9, 1];
-
+function FieldRow({
+  label,
+  kind,
+  delay,
+  reduce,
+}: {
+  label: string;
+  kind: "text" | "check";
+  delay: number;
+  reduce?: boolean | null;
+}) {
   return (
     <div className="flex items-center gap-2 rounded-md border border-line bg-surface/60 px-2 py-1.5">
       <span className="w-16 shrink-0 truncate text-[8px] text-muted @lg:w-24 @lg:text-[10px]">{label}</span>
@@ -740,7 +763,7 @@ function FieldRow({ label, kind, delay }: { label: string; kind: "text" | "check
           className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[3px] border border-accent-bright/60 text-[8px] text-cyan"
           initial={{ opacity: 0 }}
           animate={reduce ? { opacity: 1 } : { opacity: [0, 0, 1, 1, 0] }}
-          transition={{ duration: 8, repeat: Infinity, delay, times: cycle }}
+          transition={{ duration: 8, repeat: Infinity, delay, times: FIELD_CYCLE_TIMES }}
         >
           ✓
         </motion.span>
@@ -750,7 +773,7 @@ function FieldRow({ label, kind, delay }: { label: string; kind: "text" | "check
             className="absolute inset-y-0 left-0 rounded-[3px] bg-accent-bright/70"
             initial={{ width: "0%" }}
             animate={reduce ? { width: "70%" } : { width: ["0%", "0%", "70%", "70%", "0%"] }}
-            transition={{ duration: 8, repeat: Infinity, delay, times: cycle }}
+            transition={{ duration: 8, repeat: Infinity, delay, times: FIELD_CYCLE_TIMES }}
           />
         </span>
       )}
@@ -778,16 +801,12 @@ function PdfFormFillerWebsite() {
         <div className="col-span-3 flex flex-col gap-1.5 @lg:gap-2">
           <span className="text-[8px] tracking-wide text-muted uppercase @lg:text-[10px]">Fill in the fields</span>
           {pdfFields.map((f, i) => (
-            <FieldRow key={f.label} label={f.label} kind={f.kind} delay={i * 0.35} />
+            <FieldRow key={f.label} label={f.label} kind={f.kind} delay={i * 0.35} reduce={reduce} />
           ))}
           <motion.span
             className="mt-1.5 w-fit rounded-full bg-accent px-2.5 py-1.5 text-[8px] font-semibold text-white @lg:text-[9px]"
-            animate={
-              reduce
-                ? undefined
-                : { boxShadow: ["0 0 0 0 rgba(111,149,255,0.6)", "0 0 0 8px rgba(111,149,255,0)"] }
-            }
-            transition={{ duration: 1.8, repeat: Infinity }}
+            animate={reduce ? undefined : pulseGlow(8)}
+            transition={PULSE_GLOW_TRANSITION}
           >
             Save &amp; generate PDF
           </motion.span>
@@ -802,14 +821,15 @@ function PdfFormFillerWebsite() {
 /* Registry — each project picks its own artwork by slug               */
 /* ------------------------------------------------------------------ */
 
-const mocks: Record<string, { website: () => ReactNode; portal: () => ReactNode }> = {
-  primegen: { website: () => <PrimegenWebsite />, portal: () => <PrimegenPortal /> },
-  clinic: { website: () => <ClinicWebsite />, portal: () => <ClinicPortal /> },
-  wedding: { website: () => <WeddingWebsite />, portal: () => <WeddingPortal /> },
-  "pdf-form-filler": { website: () => <PdfFormFillerWebsite />, portal: () => null },
+type MockComponent = () => ReactNode;
+const mocks: Record<string, { website: MockComponent; portal: MockComponent | null }> = {
+  primegen: { website: PrimegenWebsite, portal: PrimegenPortal },
+  clinic: { website: ClinicWebsite, portal: ClinicPortal },
+  wedding: { website: WeddingWebsite, portal: WeddingPortal },
+  "pdf-form-filler": { website: PdfFormFillerWebsite, portal: null },
 };
 
 export function ProjectMock({ slug, kind }: { slug: string; kind: "website" | "portal" }) {
-  const entry = mocks[slug];
-  return entry ? <>{entry[kind]()}</> : null;
+  const Comp = mocks[slug]?.[kind];
+  return Comp ? <Comp /> : null;
 }

@@ -3,11 +3,14 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { demoRequestHref, projects, type Facet, type Project } from "@/data/site";
+import { META_EVENTS } from "@/lib/meta";
+import { trackMetaEvent } from "@/lib/meta-client";
 import { ProjectMock } from "./Mockups";
 import {
   EASE,
   FadeUp,
   Line,
+  LockIcon,
   Magnetic,
   Parallax,
   RollText,
@@ -39,10 +42,7 @@ function StatusChip({ facet }: { facet: Facet }) {
   }
   return (
     <span className="label inline-flex items-center gap-2 rounded-full bg-accent/15 px-3 py-1.5 text-[0.65rem] text-accent-bright">
-      <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-        <rect x="5" y="11" width="14" height="9" rx="2" />
-        <path d="M8 11V8a4 4 0 018 0v3" />
-      </svg>
+      <LockIcon />
       {facet.statusLabel}
     </span>
   );
@@ -93,6 +93,16 @@ function FacetPanel({ facet, slug }: { facet: Facet; slug: string }) {
             <a
               href={href}
               {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
+              onClick={() => {
+                // Only the "request a demo" fallback is a real lead for us —
+                // an outbound click to a client's own live site isn't.
+                if (!external) {
+                  trackMetaEvent(META_EVENTS.lead, {
+                    content_name: "case_study_cta",
+                    content_category: slug,
+                  });
+                }
+              }}
               className="group label inline-flex items-center gap-3 rounded-full bg-accent px-7 py-4 text-white transition-colors duration-300 hover:bg-accent-bright"
             >
               <RollText revealClassName="text-white">{facet.cta.label}</RollText>

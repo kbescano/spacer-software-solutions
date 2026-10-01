@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo_Black, Geist, Geist_Mono } from "next/font/google";
+import { MetaPixel } from "@/components/MetaPixel";
 import { Providers } from "@/components/Providers";
 import { SITE_URL, site } from "@/data/site";
 import "./globals.css";
@@ -84,6 +85,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           // Static, build-time JSON we control — never includes visitor input.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
+        <MetaPixel />
         <Providers>{children}</Providers>
       </body>
     </html>

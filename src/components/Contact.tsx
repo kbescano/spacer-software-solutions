@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { demoRequestHref, site } from "@/data/site";
+import { META_EVENTS } from "@/lib/meta";
+import { trackMetaEvent } from "@/lib/meta-client";
 import { useScrollControls } from "./Providers";
 import { EASE, FadeUp, Line, Magnetic, RollText, SectionLabel, Split } from "./Reveal";
 
@@ -13,6 +15,7 @@ function CopyEmail() {
     try {
       await navigator.clipboard.writeText(site.email);
       setCopied(true);
+      trackMetaEvent(META_EVENTS.contact, { content_name: "copy_email" });
       setTimeout(() => setCopied(false), 1800);
     } catch {
       // Clipboard can be blocked; the mailto link still works.
@@ -81,6 +84,9 @@ export function Contact() {
           <Magnetic strength={0.3} className="self-start lg:mb-6 lg:self-end">
             <a
               href={`mailto:${site.email}?subject=${encodeURIComponent("Project inquiry")}`}
+              onClick={() =>
+                trackMetaEvent(META_EVENTS.lead, { content_name: "get_in_touch_circle" })
+              }
               className="group relative flex h-36 w-36 items-center justify-center rounded-full bg-accent text-center text-white transition-colors duration-500 hover:bg-accent-bright md:h-52 md:w-52"
             >
               <span className="label text-[0.8rem] leading-tight">
@@ -96,6 +102,9 @@ export function Contact() {
           <div className="flex flex-col gap-6 py-8 lg:flex-row lg:items-center lg:justify-between">
             <a
               href={`mailto:${site.email}`}
+              onClick={() =>
+                trackMetaEvent(META_EVENTS.lead, { content_name: "email_text_link" })
+              }
               className="group relative w-fit max-w-full min-w-0 text-[clamp(1.25rem,4.4vw,4.5rem)] font-semibold tracking-[-0.04em] [overflow-wrap:anywhere]"
             >
               {site.email.split("@")[0]}@<wbr />{site.email.split("@")[1]}
@@ -109,6 +118,9 @@ export function Contact() {
         <FadeUp className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-4">
           <a
             href={demoRequestHref}
+            onClick={() =>
+              trackMetaEvent(META_EVENTS.lead, { content_name: "request_a_demo" })
+            }
             className="group label inline-flex items-center gap-2 text-muted transition-colors hover:text-fg"
           >
             <RollText>Request a demo</RollText>

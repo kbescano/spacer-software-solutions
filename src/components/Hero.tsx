@@ -124,7 +124,7 @@ function Badge() {
           e.preventDefault();
           scrollTo("#contact");
         }}
-        className="group relative flex h-32 w-32 items-center justify-center rounded-full border border-line bg-bg/40 backdrop-blur-sm transition-colors duration-500 hover:bg-accent md:h-40 md:w-40"
+        className="group relative flex h-32 w-32 items-center justify-center rounded-full border border-line bg-bg/40 shadow-[0_20px_60px_-24px_rgba(108,207,212,0.45)] backdrop-blur-sm transition-[color,background-color,box-shadow] duration-500 hover:bg-accent md:h-40 md:w-40"
         aria-label="Taking new projects — get in touch"
       >
         <svg
@@ -205,10 +205,28 @@ export function Hero() {
       {/* name */}
       <motion.div className="relative z-10 my-6" style={{ y, opacity, scale }}>
         <h1 className="display text-[clamp(3rem,14vw,16rem)] uppercase">
-          <span className="block">
+          <span className="relative block">
             <Split as="span" by="char" active={loaded} delay={0.15}>
               Websites
             </Split>
+            {/* One-shot premium shine — the hero's single signature motion
+                detail (chosen over another background layer). Duplicate text,
+                clipped to a sweeping gradient, lands on top of the real glyphs
+                right after they finish settling in. */}
+            <motion.span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-clip-text text-transparent select-none"
+              style={{
+                backgroundImage:
+                  "linear-gradient(100deg, transparent 42%, rgba(108,207,212,0.9) 47%, rgba(255,255,255,1) 50%, rgba(108,207,212,0.9) 53%, transparent 58%)",
+                backgroundSize: "300% 100%",
+              }}
+              initial={{ backgroundPositionX: "150%" }}
+              animate={loaded ? { backgroundPositionX: "-150%" } : { backgroundPositionX: "150%" }}
+              transition={{ duration: 1.3, delay: 1.05, ease: [0.76, 0, 0.24, 1] }}
+            >
+              Websites
+            </motion.span>
           </span>
           <span className="text-outline block">
             <Split as="span" by="char" active={loaded} delay={0.3}>
@@ -234,7 +252,7 @@ export function Hero() {
                   e.preventDefault();
                   scrollTo("#work");
                 }}
-                className="group label inline-flex rounded-full bg-accent px-7 py-4 font-bold text-white transition-colors duration-300 hover:bg-accent-bright"
+                className="group label inline-flex rounded-full bg-accent px-7 py-4 font-bold text-white shadow-[0_14px_40px_-14px_rgba(108,207,212,0.55)] transition-[color,background-color,box-shadow] duration-300 hover:bg-accent-bright hover:shadow-[0_18px_50px_-14px_rgba(108,207,212,0.75)]"
               >
                 <RollText revealClassName="text-white">See our work</RollText>
               </a>
@@ -246,7 +264,7 @@ export function Hero() {
                   e.preventDefault();
                   scrollTo("#contact");
                 }}
-                className="group label inline-flex rounded-full border border-line px-7 py-4 transition-colors duration-300 hover:border-accent-bright"
+                className="group label inline-flex rounded-full border border-line px-7 py-4 shadow-[0_10px_34px_-16px_rgba(108,207,212,0.3)] transition-[color,border-color,box-shadow] duration-300 hover:border-accent-bright hover:shadow-[0_14px_40px_-16px_rgba(108,207,212,0.45)]"
               >
                 <RollText>Get in touch</RollText>
               </a>
