@@ -6,7 +6,7 @@ import { demoRequestHref, site } from "@/data/site";
 import { META_EVENTS } from "@/lib/meta";
 import { trackMetaEvent } from "@/lib/meta-client";
 import { useScrollControls } from "./Providers";
-import { EASE, FadeUp, Line, Magnetic, RollText, SectionLabel, Split } from "./Reveal";
+import { EASE, FadeUp, Line, Magnetic, RollText, SectionLabel, Shine, Split } from "./Reveal";
 
 function CopyEmail() {
   const [copied, setCopied] = useState(false);
@@ -74,10 +74,11 @@ export function Contact() {
               build your
             </Split>
             <br />
-            <span className="text-outline">
+            <span className="text-outline relative inline-block">
               <Split as="span" delay={0.24}>
                 system?
               </Split>
+              <Shine delay={0.7}>system?</Shine>
             </span>
           </h2>
 
@@ -87,7 +88,7 @@ export function Contact() {
               onClick={() =>
                 trackMetaEvent(META_EVENTS.lead, { content_name: "get_in_touch_circle" })
               }
-              className="group relative flex h-36 w-36 items-center justify-center rounded-full bg-accent text-center text-white transition-colors duration-500 hover:bg-accent-bright md:h-52 md:w-52"
+              className="group relative flex h-36 w-36 items-center justify-center rounded-full bg-accent text-center text-white shadow-[0_18px_50px_-18px_rgba(108,207,212,0.5)] transition-[background-color,box-shadow] duration-500 hover:bg-accent-bright hover:shadow-[0_22px_60px_-18px_rgba(108,207,212,0.7)] md:h-52 md:w-52"
             >
               <span className="label text-[0.8rem] leading-tight">
                 <RollText revealClassName="text-white">Get in touch</RollText>

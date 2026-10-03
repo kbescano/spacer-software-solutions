@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { services } from "@/data/site";
-import { EASE, SectionLabel, Split, Tilt } from "./Reveal";
+import { EASE, SectionLabel, Shine, Split, Tilt } from "./Reveal";
 
 export function Services() {
   return (
@@ -11,10 +11,11 @@ export function Services() {
       <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)] uppercase">
         <Split as="span">What we</Split>
         <br />
-        <span className="text-outline">
+        <span className="text-outline relative inline-block">
           <Split as="span" delay={0.15}>
             Build
           </Split>
+          <Shine delay={0.6}>Build</Shine>
         </span>
       </h2>
 
@@ -22,7 +23,7 @@ export function Services() {
         {services.map((item, i) => (
           <Tilt key={item.title} max={5} glareClassName="rounded-none" className="h-full">
           <motion.article
-            className="group relative flex h-full min-h-[22rem] flex-col justify-between overflow-hidden bg-bg p-8 md:p-10 lg:min-h-[32rem]"
+            className="group relative flex h-full min-h-[22rem] flex-col justify-between overflow-hidden bg-bg p-8 shadow-[inset_0_0_0_0_rgba(108,207,212,0)] transition-shadow duration-700 hover:shadow-[inset_0_0_90px_-20px_rgba(108,207,212,0.45)] md:p-10 lg:min-h-[32rem]"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "0px 0px -10% 0px" }}

@@ -10,7 +10,7 @@ import {
 } from "motion/react";
 import { site } from "@/data/site";
 import { useLoading, useScrollControls } from "./Providers";
-import { FadeUp, Magnetic, RollText, Split } from "./Reveal";
+import { FadeUp, Magnetic, RollText, Shine, Split } from "./Reveal";
 
 /* ------------------------------------------------------------------ */
 /* Background: panning grid, drifting orbs, cursor glow, orbit rings   */
@@ -209,24 +209,13 @@ export function Hero() {
             <Split as="span" by="char" active={loaded} delay={0.15}>
               Websites
             </Split>
-            {/* One-shot premium shine — the hero's single signature motion
-                detail (chosen over another background layer). Duplicate text,
-                clipped to a sweeping gradient, lands on top of the real glyphs
-                right after they finish settling in. */}
-            <motion.span
-              aria-hidden
-              className="pointer-events-none absolute inset-0 bg-clip-text text-transparent select-none"
-              style={{
-                backgroundImage:
-                  "linear-gradient(100deg, transparent 42%, rgba(108,207,212,0.9) 47%, rgba(255,255,255,1) 50%, rgba(108,207,212,0.9) 53%, transparent 58%)",
-                backgroundSize: "300% 100%",
-              }}
-              initial={{ backgroundPositionX: "150%" }}
-              animate={loaded ? { backgroundPositionX: "-150%" } : { backgroundPositionX: "150%" }}
-              transition={{ duration: 1.3, delay: 1.05, ease: [0.76, 0, 0.24, 1] }}
-            >
+            {/* One-shot premium shine — the hero's signature motion detail.
+                Now shared as Shine (Reveal.tsx) so every other section's
+                outlined headline word gets the same beat — a sitewide
+                signature instead of a one-off. */}
+            <Shine active={loaded} delay={1.05}>
               Websites
-            </motion.span>
+            </Shine>
           </span>
           <span className="text-outline block">
             <Split as="span" by="char" active={loaded} delay={0.3}>

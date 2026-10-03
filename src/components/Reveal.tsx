@@ -90,6 +90,49 @@ export function Split({
 }
 
 /* ------------------------------------------------------------------ */
+/* Shine — one-shot diagonal light sweep, clipped to text. Started as a  */
+/* single Hero flourish; pulled out here so every section's outlined    */
+/* headline word gets the same beat as it settles in — a recurring      */
+/* signature instead of a one-off, with one gradient to tune.           */
+/* ------------------------------------------------------------------ */
+
+export function Shine({
+  children,
+  delay = 0,
+  active,
+}: {
+  children: string;
+  delay?: number;
+  /** Controlled mode (e.g. the Hero, gated on the preloader). Omit to play
+   *  once automatically on scroll into view, like the rest of this file. */
+  active?: boolean;
+}) {
+  const rest = { backgroundPositionX: "150%" };
+  const sweep = { backgroundPositionX: "-150%" };
+  const trigger =
+    active === undefined
+      ? { whileInView: sweep, viewport: { once: true, margin: "0px 0px -20% 0px" } }
+      : { animate: active ? sweep : rest };
+
+  return (
+    <motion.span
+      aria-hidden
+      className="pointer-events-none absolute inset-0 bg-clip-text text-transparent select-none"
+      style={{
+        backgroundImage:
+          "linear-gradient(100deg, transparent 42%, rgba(108,207,212,0.9) 47%, rgba(255,255,255,1) 50%, rgba(108,207,212,0.9) 53%, transparent 58%)",
+        backgroundSize: "300% 100%",
+      }}
+      initial={rest}
+      {...trigger}
+      transition={{ duration: 1.3, delay, ease: [0.76, 0, 0.24, 1] }}
+    >
+      {children}
+    </motion.span>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* FadeUp                                                              */
 /* ------------------------------------------------------------------ */
 

@@ -1,5 +1,5 @@
 import { steps } from "@/data/site";
-import { FadeUp, Line, SectionLabel, Split } from "./Reveal";
+import { FadeUp, SectionLabel, Shine, Split } from "./Reveal";
 
 export function Process() {
   return (
@@ -14,42 +14,35 @@ export function Process() {
               we
             </Split>
             <br />
-            <span className="text-outline">
+            <span className="text-outline relative inline-block">
               <Split as="span" delay={0.24}>
                 Work
               </Split>
+              <Shine delay={0.7}>Work</Shine>
             </span>
           </h2>
         </div>
 
-        <ol className="md:col-span-7">
+        {/* A grid of cards, not a running list — this section's own shape,
+            not another "headline over list" repeat of Work/Services/Contact.
+            Hover lift uses the same accent-tinted shadow language as the
+            site's CTAs. */}
+        <ol className="grid gap-4 sm:grid-cols-2 md:col-span-7 md:gap-5">
           {steps.map((step, i) => (
             <li key={step.title}>
-              <Line delay={i * 0.08} />
-              <FadeUp delay={i * 0.08} y={20}>
-                <div className="group relative grid grid-cols-1 gap-3 py-8 sm:grid-cols-[6rem_1fr] sm:gap-8 md:py-10">
-                  <span
-                    aria-hidden
-                    className="ease-expo absolute inset-y-0 -inset-x-4 origin-left scale-x-0 rounded-xl bg-surface transition-transform duration-500 group-hover:scale-x-100"
-                  />
-                  <span className="display relative text-[clamp(2.5rem,4vw,4rem)] text-accent-bright transition-colors">
+              <FadeUp delay={i * 0.1} y={24} className="h-full">
+                <div className="group relative flex h-full flex-col rounded-2xl border border-line bg-surface/40 p-7 transition-[border-color,box-shadow] duration-500 hover:border-accent-bright/40 hover:shadow-[0_24px_70px_-32px_rgba(108,207,212,0.5)] md:p-8">
+                  <span className="display text-[clamp(2.25rem,3.4vw,3.25rem)] text-accent-bright">
                     0{i + 1}
                   </span>
-                  <div className="relative">
-                    <h3 className="text-2xl font-semibold tracking-tight md:text-3xl">
-                      {step.title}
-                    </h3>
-                    <p className="mt-2 max-w-md leading-relaxed text-muted">
-                      {step.text}
-                    </p>
-                  </div>
+                  <h3 className="mt-4 text-xl font-semibold tracking-tight md:text-2xl">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 leading-relaxed text-muted">{step.text}</p>
                 </div>
               </FadeUp>
             </li>
           ))}
-          <li aria-hidden>
-            <Line />
-          </li>
         </ol>
       </div>
     </section>

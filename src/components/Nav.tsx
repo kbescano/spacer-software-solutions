@@ -118,7 +118,7 @@ export function Nav() {
             <a
               href="#contact"
               onClick={go("#contact")}
-              className="group label rounded-full border border-accent-bright/50 bg-accent/10 px-5 py-2.5 transition-colors duration-300 hover:bg-accent hover:text-white"
+              className="group label rounded-full border border-accent-bright/50 bg-accent/10 px-5 py-2.5 shadow-[0_8px_26px_-14px_rgba(108,207,212,0.4)] transition-[color,background-color,box-shadow] duration-300 hover:bg-accent hover:text-white hover:shadow-[0_10px_30px_-12px_rgba(108,207,212,0.6)]"
             >
               <RollText>Let’s talk</RollText>
             </a>

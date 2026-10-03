@@ -15,6 +15,7 @@ import {
   Parallax,
   RollText,
   SectionLabel,
+  Shine,
   Split,
 } from "./Reveal";
 
@@ -180,8 +181,10 @@ function CaseStudy({ project, index }: { project: Project; index: number }) {
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setActive(i)}
-                className={`relative rounded-2xl border px-4 py-4 text-left transition-colors duration-300 md:px-7 md:py-6 ${
-                  selected ? "border-accent-bright/60" : "border-line hover:border-accent-bright/40"
+                className={`relative rounded-2xl border px-4 py-4 text-left transition-[border-color,box-shadow] duration-300 md:px-7 md:py-6 ${
+                  selected
+                    ? "border-accent-bright/60 shadow-[0_14px_40px_-20px_rgba(108,207,212,0.5)]"
+                    : "border-line hover:border-accent-bright/40"
                 }`}
               >
                 {selected && (
@@ -230,10 +233,11 @@ export function Work() {
           <SectionLabel index="01">Selected work</SectionLabel>
           <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)] uppercase">
             <Split as="span">Our</Split>
-            <span className="text-outline ml-[0.15em]">
+            <span className="text-outline relative ml-[0.15em] inline-block">
               <Split as="span" delay={0.12}>
                 Work
               </Split>
+              <Shine delay={0.55}>Work</Shine>
             </span>
           </h2>
         </div>
