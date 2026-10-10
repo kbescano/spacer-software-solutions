@@ -2,20 +2,23 @@
 
 import { motion } from "motion/react";
 import { services } from "@/data/site";
-import { EASE, SectionLabel, Shine, Split, Tilt } from "./Reveal";
+import { EASE, SectionLabel, Shine, Split, Tilt, useFlickerReplay } from "./Reveal";
 
 export function Services() {
+  const { ref: flickerRef, cycle: flickerCycle } = useFlickerReplay<HTMLSpanElement>();
   return (
     <section id="services" className="relative px-6 py-28 md:px-10 md:py-44">
       <SectionLabel index="02">Services</SectionLabel>
       <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)] uppercase">
         <Split as="span">What we</Split>
         <br />
-        <span className="text-outline relative inline-block">
-          <Split as="span" delay={0.15}>
-            Build
-          </Split>
-          <Shine delay={0.6}>Build</Shine>
+        <span ref={flickerRef} className="text-outline relative inline-block">
+          <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
+            <Split as="span" delay={0.15}>
+              Build
+            </Split>
+            <Shine delay={0.6}>Build</Shine>
+          </span>
         </span>
       </h2>
 

@@ -169,8 +169,11 @@ html.has-custom-cursor * {
   }
 }
 
-/* Neon-tube stutter — one of the two Hero signage marks catches this, not
-   both (both flickering reads as broken, not alive). */
+/* Neon-tube stutter — used on one of the two Hero signage marks (not both;
+   both flickering reads as broken, not alive) and on every section's
+   outline display word (Hero's "& Portals", Work's "Work", Services'
+   "Build", Process's "Work", Contact's "system?") for the same neon-sign
+   read sitewide. */
 @keyframes neon-flicker {
   0%,
   18%,

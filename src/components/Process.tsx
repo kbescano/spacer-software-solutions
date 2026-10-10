@@ -1,7 +1,10 @@
+"use client";
+
 import { steps } from "@/data/site";
-import { FadeUp, SectionLabel, Shine, Split } from "./Reveal";
+import { FadeUp, SectionLabel, Shine, Split, useFlickerReplay } from "./Reveal";
 
 export function Process() {
+  const { ref: flickerRef, cycle: flickerCycle } = useFlickerReplay<HTMLSpanElement>();
   return (
     <section id="process" className="relative px-6 py-28 md:px-10 md:py-44">
       <div className="grid gap-16 md:grid-cols-12">
@@ -14,11 +17,13 @@ export function Process() {
               we
             </Split>
             <br />
-            <span className="text-outline relative inline-block">
-              <Split as="span" delay={0.24}>
-                Work
-              </Split>
-              <Shine delay={0.7}>Work</Shine>
+            <span ref={flickerRef} className="text-outline relative inline-block">
+              <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
+                <Split as="span" delay={0.24}>
+                  Work
+                </Split>
+                <Shine delay={0.7}>Work</Shine>
+              </span>
             </span>
           </h2>
         </div>

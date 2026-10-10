@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   motion,
   useMotionTemplate,
@@ -12,6 +12,50 @@ import {
 } from "motion/react";
 
 export const EASE = [0.22, 1, 0.36, 1] as const;
+
+/* ------------------------------------------------------------------ */
+/* useFlickerReplay — replays the FULL entrance (Split's per-character   */
+/* blur/slide-in, the Shine sweep, and the neon-flicker blink) every     */
+/* time the word scrolls into view and every time the tab/window regains */
+/* focus. A WAAPI restart of just the flicker's opacity isn't enough —   */
+/* Split/Shine are Framer `whileInView` reveals with `once: true`, so    */
+/* they only ever play once per mounted instance. `cycle` is meant as a  */
+/* React `key` on the child wrapping Split+Shine: bumping it forces a    */
+/* real remount, which gives that child a fresh "once" flag and replays  */
+/* everything together, exactly like the reference recording.           */
+/* ------------------------------------------------------------------ */
+
+export function useFlickerReplay<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [cycle, setCycle] = useState(0);
+  const reduce = useReducedMotion();
+
+  useEffect(() => {
+    if (reduce) return;
+    const el = ref.current;
+    if (!el) return;
+
+    const replay = () => setCycle((c) => c + 1);
+
+    const io = new IntersectionObserver(
+      ([entry]) => entry.isIntersecting && replay(),
+      { threshold: 0.4 },
+    );
+    io.observe(el);
+
+    const onVisibility = () => document.visibilityState === "visible" && replay();
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("focus", replay);
+
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("focus", replay);
+    };
+  }, [reduce]);
+
+  return { ref, cycle };
+}
 
 /* ------------------------------------------------------------------ */
 /* Split — masked text reveal, by word or by character                 */

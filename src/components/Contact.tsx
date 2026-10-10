@@ -6,7 +6,7 @@ import { demoRequestHref, site } from "@/data/site";
 import { META_EVENTS } from "@/lib/meta";
 import { trackMetaEvent } from "@/lib/meta-client";
 import { useScrollControls } from "./Providers";
-import { EASE, FadeUp, Line, Magnetic, RollText, SectionLabel, Shine, Split } from "./Reveal";
+import { EASE, FadeUp, Line, Magnetic, RollText, SectionLabel, Shine, Split, useFlickerReplay } from "./Reveal";
 
 function CopyEmail() {
   const [copied, setCopied] = useState(false);
@@ -44,6 +44,7 @@ function CopyEmail() {
 }
 
 export function Contact() {
+  const { ref: flickerRef, cycle: flickerCycle } = useFlickerReplay<HTMLSpanElement>();
   return (
     <section
       id="contact"
@@ -74,11 +75,13 @@ export function Contact() {
               build your
             </Split>
             <br />
-            <span className="text-outline relative inline-block">
-              <Split as="span" delay={0.24}>
-                system?
-              </Split>
-              <Shine delay={0.7}>system?</Shine>
+            <span ref={flickerRef} className="text-outline relative inline-block">
+              <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
+                <Split as="span" delay={0.24}>
+                  system?
+                </Split>
+                <Shine delay={0.7}>system?</Shine>
+              </span>
             </span>
           </h2>
 

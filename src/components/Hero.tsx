@@ -8,7 +8,7 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import { FadeUp, Magnetic, RollText, Shine, Split } from "./Reveal";
+import { FadeUp, Magnetic, RollText, Shine, Split, useFlickerReplay } from "./Reveal";
 import { site } from "@/data/site";
 import { useLoading, useScrollControls } from "./Providers";
 
@@ -303,6 +303,7 @@ export function Hero() {
   const { loaded } = useLoading();
   const { scrollTo } = useScrollControls();
   const ref = useRef<HTMLElement>(null);
+  const { ref: flickerRef, cycle: flickerCycle } = useFlickerReplay<HTMLSpanElement>();
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -356,10 +357,12 @@ export function Hero() {
               Websites
             </Shine>
           </span>
-          <span className="text-outline block">
-            <Split as="span" by="char" active={loaded} delay={0.3}>
-              & Portals
-            </Split>
+          <span ref={flickerRef} className="text-outline block">
+            <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
+              <Split as="span" by="char" active={loaded} delay={0.3}>
+                & Portals
+              </Split>
+            </span>
           </span>
         </h1>
       </motion.div>

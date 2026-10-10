@@ -17,6 +17,7 @@ import {
   SectionLabel,
   Shine,
   Split,
+  useFlickerReplay,
 } from "./Reveal";
 
 function StatusChip({ facet }: { facet: Facet }) {
@@ -218,7 +219,7 @@ function CaseStudy({ project, index }: { project: Project; index: number }) {
         </div>
       )}
 
-      <AnimatePresence mode="wait" initial={false}>
+      <AnimatePresence mode="wait">
         <FacetPanel key={facet.kind} facet={facet} slug={project.slug} />
       </AnimatePresence>
     </article>
@@ -226,6 +227,7 @@ function CaseStudy({ project, index }: { project: Project; index: number }) {
 }
 
 export function Work() {
+  const { ref: flickerRef, cycle: flickerCycle } = useFlickerReplay<HTMLSpanElement>();
   return (
     <section id="work" className="relative px-6 py-28 md:px-10 md:py-44">
       <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
@@ -233,11 +235,13 @@ export function Work() {
           <SectionLabel index="01">Selected work</SectionLabel>
           <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)] uppercase">
             <Split as="span">Our</Split>
-            <span className="text-outline relative ml-[0.15em] inline-block">
-              <Split as="span" delay={0.12}>
-                Work
-              </Split>
-              <Shine delay={0.55}>Work</Shine>
+            <span ref={flickerRef} className="text-outline relative ml-[0.15em] inline-block">
+              <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
+                <Split as="span" delay={0.12}>
+                  Work
+                </Split>
+                <Shine delay={0.55}>Work</Shine>
+              </span>
             </span>
           </h2>
         </div>
