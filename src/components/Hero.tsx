@@ -8,15 +8,132 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
+import { FadeUp, Magnetic, RollText, Shine, Split } from "./Reveal";
 import { site } from "@/data/site";
 import { useLoading, useScrollControls } from "./Providers";
-import { FadeUp, Magnetic, RollText, Shine, Split } from "./Reveal";
 
 /* ------------------------------------------------------------------ */
-/* Background: panning grid, drifting orbs, cursor glow, orbit rings   */
+/* Signage — just the two brand marks, sliding in from the right once on */
+/* load, then drifting gently. No extra shapes alongside them.           */
 /* ------------------------------------------------------------------ */
 
-function HeroBackground() {
+function GlowText({
+  children,
+  color,
+  boxed,
+  flicker,
+  className = "",
+}: {
+  children: string;
+  color: string;
+  boxed?: boolean;
+  flicker?: boolean;
+  className?: string;
+}) {
+  return (
+    <span
+      className={`pointer-events-none inline-block font-mono tracking-wider uppercase select-none ${
+        boxed ? "rounded-sm border px-2.5 py-1.5" : ""
+      } ${flicker ? "animate-[neon-flicker_7s_ease-in-out_infinite]" : ""} ${className}`}
+      style={{
+        color,
+        borderColor: boxed ? color : undefined,
+        textShadow: `0 0 6px ${color}, 0 0 20px ${color}`,
+        boxShadow: boxed ? `0 0 24px -10px ${color}` : undefined,
+        background: boxed ? "rgba(4,8,22,0.45)" : undefined,
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+function Signage({ loaded }: { loaded: boolean }) {
+  return (
+    <>
+      {/* desktop — loops in from off-screen right, holds, then slides back
+          out and repeats, rather than a one-shot entrance */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute top-32 right-6 z-0 hidden lg:block xl:right-12"
+        initial={{ x: 260, opacity: 0 }}
+        animate={
+          loaded
+            ? { x: [260, 0, 0, 260], opacity: [0, 1, 1, 0] }
+            : { x: 260, opacity: 0 }
+        }
+        transition={
+          loaded
+            ? {
+                duration: 11,
+                times: [0, 0.42, 0.58, 1],
+                delay: 1.6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }
+            : undefined
+        }
+      >
+        <div className="relative flex animate-[signage-drift_12s_ease-in-out_infinite] flex-col items-end gap-3">
+          <GlowText color="var(--accent-bright)" boxed flicker className="-rotate-2 text-lg">
+            S3
+          </GlowText>
+          <GlowText color="var(--neon-pink)" boxed className="rotate-1 text-sm">
+            SPACER
+          </GlowText>
+        </div>
+      </motion.div>
+
+      {/* mobile — same pair and loop, scaled down and moved into the open
+          gap between the CTAs and the bottom bar (checked live: clears
+          both with margin at 375px width) */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute right-6 bottom-28 z-0 lg:hidden"
+        initial={{ x: 200, opacity: 0 }}
+        animate={
+          loaded
+            ? { x: [200, 0, 0, 200], opacity: [0, 1, 1, 0] }
+            : { x: 200, opacity: 0 }
+        }
+        transition={
+          loaded
+            ? {
+                duration: 11,
+                times: [0, 0.42, 0.58, 1],
+                delay: 1.6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }
+            : undefined
+        }
+      >
+        <div className="relative flex animate-[signage-drift_12s_ease-in-out_infinite] flex-col items-end gap-2">
+          <GlowText color="var(--accent-bright)" boxed flicker className="-rotate-2 text-sm">
+            S3
+          </GlowText>
+          <GlowText color="var(--neon-pink)" boxed className="rotate-1 text-xs">
+            SPACER
+          </GlowText>
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Background — the original grid/orbs/cursor-glow/orbit-rings, kept    */
+/* exactly as they were, now with a video underneath all of it (not      */
+/* replacing it). Referenced by URL only, not downloaded/stored in the   */
+/* repo — Pexels' own CDN (videos.pexels.com), royalty-free. No CSS      */
+/* filter on the video right now — only the scrim below dims it — so     */
+/* whatever clip HERO_VIDEO_URL points at shows its own native color.     */
+/* Re-check that against the locked palette whenever this URL changes.   */
+/* ------------------------------------------------------------------ */
+
+const HERO_VIDEO_URL = "https://www.pexels.com/download/video/34732653/";
+
+function HeroBackground({ loaded }: { loaded: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const gx = useMotionValue(0);
   const gy = useMotionValue(0);
@@ -42,6 +159,26 @@ function HeroBackground() {
 
   return (
     <div ref={ref} aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* video — sits behind everything else below; the scrim just past
+          it is the only thing dimming it (no filter on the element itself) */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        className="absolute inset-0 h-full w-full object-cover"
+      >
+        <source src={HERO_VIDEO_URL} type="video/mp4" />
+      </video>
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(100deg, rgba(4,8,22,0.88) 0%, rgba(4,8,22,0.72) 40%, rgba(4,8,22,0.58) 70%, rgba(4,8,22,0.45) 100%), rgba(4,8,22,0.35)",
+        }}
+      />
+
       {/* grid */}
       <div
         className="absolute inset-0 animate-[grid-pan_6s_linear_infinite] opacity-70"
@@ -102,6 +239,8 @@ function HeroBackground() {
           <circle cx="140" cy="500" r="4" fill="var(--accent-bright)" />
         </g>
       </svg>
+
+      <Signage loaded={loaded} />
 
       {/* bottom fade into next section */}
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg to-transparent" />
@@ -179,7 +318,7 @@ export function Hero() {
       ref={ref}
       className="relative flex min-h-svh flex-col justify-between overflow-hidden px-6 pt-24 pb-6 md:px-10"
     >
-      <HeroBackground />
+      <HeroBackground loaded={loaded} />
 
       {/* top meta */}
       <FadeUp

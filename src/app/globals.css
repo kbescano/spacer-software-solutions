@@ -21,6 +21,8 @@
      --muted's broken value. 10.73:1 against --bg. */
   --cyan: #2dd4bf;
   --white: #fffff0;
+  /* Hero signage tone, paired with --accent-bright for the S3/SPACER marks. */
+  --neon-pink: #ff3b8d;
   color-scheme: dark;
 }
 
@@ -151,6 +153,36 @@ html.has-custom-cursor * {
   100% {
     transform: scale(2.4);
     opacity: 0;
+  }
+}
+
+/* Hero signage — slow horizontal sway, same breathing shape (rest → peak
+   → rest) as drift-a/drift-b/slow-zoom elsewhere, just on the X axis:
+   drifts right-to-left and back rather than scaling or looping. */
+@keyframes signage-drift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-16px);
+  }
+}
+
+/* Neon-tube stutter — one of the two Hero signage marks catches this, not
+   both (both flickering reads as broken, not alive). */
+@keyframes neon-flicker {
+  0%,
+  18%,
+  22%,
+  53%,
+  57%,
+  100% {
+    opacity: 1;
+  }
+  20%,
+  55% {
+    opacity: 0.35;
   }
 }
 
