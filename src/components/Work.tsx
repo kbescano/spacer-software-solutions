@@ -104,7 +104,7 @@ function FacetPanel({ facet, slug }: { facet: Facet; slug: string }) {
                   });
                 }
               }}
-              className="group label inline-flex items-center gap-3 rounded-full bg-accent px-7 py-4 text-white transition-colors duration-300 hover:bg-accent-bright"
+              className="group label inline-flex items-center gap-3 rounded-full border border-accent-bright/50 bg-accent px-7 py-4 text-white transition-[color,background-color,border-color] duration-300 hover:border-accent-bright hover:bg-accent-bright"
             >
               <RollText revealClassName="text-white">{facet.cta.label}</RollText>
               <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">

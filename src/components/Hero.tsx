@@ -306,7 +306,7 @@ export function Hero() {
       {/* top meta */}
       <FadeUp
         active={loaded}
-        delay={0.9}
+        delay={0.15}
         y={14}
         className="label relative z-10 flex items-start justify-between text-muted"
       >
@@ -346,12 +346,12 @@ export function Hero() {
       {/* intro + CTAs */}
       <div className="relative z-10 flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
         <div className="max-w-lg">
-          <FadeUp active={loaded} delay={1.1}>
+          <FadeUp active={loaded} delay={0.3}>
             <p className="text-lg leading-snug text-muted md:text-xl">
               <span className="text-fg">{site.name}.</span> {site.intro}
             </p>
           </FadeUp>
-          <FadeUp active={loaded} delay={1.25} className="mt-8 flex flex-wrap gap-3">
+          <FadeUp active={loaded} delay={0.4} className="mt-8 flex flex-wrap gap-3">
             <Magnetic>
               <a
                 href="#work"
@@ -359,7 +359,7 @@ export function Hero() {
                   e.preventDefault();
                   scrollTo("#work");
                 }}
-                className="group label inline-flex rounded-full bg-accent px-7 py-4 font-bold text-white shadow-[0_14px_40px_-14px_rgba(108,207,212,0.55)] transition-[color,background-color,box-shadow] duration-300 hover:bg-accent-bright hover:shadow-[0_18px_50px_-14px_rgba(108,207,212,0.75)]"
+                className="group label inline-flex rounded-full border border-accent-bright/50 bg-accent px-7 py-4 font-bold text-white shadow-[0_14px_40px_-14px_rgba(108,207,212,0.55)] transition-[color,background-color,box-shadow,border-color] duration-300 hover:border-accent-bright hover:bg-accent-bright hover:shadow-[0_18px_50px_-14px_rgba(108,207,212,0.75)]"
               >
                 <RollText revealClassName="text-white">See our work</RollText>
               </a>
@@ -379,7 +379,7 @@ export function Hero() {
           </FadeUp>
         </div>
 
-        <FadeUp active={loaded} delay={1.4} className="hidden md:block">
+        <FadeUp active={loaded} delay={0.5} className="hidden md:block">
           <Badge />
         </FadeUp>
       </div>
@@ -387,7 +387,7 @@ export function Hero() {
       {/* bottom bar */}
       <FadeUp
         active={loaded}
-        delay={1.5}
+        delay={0.55}
         y={10}
         className="label relative z-10 mt-8 flex items-center justify-between border-t border-line pt-5 text-muted"
       >

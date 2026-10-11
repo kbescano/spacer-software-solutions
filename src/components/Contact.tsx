@@ -91,7 +91,7 @@ export function Contact() {
               onClick={() =>
                 trackMetaEvent(META_EVENTS.lead, { content_name: "get_in_touch_circle" })
               }
-              className="group relative flex h-36 w-36 items-center justify-center rounded-full bg-accent text-center text-white shadow-[0_18px_50px_-18px_rgba(108,207,212,0.5)] transition-[background-color,box-shadow] duration-500 hover:bg-accent-bright hover:shadow-[0_22px_60px_-18px_rgba(108,207,212,0.7)] md:h-52 md:w-52"
+              className="group relative flex h-36 w-36 items-center justify-center rounded-full border border-accent-bright/50 bg-accent text-center text-white shadow-[0_18px_50px_-18px_rgba(108,207,212,0.5)] transition-[background-color,box-shadow,border-color] duration-500 hover:border-accent-bright hover:bg-accent-bright hover:shadow-[0_22px_60px_-18px_rgba(108,207,212,0.7)] md:h-52 md:w-52"
             >
               <span className="label text-[0.8rem] leading-tight">
                 <RollText revealClassName="text-white">Get in touch</RollText>
