@@ -1,0 +1,72 @@
+"use client";
+
+import { motion } from "motion/react";
+import { services } from "@/data/site";
+import { EASE, SectionLabel, Shine, Split, Tilt, useFlickerReplay } from "./Reveal";
+
+export function Services() {
+  const { ref: flickerRef, cycle: flickerCycle } = useFlickerReplay<HTMLSpanElement>();
+  return (
+    <section id="services" className="relative px-6 py-28 md:px-10 md:py-44">
+      <SectionLabel index="02">Services</SectionLabel>
+      <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)] uppercase">
+        <Split as="span">What we</Split>
+        <br />
+        <span ref={flickerRef} className="text-outline relative inline-block">
+          <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
+            <Split as="span" delay={0.15}>
+              Build
+            </Split>
+            <Shine delay={0.6}>Build</Shine>
+          </span>
+        </span>
+      </h2>
+
+      <div className="mt-16 grid gap-px overflow-hidden rounded-3xl border border-line bg-line md:mt-24 lg:grid-cols-3">
+        {services.map((item, i) => (
+          <Tilt key={item.title} max={5} glareClassName="rounded-none" className="h-full">
+          <motion.article
+            className="group relative flex h-full min-h-[22rem] flex-col justify-between overflow-hidden bg-bg p-8 shadow-[inset_0_0_0_0_rgba(108,207,212,0)] transition-shadow duration-700 hover:shadow-[inset_0_0_90px_-20px_rgba(108,207,212,0.45)] md:p-10 lg:min-h-[32rem]"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            transition={{ duration: 1, ease: EASE, delay: i * 0.12 }}
+          >
+            {/* colour sweep on hover */}
+            <span
+              aria-hidden
+              className="ease-expo absolute inset-0 origin-bottom scale-y-0 bg-accent transition-transform duration-700 group-hover:scale-y-100"
+            />
+
+            <div className="relative flex items-start justify-between">
+              <span className="label text-muted transition-colors duration-500 group-hover:text-white/70">
+                0{i + 1}
+              </span>
+              <span className="ease-expo flex h-10 w-10 items-center justify-center rounded-full border border-line text-lg transition-all duration-700 group-hover:rotate-[135deg] group-hover:border-white/50">
+                +
+              </span>
+            </div>
+
+            <div className="relative">
+              <h3 className="display text-[clamp(2rem,3.4vw,3.4rem)] leading-[0.95]">
+                {item.title}
+              </h3>
+              <p className="mt-5 max-w-xs text-muted transition-colors duration-500 group-hover:text-white/85">
+                {item.blurb}
+              </p>
+              <ul className="mt-6 space-y-2 text-sm text-muted transition-colors duration-500 group-hover:text-white/85">
+                {item.items.map((li) => (
+                  <li key={li} className="flex items-center gap-3">
+                    <span className="h-px w-4 bg-current opacity-60" />
+                    {li}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.article>
+          </Tilt>
+        ))}
+      </div>
+    </section>
+  );
+}
