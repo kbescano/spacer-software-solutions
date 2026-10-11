@@ -163,6 +163,9 @@ function Footer() {
         © {site.year} {site.name} ({site.short})
       </span>
       <span className="hidden md:block">Websites · Portals · Custom software</span>
+      <a href="/llms.txt" className="transition-colors hover:text-fg">
+        llms.txt
+      </a>
       <button
         type="button"
         onClick={() => scrollTo(0)}
