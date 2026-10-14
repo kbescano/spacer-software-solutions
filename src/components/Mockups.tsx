@@ -695,6 +695,344 @@ function WeddingPortal() {
   );
 }
 
+// Sari-Sari Store — POS, inventory, sales & logs portal. Modeled directly on
+// the real, live demo at sari-sari-storeph.vercel.app: a top navbar (no
+// sidebar — that app doesn't have one), its own light/blue brand (not
+// ours), and its actual feature set. No "utang" anywhere — the real product
+// doesn't have a credit-tab feature, so neither does this illustration.
+const SARI_BLUE = "#007aff";
+const SARI_BG = "#f8fafc";
+const SARI_BORDER = "#e2e8f0";
+const SARI_TEXT = "#0f172a";
+const SARI_MUTED = "#64748b";
+
+const sariNavItems = [
+  { label: "POS", icon: "cart" as const },
+  { label: "Inventory", icon: "box" as const },
+  { label: "Sales Report", icon: "chart" as const },
+  { label: "Logs", icon: "clock" as const },
+];
+const sariCategories = ["All", "Drinks", "Snacks", "Canned Goods", "Household"];
+const sariProducts = [
+  { brand: "RED HORSE", name: "Beer", price: "₱52.00 / piece" },
+  { brand: "SAN MIGUEL", name: "Pale Pilsen", price: "₱48.00 / piece" },
+  { brand: "COLT 45", name: "Beer", price: "₱45.00 / piece", out: true },
+  { brand: "ABSOLUTE", name: "Bottled Water", price: "₱15.00 / piece" },
+  { brand: "LUCKY ME", name: "Pancit Canton", price: "₱14.00 / piece" },
+  { brand: "NESCAFÉ", name: "3-in-1 Sachet", price: "₱9.00 / piece" },
+];
+
+type SariIconKind = "cart" | "box" | "chart" | "clock" | "gear" | "logout" | "search" | "store";
+
+function SariIcon({ kind, className = "h-3 w-3" }: { kind: SariIconKind; className?: string }) {
+  const p = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, className, "aria-hidden": true };
+  switch (kind) {
+    case "cart":
+      return <svg {...p}><circle cx="9" cy="20" r="1" /><circle cx="18" cy="20" r="1" /><path d="M3 4h2l2.4 11.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6" /></svg>;
+    case "box":
+      return <svg {...p}><path d="M21 8l-9-5-9 5 9 5 9-5Z" /><path d="M3 8v8l9 5 9-5V8" /><path d="M12 13v8" /></svg>;
+    case "chart":
+      return <svg {...p}><path d="M4 20V10M12 20V4M20 20v-6" /></svg>;
+    case "clock":
+      return <svg {...p}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>;
+    case "gear":
+      return <svg {...p}><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" /></svg>;
+    case "logout":
+      return <svg {...p}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></svg>;
+    case "search":
+      return <svg {...p}><circle cx="11" cy="11" r="7" /><path d="M21 21l-3.5-3.5" /></svg>;
+    case "store":
+      return <svg {...p}><path d="M3 9l1-5h16l1 5" /><path d="M4 9v10h16V9" /><path d="M9 19v-6h6v6" /></svg>;
+  }
+}
+
+// product cards flash in turn, like a cashier actively ringing up a sale
+const TAP_TIMES = [0, 0.08, 0.18, 0.26, 0.36, 1];
+const TAP_FIRST = { opacity: [0, 1, 0, 0, 0, 0] };
+const TAP_SECOND = { opacity: [0, 0, 0, 1, 0, 0] };
+const TAP_TRANSITION = { duration: 6, repeat: Infinity, times: TAP_TIMES };
+
+// Bill panel crossfades from empty to the two tapped items shortly after,
+// on the same 6s loop as the taps above — the sale has a visible result.
+const BILL_TRANSITION = { duration: 6, repeat: Infinity, times: [0, 0.4, 0.45, 0.95, 1] };
+const BILL_OUT = { opacity: [1, 1, 0, 0, 1] };
+const BILL_IN = { opacity: [0, 0, 1, 1, 0] };
+const billItems = [
+  ["Red Horse Beer", "₱52.00"],
+  ["San Miguel Pale Pilsen", "₱48.00"],
+] as const;
+
+function SariBill({ reduce }: { reduce?: boolean | null }) {
+  return (
+    <div className="hidden w-[34%] shrink-0 flex-col gap-2 rounded-md p-2 @md:flex @lg:w-[30%] @lg:p-2.5" style={{ background: "#fff", border: `1px solid ${SARI_BORDER}` }}>
+      <span className="text-[8px] font-bold @lg:text-[10px]" style={{ color: SARI_TEXT }}>
+        Bill
+      </span>
+      <div className="relative flex-1">
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center text-center text-[7px] @lg:text-[8px]"
+          style={{ color: SARI_MUTED }}
+          animate={reduce ? undefined : BILL_OUT}
+          transition={BILL_TRANSITION}
+        >
+          No items in the bill yet.
+        </motion.div>
+        {!reduce && (
+          <motion.div
+            className="absolute inset-0 flex flex-col justify-center gap-1"
+            initial={{ opacity: 0 }}
+            animate={BILL_IN}
+            transition={BILL_TRANSITION}
+          >
+            {billItems.map(([name, price]) => (
+              <div key={name} className="flex items-center justify-between text-[7px] @lg:text-[8px]" style={{ color: SARI_TEXT }}>
+                <span className="truncate">{name}</span>
+                <span className="shrink-0 pl-1" style={{ color: SARI_MUTED }}>
+                  {price}
+                </span>
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </div>
+      <div className="flex items-center justify-between border-t pt-1.5 text-[8px] font-bold @lg:text-[10px]" style={{ borderColor: SARI_BORDER, color: SARI_TEXT }}>
+        <span>Total:</span>
+        <span className="relative inline-grid">
+          <motion.span className="col-start-1 row-start-1" animate={reduce ? undefined : BILL_OUT} transition={BILL_TRANSITION}>
+            ₱0.00
+          </motion.span>
+          {!reduce && (
+            <motion.span className="col-start-1 row-start-1" initial={{ opacity: 0 }} animate={BILL_IN} transition={BILL_TRANSITION}>
+              ₱100.00
+            </motion.span>
+          )}
+        </span>
+      </div>
+      <span className="rounded-md py-1.5 text-center text-[7px] font-semibold text-white @lg:text-[9px]" style={{ background: SARI_BLUE }}>
+        Cash
+      </span>
+    </div>
+  );
+}
+
+function SariProductCard({ p, i, reduce }: { p: (typeof sariProducts)[number]; i: number; reduce?: boolean | null }) {
+  return (
+    <motion.div
+      className="relative overflow-hidden rounded-md p-1.5 @lg:p-2"
+      style={{ background: "#fff", border: `1px solid ${SARI_BORDER}` }}
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.25 + i * 0.07 }}
+    >
+      {!reduce && i < 2 && (
+        <motion.span
+          aria-hidden
+          className="absolute inset-0"
+          style={{ background: `${SARI_BLUE}22` }}
+          initial={{ opacity: 0 }}
+          animate={i === 0 ? TAP_FIRST : TAP_SECOND}
+          transition={TAP_TRANSITION}
+        />
+      )}
+      <span className="relative block truncate text-[6px] font-bold tracking-wide @lg:text-[7px]" style={{ color: SARI_BLUE }}>
+        {p.brand}
+      </span>
+      <span className="relative block truncate text-[8px] font-semibold @lg:text-[10px]" style={{ color: SARI_TEXT }}>
+        {p.name}
+      </span>
+      <span className="relative block truncate text-[7px] @lg:text-[9px]" style={{ color: SARI_MUTED }}>
+        {p.price}
+      </span>
+      {p.out && <span className="relative mt-0.5 block text-[6px] font-medium text-rose-500 @lg:text-[7px]">Out of stock</span>}
+    </motion.div>
+  );
+}
+
+function SariDesktopView({ reduce }: { reduce?: boolean | null }) {
+  return (
+    <div className="flex h-full flex-col overflow-hidden rounded-lg" style={{ background: SARI_BG, color: SARI_TEXT }}>
+      {/* top navbar — the real app has no sidebar */}
+      <div className="flex items-center justify-between border-b px-2.5 py-2 @lg:px-4 @lg:py-2.5" style={{ borderColor: SARI_BORDER, background: "#fff" }}>
+        <div className="flex items-center gap-1.5">
+          <span className="flex h-5 w-5 items-center justify-center rounded-md @lg:h-6 @lg:w-6" style={{ background: SARI_BLUE }}>
+            <SariIcon kind="store" className="h-3 w-3 text-white" />
+          </span>
+          <span className="hidden font-semibold @lg:block @lg:text-[11px]">Sari Sari Store</span>
+        </div>
+        <div className="flex items-center gap-1 @lg:gap-1.5">
+          {sariNavItems.map((item, i) => (
+            <span
+              key={item.label}
+              className="flex items-center gap-1 rounded-md px-1.5 py-1 text-[7px] font-medium @lg:px-2.5 @lg:py-1.5 @lg:text-[9px]"
+              style={i === 0 ? { background: SARI_BLUE, color: "#fff" } : { color: SARI_MUTED }}
+            >
+              <SariIcon kind={item.icon} className="h-2.5 w-2.5 @lg:h-3 @lg:w-3" />
+              <span className="hidden @lg:inline">{item.label}</span>
+            </span>
+          ))}
+        </div>
+        <div className="flex items-center gap-1.5" style={{ color: SARI_MUTED }}>
+          <SariIcon kind="gear" className="h-3 w-3 @lg:h-3.5 @lg:w-3.5" />
+          <SariIcon kind="logout" className="h-3 w-3 @lg:h-3.5 @lg:w-3.5" />
+        </div>
+      </div>
+
+      {/* POS body */}
+      <div className="flex flex-1 gap-2.5 overflow-hidden p-2.5 @lg:gap-3 @lg:p-3.5">
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5 @lg:gap-2">
+          <span className="text-[10px] font-extrabold @lg:text-sm">Point of Sale</span>
+          <span className="flex items-center gap-1.5 rounded-md border px-2 py-1 text-[7px] @lg:text-[9px]" style={{ borderColor: SARI_BORDER, color: SARI_MUTED }}>
+            <SariIcon kind="search" className="h-2.5 w-2.5" />
+            Search products...
+          </span>
+          <div className="flex flex-wrap gap-1 @lg:gap-1.5">
+            {sariCategories.map((c, i) => (
+              <span
+                key={c}
+                className="rounded-full px-2 py-0.5 text-[7px] font-medium @lg:px-2.5 @lg:py-1 @lg:text-[8px]"
+                style={i === 0 ? { background: SARI_BLUE, color: "#fff" } : { background: "#fff", border: `1px solid ${SARI_BORDER}`, color: SARI_MUTED }}
+              >
+                {c}
+              </span>
+            ))}
+          </div>
+          <div className="grid flex-1 grid-cols-2 gap-1.5 @lg:grid-cols-3 @lg:gap-2">
+            {sariProducts.map((p, i) => (
+              <SariProductCard key={p.brand + p.name} p={p} i={i} reduce={reduce} />
+            ))}
+          </div>
+        </div>
+
+        <SariBill reduce={reduce} />
+      </div>
+    </div>
+  );
+}
+
+function SariMobileView({ reduce }: { reduce?: boolean | null }) {
+  return (
+    <div
+      className="flex h-full flex-col overflow-hidden rounded-[1.1rem] border-[3px] @lg:rounded-[1.4rem]"
+      style={{ background: SARI_BG, borderColor: "#1e293b" }}
+    >
+      {/* header — simplified; nav moves to the bottom tab bar on mobile */}
+      <div className="flex items-center justify-between px-2 py-1.5" style={{ background: "#fff" }}>
+        <div className="flex items-center gap-1">
+          <span className="flex h-4 w-4 items-center justify-center rounded" style={{ background: SARI_BLUE }}>
+            <SariIcon kind="store" className="h-2.5 w-2.5 text-white" />
+          </span>
+          <span className="truncate text-[6px] font-bold @lg:text-[7px]" style={{ color: SARI_TEXT }}>
+            Sari Sari Store
+          </span>
+        </div>
+        <div className="flex shrink-0 items-center gap-1" style={{ color: SARI_MUTED }}>
+          <SariIcon kind="gear" className="h-2.5 w-2.5" />
+          <SariIcon kind="logout" className="h-2.5 w-2.5" />
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-1.5 overflow-hidden px-2 py-1.5">
+        <span className="text-[7px] font-extrabold @lg:text-[9px]" style={{ color: SARI_TEXT }}>
+          Point of Sale
+        </span>
+        {/* Products / Bill toggle — mobile has no room for a side-by-side bill panel */}
+        <div className="flex gap-1 rounded-md p-0.5" style={{ background: "#eef2f7" }}>
+          <span className="flex-1 rounded py-1 text-center text-[6px] font-semibold @lg:text-[7px]" style={{ background: "#fff", color: SARI_BLUE }}>
+            Products
+          </span>
+          <span className="flex-1 rounded py-1 text-center text-[6px] @lg:text-[7px]" style={{ color: SARI_MUTED }}>
+            Bill
+          </span>
+        </div>
+        {/* wraps instead of clipping at the frame edge */}
+        <div className="flex flex-wrap gap-1">
+          {sariCategories.slice(0, 2).map((c, i) => (
+            <motion.span
+              key={c}
+              className="shrink-0 rounded-full px-1.5 py-0.5 text-[6px] font-medium"
+              style={i === 0 ? { background: SARI_BLUE, color: "#fff" } : { background: "#fff", border: `1px solid ${SARI_BORDER}`, color: SARI_MUTED }}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + i * 0.06 }}
+            >
+              {c}
+            </motion.span>
+          ))}
+        </div>
+        <div className="flex flex-1 flex-col gap-1">
+          {sariProducts.slice(0, 4).map((p, i) => (
+            <motion.div
+              key={p.brand + p.name}
+              className="relative overflow-hidden rounded-md px-1.5 py-1"
+              style={{ background: "#fff", border: `1px solid ${SARI_BORDER}` }}
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 + i * 0.07 }}
+            >
+              {!reduce && i < 2 && (
+                <motion.span
+                  aria-hidden
+                  className="absolute inset-0"
+                  style={{ background: `${SARI_BLUE}22` }}
+                  initial={{ opacity: 0 }}
+                  animate={i === 0 ? TAP_FIRST : TAP_SECOND}
+                  transition={TAP_TRANSITION}
+                />
+              )}
+              {/* name above price — side by side truncated names too aggressively at this width */}
+              <span className="relative block truncate text-[6px] font-semibold @lg:text-[7px]" style={{ color: SARI_TEXT }}>
+                {p.name}
+              </span>
+              <span className="relative block text-[6px] @lg:text-[7px]" style={{ color: SARI_MUTED }}>
+                {p.price}
+              </span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* bottom tab bar, as on the real site's phone view */}
+      <div className="grid grid-cols-4 border-t py-1" style={{ background: "#fff", borderColor: SARI_BORDER }}>
+        {sariNavItems.map((item, i) => (
+          <span
+            key={item.label}
+            className="flex flex-col items-center gap-0.5 text-[5px] @lg:text-[6px]"
+            style={{ color: i === 0 ? SARI_BLUE : SARI_MUTED }}
+          >
+            <SariIcon kind={item.icon} className="h-2.5 w-2.5" />
+            {item.label === "Sales Report" ? "Sales" : item.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SariSariPortal() {
+  const reduce = useReducedMotion();
+
+  return (
+    <Frame
+      url="sari-sari-storeph.vercel.app"
+      badge={
+        <span className="text-[8px] font-semibold" style={{ color: SARI_BLUE }}>
+          Live demo
+        </span>
+      }
+    >
+      {/* desktop + mobile side by side — the real app's two breakpoints */}
+      <div className="flex h-full gap-2 p-2 @lg:gap-3 @lg:p-3" style={{ background: SARI_BG }}>
+        <div className="min-w-0 flex-[2]">
+          <SariDesktopView reduce={reduce} />
+        </div>
+        <div className="w-[34%] shrink-0 @lg:w-[30%]">
+          <SariMobileView reduce={reduce} />
+        </div>
+      </div>
+    </Frame>
+  );
+}
+
 // PDF Form Filler — client-side tool
 const pdfFields = [
   { label: "Full name", kind: "text" as const },
@@ -779,10 +1117,11 @@ function PdfFormFillerWebsite() {
 
 // Registry — each project picks its own artwork by slug
 type MockComponent = () => ReactNode;
-const mocks: Record<string, { website: MockComponent; portal: MockComponent | null }> = {
+const mocks: Record<string, { website: MockComponent | null; portal: MockComponent | null }> = {
   primegen: { website: PrimegenWebsite, portal: PrimegenPortal },
   clinic: { website: ClinicWebsite, portal: ClinicPortal },
   wedding: { website: WeddingWebsite, portal: WeddingPortal },
+  "sari-sari-store": { website: null, portal: SariSariPortal },
   "pdf-form-filler": { website: PdfFormFillerWebsite, portal: null },
 };
 

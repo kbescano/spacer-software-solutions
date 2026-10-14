@@ -16,7 +16,7 @@ export const site = {
     "We build the site people use — to get a quote, book a visit, or RSVP — and the private portal your team runs the business on. Orders, schedules, messages, reports: one team, one system.",
   // For <meta name="description"> — keep near 155 chars
   metaDescription:
-    "S3 builds fast websites and the private portals behind them — live work for a supplier, a clinic and a wedding, plus a free PDF tool.",
+    "S3 builds fast websites and the private portals behind them — work for a supplier, a clinic, a sari-sari store and a wedding, plus a free PDF tool.",
   keywords: [
     "custom website development",
     "client portal development",
@@ -242,6 +242,35 @@ export const projects: Project[] = [
     },
   },
   {
+    slug: "sari-sari-store",
+    title: "Sari-Sari Store",
+    client: "S3 product demo",
+    industry: "Neighborhood retail & sari-sari stores",
+    summary:
+      "A point-of-sale, inventory and sales-reporting portal built for sari-sari store owners, as a demo of what S3 delivers for small neighborhood retail: ring up a sale, watch stock update live, and see what's selling — all from a phone or tablet behind the counter.",
+    tags: ["Next.js", "Payload CMS", "PostgreSQL"],
+    portal: {
+      kind: "portal",
+      label: "Portal",
+      status: "live",
+      statusLabel: "Live demo",
+      headline: "The whole store, behind the counter.",
+      description:
+        "A fast point-of-sale and stock tracker built for a one-person counter — ring up sales, manage inventory and pricing, and see what's selling.",
+      features: [
+        "Point of sale — search or browse by category, ring up a sale, take cash",
+        "Inventory with current stock, low-stock alerts, and a best-sellers view",
+        "Sales report by day, week, month, year or a custom range",
+        "Owner-only activity log of who changed inventory, and when",
+        "Separate owner and staff logins, with a public try-it-now demo for each",
+        "Works on a phone, tablet, or desktop behind the counter",
+      ],
+      cta: { label: "Try the live demo", href: "https://sari-sari-storeph.vercel.app/" },
+      note: "A shared, public sandbox — anyone can click through as Owner or Staff. Nothing entered there is saved.",
+      caption: "Illustration — desktop and mobile views",
+    },
+  },
+  {
     slug: "pdf-form-filler",
     title: "PDF Forms",
     client: "S3 product",
@@ -320,7 +349,7 @@ export const faq = [
   {
     question: "Who is this for?",
     answer:
-      "Growing businesses that take inquiries or bookings online and then have to manage the work that follows — we've shipped this exact pattern for a steel and construction-materials supplier, an appointment-based clinic, and an event/wedding business. If your team is still running that handoff through spreadsheets or email, that's the gap we fill.",
+      "Growing businesses that take inquiries, bookings or sales and then have to manage the work that follows — we've shipped this exact pattern for a steel and construction-materials supplier, an appointment-based clinic, a neighborhood sari-sari store, and an event/wedding business. If your team is still running that handoff through spreadsheets, a notebook or email, that's the gap we fill.",
   },
   {
     question: "What's the benefit of a portal, not just a website?",
