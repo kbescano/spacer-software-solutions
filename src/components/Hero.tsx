@@ -182,12 +182,8 @@ function HeroBackground({ loaded }: { loaded: boolean }) {
         }}
       />
 
-      {/* drifting orbs */}
-      {/* <div className="absolute -top-[15%] -left-[10%] h-[60vw] max-h-[720px] w-[60vw] max-w-[720px] animate-[drift-a_18s_ease-in-out_infinite] rounded-full bg-accent/40 blur-[140px]" />
-      <div className="absolute -right-[10%] bottom-[-10%] h-[50vw] max-h-[620px] w-[50vw] max-w-[620px] animate-[drift-b_22s_ease-in-out_infinite] rounded-full bg-cyan/20 blur-[140px]" /> */}
-
-      {/* cursor glow */}
-      {/* <motion.div
+      {/* cursor glow — a soft light that follows the pointer over the video */}
+      <motion.div
         className="absolute top-0 left-0 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           x: sx,
@@ -195,10 +191,11 @@ function HeroBackground({ loaded }: { loaded: boolean }) {
           background:
             "radial-gradient(circle, rgba(111,149,255,0.32) 0%, rgba(47,91,255,0.12) 40%, transparent 70%)",
         }}
-      /> */}
+      />
 
-      {/* orbit rings */}
-      {/* <svg
+      {/* orbit rings — thin and low-opacity so they read as a motif over the
+          video rather than competing with it */}
+      <svg
         viewBox="0 0 1000 1000"
         className="absolute top-1/2 left-1/2 hidden h-[130vh] max-h-[1100px] -translate-x-1/2 -translate-y-1/2 md:block"
       >
@@ -208,7 +205,7 @@ function HeroBackground({ loaded }: { loaded: boolean }) {
           r="490"
           fill="none"
           stroke="var(--accent-bright)"
-          strokeOpacity="0.18"
+          strokeOpacity="0.16"
           strokeDasharray="2 10"
           className="origin-center animate-[spin_120s_linear_infinite]"
         />
@@ -218,7 +215,7 @@ function HeroBackground({ loaded }: { loaded: boolean }) {
           r="360"
           fill="none"
           stroke="var(--accent-bright)"
-          strokeOpacity="0.14"
+          strokeOpacity="0.12"
           className="origin-center"
         />
         <g className="origin-center animate-[spin_40s_linear_infinite]">
@@ -227,7 +224,7 @@ function HeroBackground({ loaded }: { loaded: boolean }) {
         <g className="origin-center animate-[spin_70s_linear_infinite_reverse]">
           <circle cx="140" cy="500" r="4" fill="var(--accent-bright)" />
         </g>
-      </svg> */}
+      </svg>
 
       <Signage loaded={loaded} />
 
@@ -333,6 +330,14 @@ export function Hero() {
             </Split>
           </span>
           <span ref={flickerRef} className="text-outline relative block">
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 -z-10 animate-[glow-pulse_7s_ease-in-out_infinite] blur-3xl"
+              style={{
+                background:
+                  "radial-gradient(ellipse 60% 70% at 30% 50%, var(--accent-bright), transparent 70%)",
+              }}
+            />
             <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
               <Split as="span" by="char" active={loaded} delay={0.3}>
                 & Portals

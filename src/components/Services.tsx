@@ -8,7 +8,7 @@ export function Services() {
   const { ref: flickerRef, cycle: flickerCycle } = useFlickerReplay<HTMLSpanElement>();
   return (
     <section id="services" className="relative px-6 py-28 md:px-10 md:py-44">
-      <SectionLabel index="02">Services</SectionLabel>
+      <SectionLabel index="03">Services</SectionLabel>
       <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)] uppercase">
         <Split as="span">What we</Split>
         <br />

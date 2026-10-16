@@ -9,7 +9,7 @@ export function Process() {
     <section id="process" className="relative px-6 py-28 md:px-10 md:py-44">
       <div className="grid gap-16 md:grid-cols-12">
         <div className="md:col-span-5">
-          <SectionLabel index="03">Process</SectionLabel>
+          <SectionLabel index="04">Process</SectionLabel>
           <h2 className="display mt-8 text-[clamp(3.5rem,8vw,8rem)] uppercase">
             <Split as="span">How</Split>
             <br />

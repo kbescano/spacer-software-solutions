@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { demoRequestHref, projects, type Facet, type Project } from "@/data/site";
+import { screenshots } from "@/data/screenshots";
 import { META_EVENTS } from "@/lib/meta";
 import { trackMetaEvent } from "@/lib/meta-client";
-import { ProjectMock } from "./Mockups";
+import { ProjectMock, RealShot } from "./Mockups";
 import {
   EASE,
   FadeUp,
@@ -117,9 +118,15 @@ function FacetPanel({ facet, slug }: { facet: Facet; slug: string }) {
 
       <div className="lg:col-span-7">
         <Parallax strength={36}>
-          <ProjectMock slug={slug} kind={facet.kind} />
+          {screenshots[slug]?.[facet.kind] ? (
+            <RealShot shot={screenshots[slug]![facet.kind]!} badge={<StatusChip facet={facet} />} />
+          ) : (
+            <ProjectMock slug={slug} kind={facet.kind} />
+          )}
         </Parallax>
-        <p className="label mt-4 text-center text-[0.65rem] text-muted">{facet.caption}</p>
+        <p className="label mt-4 text-center text-[0.65rem] text-muted">
+          {screenshots[slug]?.[facet.kind] ? "Real screenshot of the live site" : facet.caption}
+        </p>
       </div>
     </motion.div>
   );
@@ -177,6 +184,7 @@ function CaseStudy({ project, index }: { project: Project; index: number }) {
             return (
               <button
                 key={f.kind}
+                id={project.slug === "primegen" && f.kind === "portal" ? "quote-destination" : undefined}
                 type="button"
                 role="tab"
                 aria-selected={selected}
@@ -231,7 +239,7 @@ export function Work() {
     <section id="work" className="relative px-6 py-28 md:px-10 md:py-44">
       <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
         <div>
-          <SectionLabel index="01">Selected work</SectionLabel>
+          <SectionLabel index="02">Selected work</SectionLabel>
           <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)] uppercase">
             <Split as="span">Our</Split>
             <span ref={flickerRef} className="text-outline relative ml-[0.15em] inline-block">

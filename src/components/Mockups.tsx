@@ -1,18 +1,24 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
+import type { Screenshot } from "@/data/screenshots";
 import { LockIcon, Tilt } from "./Reveal";
 
 // Illustrated stand-ins for the real products — no client data.
 
+// aspectClassName default is tuned for the hand-drawn mocks; RealShot below
+// overrides it, since a real screenshot has its own fixed ratio to respect.
 function Frame({
   url,
   badge,
+  aspectClassName = "aspect-[6/5] @md:aspect-[4/3] @lg:aspect-[16/11]",
   children,
 }: {
   url: string;
   badge?: ReactNode;
+  aspectClassName?: string;
   children: ReactNode;
 }) {
   return (
@@ -29,9 +35,27 @@ function Frame({
           </div>
           <div className="flex min-w-[3.5rem] justify-end">{badge}</div>
         </div>
-        <div className="relative aspect-[6/5] @md:aspect-[4/3] @lg:aspect-[16/11]">{children}</div>
+        <div className={`relative ${aspectClassName}`}>{children}</div>
       </div>
     </Tilt>
+  );
+}
+
+// RealShot — a real screenshot of a live, public URL, framed like the
+// illustrated mocks so the two read as one family. Every capture is
+// 1440x960 (3:2), so it keeps that ratio at every breakpoint instead of
+// Frame's mobile-first default, which would crop a landscape shot badly.
+export function RealShot({ shot, badge }: { shot: Screenshot; badge?: ReactNode }) {
+  return (
+    <Frame url={shot.url} badge={badge} aspectClassName="aspect-[3/2]">
+      <Image
+        src={shot.src}
+        alt={shot.alt}
+        fill
+        sizes="(min-width: 1024px) 60vw, 100vw"
+        className="object-cover object-top"
+      />
+    </Frame>
   );
 }
 

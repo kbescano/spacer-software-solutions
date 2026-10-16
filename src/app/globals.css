@@ -41,7 +41,12 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  overflow-x: hidden;
+  /* overflow-x lives on html only (it gets special viewport-propagation
+     treatment there). Repeating it here turns body into a second, real
+     scroll container per the CSS overflow-x/y coupling rule — harmless
+     in practice (nothing scrolls it), but it silently breaks
+     `position: sticky` for any element on the page, since sticky then
+     resolves against body's own non-moving box instead of the viewport. */
 }
 
 ::selection {
@@ -142,6 +147,20 @@ html.has-custom-cursor * {
   100% {
     transform: scale(2.4);
     opacity: 0;
+  }
+}
+
+/* Slow ambient breathing glow — sits behind the Hero's outline word, like a
+   real neon sign bleeding light onto the wall behind it. */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.55;
   }
 }
 

@@ -65,7 +65,7 @@ export function Contact() {
       />
 
       <div className="relative">
-        <SectionLabel index="05">Contact</SectionLabel>
+        <SectionLabel index="06">Contact</SectionLabel>
 
         <div className="mt-8 flex flex-col gap-12 lg:flex-row lg:items-end lg:justify-between">
           <h2 className="display text-[clamp(3.25rem,11vw,11rem)] uppercase">

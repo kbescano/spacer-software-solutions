@@ -36,20 +36,16 @@ export function Preloader() {
       onComplete: () => setProgressDone(true),
     });
     return () => controls.stop();
-  }, [reduce, progress]);
+  }, [reduce, progress, setLoaded]);
 
   // reveal once progress is done and the video is playing (or times out)
   useEffect(() => {
     if (reduce || !progressDone) return;
-    if (videoReady) {
-      setLoaded(true);
-      setVisible(false);
-      return;
-    }
+    const delay = videoReady ? 0 : MAX_VIDEO_WAIT_MS;
     const timeout = setTimeout(() => {
       setLoaded(true);
       setVisible(false);
-    }, MAX_VIDEO_WAIT_MS);
+    }, delay);
     return () => clearTimeout(timeout);
   }, [reduce, progressDone, videoReady, setLoaded]);
 

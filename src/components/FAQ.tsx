@@ -57,7 +57,7 @@ export function FAQ() {
 
   return (
     <section id="faq" className="relative px-6 py-28 md:px-10 md:py-44">
-      <SectionLabel index="04">FAQ</SectionLabel>
+      <SectionLabel index="05">FAQ</SectionLabel>
       <h2 className="display mt-8 text-[clamp(3.2rem,11vw,11rem)] uppercase">
         <Split as="span">Common</Split>
         <br />
