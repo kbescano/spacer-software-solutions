@@ -175,7 +175,6 @@ export function Nav() {
             </nav>
             <div className="label flex justify-between text-muted">
               <span>{site.email}</span>
-              <span>{site.short}</span>
             </div>
           </motion.div>
         )}
