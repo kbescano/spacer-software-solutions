@@ -9,7 +9,7 @@ export function Services() {
   return (
     <section id="services" className="relative px-6 py-28 md:px-10 md:py-44">
       <SectionLabel index="03">Services</SectionLabel>
-      <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)] uppercase">
+      <h2 className="display mt-8 text-[clamp(min(3.5rem,14.5vw),11vw,11rem)] uppercase">
         <Split as="span">What we</Split>
         <br />
         <span ref={flickerRef} className="text-outline relative inline-block">

@@ -41,12 +41,10 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  /* overflow-x lives on html only (it gets special viewport-propagation
-     treatment there). Repeating it here turns body into a second, real
-     scroll container per the CSS overflow-x/y coupling rule — harmless
-     in practice (nothing scrolls it), but it silently breaks
-     `position: sticky` for any element on the page, since sticky then
-     resolves against body's own non-moving box instead of the viewport. */
+  /* mobile browsers can still pan sideways with overflow-x only on html.
+     Needs `clip` here, not `hidden`: hidden turns body into a scroll
+     container and `position: sticky` (the Reveal pin) stops sticking. */
+  overflow-x: clip;
 }
 
 ::selection {

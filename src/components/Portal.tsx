@@ -75,7 +75,7 @@ function ScrollReveal({ primegen }: { primegen: NonNullable<(typeof screenshots)
           >
             <motion.div
               aria-hidden
-              className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] blur-3xl"
+              className="pointer-events-none absolute -inset-x-4 -inset-y-10 -z-10 rounded-[3rem] blur-3xl"
               style={{
                 opacity: glowOpacity,
                 background:
@@ -126,7 +126,7 @@ export function Portal() {
   return (
     <section id="reveal" className="relative px-6 py-28 md:px-10 md:py-44">
       <SectionLabel index="01">The reveal</SectionLabel>
-      <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)] uppercase">
+      <h2 className="display mt-8 text-[clamp(min(3.5rem,14.5vw),11vw,11rem)] uppercase">
         <Split as="span">One visit.</Split>
         <br />
         <span ref={flickerRef} className="text-outline relative inline-block">

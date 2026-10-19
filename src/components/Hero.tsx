@@ -323,7 +323,7 @@ export function Hero() {
 
       {/* name */}
       <motion.div className="relative z-10 my-6" style={{ y, opacity, scale }}>
-        <h1 className="display text-[clamp(3rem,14vw,16rem)] uppercase">
+        <h1 className="display text-[clamp(min(3rem,13vw),14vw,16rem)] uppercase">
           <span className="relative block">
             <Split as="span" by="char" active={loaded} delay={0.15}>
               Websites

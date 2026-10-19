@@ -68,7 +68,7 @@ export function Contact() {
         <SectionLabel index="06">Contact</SectionLabel>
 
         <div className="mt-8 flex flex-col gap-12 lg:flex-row lg:items-end lg:justify-between">
-          <h2 className="display text-[clamp(3.25rem,11vw,11rem)] uppercase">
+          <h2 className="display text-[clamp(min(3.25rem,14.5vw),11vw,11rem)] uppercase">
             <Split as="span">Ready to</Split>
             <br />
             <Split as="span" delay={0.12}>

@@ -151,7 +151,7 @@ function CaseStudy({ project, index }: { project: Project; index: number }) {
         </span>
         <h3
           id={`${project.slug}-title`}
-          className="display mt-5 text-[clamp(3.25rem,13vw,13rem)] uppercase"
+          className="display mt-5 text-[clamp(min(3.25rem,13vw),13vw,13rem)] uppercase"
         >
           <Split as="span">{project.title}</Split>
         </h3>
@@ -240,7 +240,7 @@ export function Work() {
       <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
         <div>
           <SectionLabel index="02">Selected work</SectionLabel>
-          <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)] uppercase">
+          <h2 className="display mt-8 text-[clamp(min(3.5rem,14.5vw),11vw,11rem)] uppercase">
             <Split as="span">Our</Split>
             <span ref={flickerRef} className="text-outline relative ml-[0.15em] inline-block">
               <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
