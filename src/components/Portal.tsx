@@ -5,7 +5,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 import { site } from "@/data/site";
 import { screenshots } from "@/data/screenshots";
 import { ProjectMock, RealShot } from "./Mockups";
-import { FadeUp, SectionLabel, Shine, Split, useFlickerReplay } from "./Reveal";
+import { Drift, FadeUp, Ghost, SectionLabel, Shine, Split, useFlickerReplay } from "./Reveal";
 
 // The reveal — a public website opening up, mid-scroll, to show the private
 // portal already running underneath it. The page's one engineered peak:
@@ -19,7 +19,7 @@ function QuoteChip() {
       style={{ left: "82%", top: "6%" }}
     >
       <span className="absolute inset-0 animate-[ping-soft_2s_cubic-bezier(0,0,0.2,1)_infinite] rounded-full bg-accent-bright/70" />
-      <span className="relative h-3 w-3 rounded-full border border-accent-bright bg-accent-bright/80 shadow-[0_0_20px_-2px_rgba(108,207,212,0.9)]" />
+      <span className="relative h-3 w-3 rounded-full border border-accent-bright bg-accent-bright/80 shadow-[0_0_20px_-2px_rgb(var(--glow-rgb)/0.9)]" />
     </div>
   );
 }
@@ -79,7 +79,7 @@ function ScrollReveal({ primegen }: { primegen: NonNullable<(typeof screenshots)
               style={{
                 opacity: glowOpacity,
                 background:
-                  "radial-gradient(ellipse 60% 60% at 50% 50%, var(--accent-bright), transparent 70%)",
+                  "radial-gradient(ellipse 60% 60% at 50% 50%, rgb(var(--glow-rgb)), transparent 70%)",
               }}
             />
             <div className="w-full">
@@ -124,19 +124,24 @@ export function Portal() {
   const primegen = screenshots.primegen?.website;
 
   return (
-    <section id="reveal" className="relative px-6 py-28 md:px-10 md:py-44">
+    <section id="reveal" className="relative isolate overflow-x-clip bg-bg px-6 py-28 md:px-10 md:py-44">
+      <Ghost className="-top-8 -right-[6vw] text-[46vw] md:-top-20">01</Ghost>
       <SectionLabel index="01">The reveal</SectionLabel>
       <h2 className="display mt-8 text-[clamp(min(3.5rem,14.5vw),11vw,11rem)] uppercase">
-        <Split as="span">One visit.</Split>
+        <Drift x={-70}>
+          <Split as="span">One visit.</Split>
+        </Drift>
         <br />
-        <span ref={flickerRef} className="text-outline relative inline-block">
-          <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
-            <Split as="span" delay={0.15}>
-              Two systems.
-            </Split>
-            <Shine delay={0.6}>Two systems.</Shine>
+        <Drift x={90}>
+          <span ref={flickerRef} className="text-outline relative inline-block">
+            <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
+              <Split as="span" delay={0.15}>
+                Two systems.
+              </Split>
+              <Shine delay={0.6}>Two systems.</Shine>
+            </span>
           </span>
-        </span>
+        </Drift>
       </h2>
       <FadeUp delay={0.2} className="mt-8 max-w-xl text-lg leading-relaxed text-muted">
         {site.intro}

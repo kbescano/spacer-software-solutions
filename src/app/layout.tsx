@@ -3,6 +3,7 @@ import { Archivo_Black, Geist, Geist_Mono } from "next/font/google";
 import { MetaPixel } from "@/components/MetaPixel";
 import { Providers } from "@/components/Providers";
 import { SITE_URL, faq, site } from "@/data/site";
+import { GROUND, paletteCssVars } from "@/lib/palette";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -53,7 +54,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#040816",
+  themeColor: GROUND,
   colorScheme: "dark",
 };
 
@@ -85,6 +86,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${display.variable} antialiased`}
+      style={paletteCssVars}
     >
       <body>
         <noscript>

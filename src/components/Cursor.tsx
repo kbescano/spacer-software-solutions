@@ -23,6 +23,8 @@ export function Cursor() {
   const [mode, setMode] = useState<Mode>("default");
   const [label, setLabel] = useState("");
   const [visible, setVisible] = useState(false);
+  // over the light hero the cursor takes the light tokens, so it never vanishes
+  const [onLight, setOnLight] = useState(false);
 
   const x = useMotionValue(-100);
   const y = useMotionValue(-100);
@@ -48,6 +50,7 @@ export function Cursor() {
     };
     const over = (e: PointerEvent) => {
       const el = e.target as Element | null;
+      setOnLight(Boolean(el?.closest('[data-theme="light"]')));
       const tagged = el?.closest<HTMLElement>("[data-cursor]");
       if (tagged) {
         const v = tagged.dataset.cursor ?? "";
@@ -84,27 +87,24 @@ export function Cursor() {
       {/* ring */}
       <motion.div
         aria-hidden
+        data-theme={onLight ? "light" : undefined}
         className="pointer-events-none fixed top-0 left-0 z-[100]"
         style={{ x: ringX, y: ringY }}
       >
         <motion.div
-          className="flex items-center justify-center rounded-full border border-accent-bright/70"
+          className={`flex items-center justify-center rounded-full border transition-colors duration-300 ${
+            mode === "label" ? "border-accent-bright bg-accent" : "border-accent-bright/70 bg-transparent"
+          }`}
           style={{ x: "-50%", y: "-50%", scaleX: ringScaleX, scaleY: ringScaleY }}
           animate={{
             width: ringSize,
             height: ringSize,
             opacity: visible && mode !== "none" ? 1 : 0,
-            backgroundColor:
-              mode === "label" ? "rgba(47,91,255,0.92)" : "rgba(47,91,255,0)",
-            borderColor:
-              mode === "label"
-                ? "rgba(111,149,255,0)"
-                : "rgba(111,149,255,0.7)",
           }}
           transition={{ type: "spring", stiffness: 300, damping: 26 }}
         >
           <motion.span
-            className="label text-[0.65rem] text-white"
+            className="label text-[0.65rem] text-light"
             animate={{ opacity: mode === "label" ? 1 : 0 }}
           >
             {label}
@@ -115,6 +115,7 @@ export function Cursor() {
       {/* dot */}
       <motion.div
         aria-hidden
+        data-theme={onLight ? "light" : undefined}
         className="pointer-events-none fixed top-0 left-0 z-[100]"
         style={{ x, y }}
       >

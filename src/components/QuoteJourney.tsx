@@ -96,7 +96,7 @@ export function QuoteJourney() {
       className="pointer-events-none fixed top-0 left-0 z-40 -translate-x-1/2 -translate-y-1/2"
       style={{ x: sx, y: sy, opacity: sOpacity }}
     >
-      <span className="label flex items-center gap-2 rounded-full border border-accent-bright/60 bg-bg/90 px-3 py-1.5 text-[9px] whitespace-nowrap text-accent-bright shadow-[0_0_30px_-6px_rgba(108,207,212,0.8)] backdrop-blur-sm">
+      <span className="label flex items-center gap-2 rounded-full border border-accent-bright/60 bg-bg/90 px-3 py-1.5 text-[9px] whitespace-nowrap text-accent-bright shadow-[0_0_30px_-6px_rgb(var(--glow-rgb)/0.8)] backdrop-blur-sm">
         <span className="relative flex h-1.5 w-1.5 shrink-0">
           <span className="absolute inset-0 animate-[ping-soft_2s_cubic-bezier(0,0,0.2,1)_infinite] rounded-full bg-accent-bright/70" />
           <span className="relative h-1.5 w-1.5 rounded-full bg-accent-bright" />

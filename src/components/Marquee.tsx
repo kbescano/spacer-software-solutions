@@ -16,7 +16,7 @@ import { marquee } from "@/data/site";
 // Keeps the value inside (-50, 0] so a doubled track loops seamlessly
 const wrap = (v: number) => -(((v % 50) + 50) % 50);
 
-function Row({
+export function MarqueeRow({
   items,
   baseVelocity,
   outline = false,
@@ -80,13 +80,31 @@ function Row({
 }
 
 export function Marquee() {
+  const ref = useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
+  // the tapes swing through as the strip scrolls past: crossed steeply on the
+  // way in, nearly level in the middle, crossing the other way on the way out
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const topTilt = useTransform(scrollYProgress, [0, 0.5, 1], [-7, -2, 3]);
+  const bottomTilt = useTransform(scrollYProgress, [0, 0.5, 1], [6, 1.5, -4]);
+  const topLift = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const bottomLift = useTransform(scrollYProgress, [0, 1], [-30, 30]);
+
   return (
-    <section
-      aria-label="Skills"
-      className="relative border-y border-line bg-elevated/60 py-6 md:py-10"
-    >
-      <Row items={marquee.top} baseVelocity={-2.2} />
-      <Row items={marquee.bottom} baseVelocity={2.2} outline />
+    <section ref={ref} aria-label="Skills" className="relative isolate overflow-x-clip bg-bg py-20 md:py-32">
+      {/* two tapes crossing at an angle, one filled, one ruled */}
+      <motion.div
+        className="relative z-10 -mx-[8vw] border-y border-line-strong bg-panel py-2 shadow-[0_30px_80px_-30px_rgb(var(--shadow-rgb)/0.9)] md:py-4"
+        style={reduce ? { rotate: -2.5 } : { rotate: topTilt, y: topLift }}
+      >
+        <MarqueeRow items={marquee.top} baseVelocity={-2.2} />
+      </motion.div>
+      <motion.div
+        className="relative -mx-[8vw] -mt-6 border-y border-line bg-bg py-1 md:-mt-10 md:py-3"
+        style={reduce ? { rotate: 1.75 } : { rotate: bottomTilt, y: bottomLift }}
+      >
+        <MarqueeRow items={marquee.bottom} baseVelocity={2.2} outline />
+      </motion.div>
     </section>
   );
 }

@@ -63,7 +63,7 @@ export function Preloader() {
           {/* rising blue fill */}
           <motion.div
             aria-hidden
-            className="absolute inset-x-0 bottom-0 h-full origin-bottom bg-accent/15"
+            className="absolute inset-x-0 bottom-0 h-full origin-bottom bg-accent/80"
             style={{ scaleY: bar }}
           />
 

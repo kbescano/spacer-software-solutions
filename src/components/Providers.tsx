@@ -29,6 +29,11 @@ const LoadingContext = createContext<LoadingCtx>({
 });
 export const useLoading = () => useContext(LoadingContext);
 
+// The mobile menu — opened from the hero's own top bar or from the nav
+type MenuCtx = { menuOpen: boolean; setMenuOpen: (v: boolean | ((v: boolean) => boolean)) => void };
+const MenuContext = createContext<MenuCtx>({ menuOpen: false, setMenuOpen: () => {} });
+export const useMenu = () => useContext(MenuContext);
+
 // Smooth scroll (Lenis)
 type ScrollCtx = {
   scrollTo: (target: string | number, immediate?: boolean) => void;
@@ -105,15 +110,19 @@ function SmoothScroll({ children }: { children: ReactNode }) {
 export function Providers({ children }: { children: ReactNode }) {
   const [loaded, setLoaded] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const value = useMemo(
     () => ({ loaded, setLoaded, videoReady, setVideoReady }),
     [loaded, videoReady],
   );
+  const menu = useMemo(() => ({ menuOpen, setMenuOpen }), [menuOpen]);
 
   return (
     <MotionConfig reducedMotion="user">
       <LoadingContext.Provider value={value}>
-        <SmoothScroll>{children}</SmoothScroll>
+        <MenuContext.Provider value={menu}>
+          <SmoothScroll>{children}</SmoothScroll>
+        </MenuContext.Provider>
       </LoadingContext.Provider>
     </MotionConfig>
   );

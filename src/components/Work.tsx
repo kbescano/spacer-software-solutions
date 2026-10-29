@@ -8,13 +8,16 @@ import { META_EVENTS } from "@/lib/meta";
 import { trackMetaEvent } from "@/lib/meta-client";
 import { ProjectMock, RealShot } from "./Mockups";
 import {
+  ClipReveal,
+  Drift,
   EASE,
   FadeUp,
+  Ghost,
   Line,
   LockIcon,
   Magnetic,
-  Parallax,
   RollText,
+  Scroll3D,
   SectionLabel,
   Shine,
   Split,
@@ -24,10 +27,10 @@ import {
 function StatusChip({ facet }: { facet: Facet }) {
   if (facet.status === "live") {
     return (
-      <span className="label inline-flex items-center gap-2 rounded-full bg-cyan/10 px-3 py-1.5 text-[0.65rem] text-cyan">
+      <span className="label inline-flex items-center gap-2 rounded-full bg-accent-bright/10 px-3 py-1.5 text-[0.65rem] text-accent-bright">
         <span className="relative flex h-1.5 w-1.5">
-          <span className="absolute inset-0 animate-[ping-soft_2s_cubic-bezier(0,0,0.2,1)_infinite] rounded-full bg-cyan/70" />
-          <span className="relative h-1.5 w-1.5 rounded-full bg-cyan" />
+          <span className="absolute inset-0 animate-[ping-soft_2s_cubic-bezier(0,0,0.2,1)_infinite] rounded-full bg-accent-bright/70" />
+          <span className="relative h-1.5 w-1.5 rounded-full bg-accent-bright" />
         </span>
         {facet.statusLabel}
       </span>
@@ -51,7 +54,7 @@ function StatusChip({ facet }: { facet: Facet }) {
   );
 }
 
-function FacetPanel({ facet, slug }: { facet: Facet; slug: string }) {
+function FacetPanel({ facet, slug, dir }: { facet: Facet; slug: string; dir: 1 | -1 }) {
   const external = facet.cta.href !== null;
   const href = facet.cta.href ?? demoRequestHref;
 
@@ -105,10 +108,10 @@ function FacetPanel({ facet, slug }: { facet: Facet; slug: string }) {
                   });
                 }
               }}
-              className="group label inline-flex items-center gap-3 rounded-full border border-accent-bright/50 bg-accent px-7 py-4 text-white transition-[color,background-color,border-color] duration-300 hover:border-accent-bright hover:bg-accent-bright"
+              className="group label inline-flex items-center gap-3 rounded-full border border-accent-bright bg-accent px-7 py-4 text-light transition-[color,background-color,border-color] duration-300 hover:border-accent-bright hover:bg-accent-bright"
             >
-              <RollText revealClassName="text-white">{facet.cta.label}</RollText>
-              <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+              <RollText revealClassName="text-on-bright">{facet.cta.label}</RollText>
+              <span aria-hidden className="transition-[transform,color] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-on-bright">
                 ↗
               </span>
             </a>
@@ -117,13 +120,15 @@ function FacetPanel({ facet, slug }: { facet: Facet; slug: string }) {
       </div>
 
       <div className="lg:col-span-7">
-        <Parallax strength={36}>
-          {screenshots[slug]?.[facet.kind] ? (
-            <RealShot shot={screenshots[slug]![facet.kind]!} badge={<StatusChip facet={facet} />} />
-          ) : (
-            <ProjectMock slug={slug} kind={facet.kind} />
-          )}
-        </Parallax>
+        <Scroll3D dir={dir}>
+          <ClipReveal>
+            {screenshots[slug]?.[facet.kind] ? (
+              <RealShot shot={screenshots[slug]![facet.kind]!} badge={<StatusChip facet={facet} />} />
+            ) : (
+              <ProjectMock slug={slug} kind={facet.kind} />
+            )}
+          </ClipReveal>
+        </Scroll3D>
         <p className="label mt-4 text-center text-[0.65rem] text-muted">
           {screenshots[slug]?.[facet.kind] ? "Real screenshot of the live site" : facet.caption}
         </p>
@@ -153,27 +158,31 @@ function CaseStudy({ project, index }: { project: Project; index: number }) {
           id={`${project.slug}-title`}
           className="display mt-5 text-[clamp(min(3.25rem,13vw),13vw,13rem)] uppercase"
         >
-          <Split as="span">{project.title}</Split>
+          <Drift x={index % 2 ? 60 : -60}>
+            <Split as="span">{project.title}</Split>
+          </Drift>
         </h3>
 
-        <FadeUp delay={0.15} className="mt-8 grid gap-8 md:mt-12 md:grid-cols-12 md:gap-10">
-          <p className="text-lg leading-relaxed text-muted md:col-span-7 md:max-w-xl">
-            {project.summary}
-          </p>
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-5 md:col-span-5">
-            {[
-              ["Client", project.client],
-              ["Industry", project.industry],
-              ["Delivered", deliverables],
-              ["Stack", project.tags.join(" · ")],
-            ].map(([k, v]) => (
-              <div key={k}>
-                <dt className="label text-[0.65rem] text-muted">{k}</dt>
-                <dd className="mt-1.5 text-sm text-fg">{v}</dd>
-              </div>
-            ))}
-          </dl>
-        </FadeUp>
+        <Scroll3D dir={index % 2 ? 1 : -1} depth={0.35}>
+          <FadeUp delay={0.15} className="mt-8 grid gap-8 md:mt-12 md:grid-cols-12 md:gap-10">
+            <p className="text-lg leading-relaxed text-muted md:col-span-7 md:max-w-xl">
+              {project.summary}
+            </p>
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-5 md:col-span-5">
+              {[
+                ["Client", project.client],
+                ["Industry", project.industry],
+                ["Delivered", deliverables],
+                ["Stack", project.tags.join(" · ")],
+              ].map(([k, v]) => (
+                <div key={k}>
+                  <dt className="label text-[0.65rem] text-muted">{k}</dt>
+                  <dd className="mt-1.5 text-sm text-fg">{v}</dd>
+                </div>
+              ))}
+            </dl>
+          </FadeUp>
+        </Scroll3D>
       </div>
 
       {/* Website / Portal switcher */}
@@ -191,14 +200,14 @@ function CaseStudy({ project, index }: { project: Project; index: number }) {
                 onClick={() => setActive(i)}
                 className={`relative rounded-2xl border px-4 py-4 text-left transition-[border-color,box-shadow] duration-300 md:px-7 md:py-6 ${
                   selected
-                    ? "border-accent-bright/60 shadow-[0_14px_40px_-20px_rgba(108,207,212,0.5)]"
-                    : "border-line hover:border-accent-bright/40"
+                    ? "border-accent-bright/60 shadow-[0_14px_40px_-20px_rgb(var(--shadow-rgb)/0.5)]"
+                    : "border-line-strong hover:border-accent-bright"
                 }`}
               >
                 {selected && (
                   <motion.span
                     layoutId={`${project.slug}-tab`}
-                    className="absolute inset-0 rounded-2xl bg-accent/15"
+                    className="absolute inset-0 rounded-2xl bg-accent/60"
                     transition={{ type: "spring", stiffness: 380, damping: 34 }}
                   />
                 )}
@@ -227,7 +236,7 @@ function CaseStudy({ project, index }: { project: Project; index: number }) {
       )}
 
       <AnimatePresence mode="wait">
-        <FacetPanel key={facet.kind} facet={facet} slug={project.slug} />
+        <FacetPanel key={facet.kind} facet={facet} slug={project.slug} dir={index % 2 ? -1 : 1} />
       </AnimatePresence>
     </article>
   );
@@ -236,20 +245,25 @@ function CaseStudy({ project, index }: { project: Project; index: number }) {
 export function Work() {
   const { ref: flickerRef, cycle: flickerCycle } = useFlickerReplay<HTMLSpanElement>();
   return (
-    <section id="work" className="relative px-6 py-28 md:px-10 md:py-44">
+    <section id="work" className="relative isolate overflow-x-clip bg-bg px-6 py-28 md:px-10 md:py-44">
+      <Ghost className="-top-6 -left-[5vw] text-[46vw] md:-top-16">02</Ghost>
       <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
         <div>
           <SectionLabel index="02">Selected work</SectionLabel>
           <h2 className="display mt-8 text-[clamp(min(3.5rem,14.5vw),11vw,11rem)] uppercase">
-            <Split as="span">Our</Split>
-            <span ref={flickerRef} className="text-outline relative ml-[0.15em] inline-block">
-              <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
-                <Split as="span" delay={0.12}>
-                  Work
-                </Split>
-                <Shine delay={0.55}>Work</Shine>
+            <Drift x={-50}>
+              <Split as="span">Our</Split>
+            </Drift>
+            <Drift x={70} className="ml-[0.15em]">
+              <span ref={flickerRef} className="text-outline relative inline-block">
+                <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
+                  <Split as="span" delay={0.12}>
+                    Work
+                  </Split>
+                  <Shine delay={0.55}>Work</Shine>
+                </span>
               </span>
-            </span>
+            </Drift>
           </h2>
         </div>
         <FadeUp delay={0.2} className="max-w-xs text-muted">

@@ -9,7 +9,7 @@ import {
 } from "motion/react";
 import { nav, site } from "@/data/site";
 import { Logo } from "./Logo";
-import { useLoading, useScrollControls } from "./Providers";
+import { useLoading, useMenu, useScrollControls } from "./Providers";
 import { EASE, RollText } from "./Reveal";
 
 const sectionIds = [...nav.map((n) => n.href.slice(1)), "contact"];
@@ -20,7 +20,8 @@ export function Nav() {
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [overHero, setOverHero] = useState(true);
+  const { menuOpen: open, setMenuOpen: setOpen } = useMenu();
   // default active section until the observer below fires
   const [active, setActive] = useState<string | null>("work");
 
@@ -29,6 +30,9 @@ export function Nav() {
     const prev = scrollY.getPrevious() ?? 0;
     setScrolled(y > 40);
     setHidden(y > prev && y > 240);
+    // the hero carries its own navigation below the video; this bar takes over after it
+    const hero = document.getElementById("top");
+    setOverHero(y < (hero?.offsetHeight ?? 0) - 72);
   });
 
   // Highlight the section in view
@@ -58,7 +62,7 @@ export function Nav() {
       unlock();
       window.removeEventListener("keydown", onKey);
     };
-  }, [open, lock, unlock]);
+  }, [open, lock, unlock, setOpen]);
 
   const go = (href: string) => (e: React.MouseEvent) => {
     e.preventDefault();
@@ -76,7 +80,8 @@ export function Nav() {
             : "border-b border-transparent"
         }`}
         initial={{ y: "-100%" }}
-        animate={{ y: loaded && (!hidden || open) ? "0%" : "-100%" }}
+        // over the hero the bar stays tucked away, unless the menu is open
+        animate={{ y: loaded && (open || (!overHero && !hidden)) ? "0%" : "-100%" }}
         transition={{ duration: 0.7, ease: EASE, delay: loaded && !scrolled ? 0.6 : 0 }}
       >
         <div className="flex items-center justify-between px-6 py-5 md:px-10">
@@ -116,9 +121,9 @@ export function Nav() {
             <a
               href="#contact"
               onClick={go("#contact")}
-              className="group label rounded-full border border-accent-bright/50 bg-accent/10 px-5 py-2.5 shadow-[0_8px_26px_-14px_rgba(108,207,212,0.4)] transition-[color,background-color,box-shadow] duration-300 hover:bg-accent hover:text-white hover:shadow-[0_10px_30px_-12px_rgba(108,207,212,0.6)]"
+              className="group label rounded-full border border-accent-bright bg-accent/10 px-5 py-2.5 shadow-[0_8px_26px_-14px_rgb(var(--shadow-rgb)/0.4)] transition-[color,background-color,box-shadow] duration-300 hover:bg-accent hover:text-light hover:shadow-[0_10px_30px_-12px_rgb(var(--shadow-rgb)/0.6)]"
             >
-              <RollText>Let’s talk</RollText>
+              <RollText revealClassName="text-light">Let’s talk</RollText>
             </a>
           </nav>
 

@@ -1,5 +1,7 @@
-// S3 monogram, vectorised with potrace. Locked palette: dark #031d44,
-// bright #6ccfd4, backing #fffff0.
+// S3 monogram, vectorised with potrace. Palette comes from palette.ts:
+// ground -> panel gradient on a light backing.
+
+import { GROUND, LIGHT, PANEL } from "@/lib/palette";
 
 export const S3_MARK_VIEWBOX = "0 0 1024 1024";
 
@@ -54,12 +56,12 @@ export const S3_MARK_PATH =
 export const S3_MARK_GRADIENT_COORDS = { x1: "0%", y1: "80%", x2: "100%", y2: "20%" };
 
 export const S3_MARK_GRADIENT_STOPS = [
-  { offset: "0%", color: "#031d44" },
-  { offset: "100%", color: "#6ccfd4" },
+  { offset: "0%", color: GROUND },
+  { offset: "100%", color: PANEL },
 ] as const;
 
 // Backing color for the mark on dark backgrounds.
-export const S3_MARK_BACKING = "#fffff0";
+export const S3_MARK_BACKING = LIGHT;
 
 /** Self-contained <svg> markup for the mark alone, transparent background. */
 export function s3MarkSvgMarkup(gradientId = "s3mark"): string {

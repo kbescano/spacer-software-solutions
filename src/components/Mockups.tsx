@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
 import type { Screenshot } from "@/data/screenshots";
+import * as palette from "@/lib/palette";
 import { LockIcon, Tilt } from "./Reveal";
 
 // Illustrated stand-ins for the real products — no client data.
@@ -23,7 +24,7 @@ function Frame({
 }) {
   return (
     <Tilt max={6} className="@container">
-      <div className="relative overflow-hidden rounded-2xl border border-line bg-elevated shadow-[0_40px_120px_-40px_rgba(47,91,255,0.55)]">
+      <div className="relative overflow-hidden rounded-2xl border border-line bg-elevated shadow-[0_40px_120px_-40px_rgb(var(--glow-rgb)/0.5)]">
         <div className="flex items-center gap-3 border-b border-line bg-bg/60 px-4 py-3">
           <div className="flex gap-1.5" aria-hidden>
             <i className="h-2.5 w-2.5 rounded-full bg-fg/15" />
@@ -48,13 +49,20 @@ function Frame({
 export function RealShot({ shot, badge }: { shot: Screenshot; badge?: ReactNode }) {
   return (
     <Frame url={shot.url} badge={badge} aspectClassName="aspect-[3/2]">
-      <Image
-        src={shot.src}
-        alt={shot.alt}
-        fill
-        sizes="(min-width: 1024px) 60vw, 100vw"
-        className="object-cover object-top"
-      />
+      {/* its own stacking context on a ground backing, so while the image loads
+          the multiply below blends with ground, not with whatever is behind */}
+      <div className="absolute inset-0 isolate bg-bg">
+        <Image
+          src={shot.src}
+          alt={shot.alt}
+          fill
+          sizes="(min-width: 1024px) 60vw, 100vw"
+          className="object-cover object-top"
+        />
+        {/* the captured sites are pure white; multiplying by the light maps
+            white to the palette's light and leaves darks alone */}
+        <span aria-hidden className="absolute inset-0 bg-light mix-blend-multiply" />
+      </div>
     </Frame>
   );
 }
@@ -145,7 +153,7 @@ function Crossfade({ from, to }: { from: ReactNode; to: ReactNode }) {
 /** Pulsing glow for a couple of primary CTAs. */
 const PULSE_GLOW_TRANSITION = { duration: 1.8, repeat: Infinity };
 function pulseGlow(spreadPx: number) {
-  return { boxShadow: [`0 0 0 0 rgba(111,149,255,0.6)`, `0 0 0 ${spreadPx}px rgba(111,149,255,0)`] };
+  return { boxShadow: [`0 0 0 0 ${palette.alpha(palette.LIGHT, 0.6)}`, `0 0 0 ${spreadPx}px ${palette.alpha(palette.LIGHT, 0)}`] };
 }
 
 // Public website
@@ -175,7 +183,7 @@ function PrimegenWebsite() {
                 {l}
               </span>
             ))}
-            <span className="rounded-full bg-accent px-2.5 py-1 text-[9px] font-semibold text-white">
+            <span className="rounded-full bg-accent px-2.5 py-1 text-[9px] font-semibold text-light">
               Request a quote
             </span>
           </div>
@@ -204,7 +212,7 @@ function PrimegenWebsite() {
               scheduled deliveries, direct supplier pricing.
             </motion.p>
             <motion.span
-              className="w-fit rounded-full bg-accent px-3 py-1.5 text-[9px] font-semibold text-white @lg:text-[10px]"
+              className="w-fit rounded-full bg-accent px-3 py-1.5 text-[9px] font-semibold text-light @lg:text-[10px]"
               animate={reduce ? undefined : pulseGlow(10)}
               transition={PULSE_GLOW_TRANSITION}
             >
@@ -216,10 +224,10 @@ function PrimegenWebsite() {
             className="relative col-span-2 overflow-hidden rounded-xl border border-line"
             style={{
               backgroundImage:
-                "repeating-linear-gradient(115deg, rgba(111,149,255,0.5) 0 6px, transparent 6px 22px), linear-gradient(160deg, #0b1a52, #2450ff)",
+                "repeating-linear-gradient(115deg, rgb(var(--accent-bright-rgb)/0.5) 0 6px, transparent 6px 22px), linear-gradient(160deg, var(--ground), var(--panel))",
             }}
           >
-            <div className="absolute -right-6 -bottom-6 h-24 w-24 rounded-full bg-cyan/40 blur-2xl" />
+            <div className="absolute -right-6 -bottom-6 h-24 w-24 rounded-full bg-accent-bright/30 blur-2xl" />
           </div>
         </div>
 
@@ -245,7 +253,7 @@ function PrimegenWebsite() {
         <motion.svg
           aria-hidden
           viewBox="0 0 24 24"
-          className="pointer-events-none absolute h-5 w-5 fill-white stroke-bg"
+          className="pointer-events-none absolute h-5 w-5 fill-light stroke-bg"
           initial={{ left: "88%", top: "82%" }}
           animate={POINTER_ANIMATE}
           transition={POINTER_TRANSITION}
@@ -297,7 +305,7 @@ function PrimegenPortal() {
             <span className="truncate text-[10px] font-semibold @lg:text-xs">Quotation pipeline</span>
             <div className="flex shrink-0 gap-1.5">
               <span className="rounded-full border border-line px-2 py-0.5 text-[8px] text-muted @lg:text-[9px]">Admin</span>
-              <span className="rounded-full bg-cyan/15 px-2 py-0.5 text-[8px] text-cyan @lg:text-[9px]">Sample data</span>
+              <span className="rounded-full bg-accent-bright/15 px-2 py-0.5 text-[8px] text-accent-bright @lg:text-[9px]">Sample data</span>
             </div>
           </div>
 
@@ -327,13 +335,13 @@ function PrimegenPortal() {
             {!reduce && (
               <motion.div
                 aria-hidden
-                className="pointer-events-none absolute top-[1.6rem] w-[calc(25%-0.4rem)] rounded-md border border-accent-bright bg-accent/80 p-1.5 shadow-[0_0_24px_rgba(111,149,255,0.6)] @lg:top-[1.9rem]"
+                className="pointer-events-none absolute top-[1.6rem] w-[calc(25%-0.4rem)] rounded-md border border-accent-bright bg-accent/80 p-1.5 shadow-[0_0_24px_rgb(var(--glow-rgb)/0.6)] @lg:top-[1.9rem]"
                 initial={{ left: "0%", opacity: 0 }}
                 animate={TRAVELING_CARD_ANIMATE}
                 transition={TRAVELING_CARD_TRANSITION}
               >
-                <div className="h-1 w-4/5 rounded bg-white/90" />
-                <div className="mt-1.5 h-1 w-1/2 rounded bg-white/50" />
+                <div className="h-1 w-4/5 rounded bg-light/90" />
+                <div className="mt-1.5 h-1 w-1/2 rounded bg-light/50" />
               </motion.div>
             )}
           </div>
@@ -345,8 +353,8 @@ function PrimegenPortal() {
 
 // Clinic — public booking website
 const slots = ["9:00 AM", "10:30 AM", "1:00 PM", "3:30 PM"];
-const NEUTRAL = { bg: "#faf8f5", fg: "#1f1a17" };
-const PICKED = { bg: "#1f1a17", fg: "#fffff0" };
+const NEUTRAL = { bg: palette.LIGHT, fg: palette.GROUND };
+const PICKED = { bg: palette.GROUND, fg: palette.LIGHT };
 
 /** Keyframe times for "selected between a and b" over one loop. */
 const window_ = (a: number, b: number) => [0, a, a + 0.02, b, b + 0.02, 1];
@@ -360,16 +368,16 @@ function ClinicWebsite() {
 
   return (
     <Frame url="clinic-x-app.netlify.app">
-      <div className="absolute inset-0 flex flex-col bg-[#f6f3ee] text-[#1f1a17]">
+      <div className="absolute inset-0 flex flex-col bg-light text-ground">
         {/* nav */}
         <div className="flex items-center justify-between px-4 py-3 @lg:px-6">
           <span className="font-serif text-[10px] tracking-[0.28em] uppercase @lg:text-xs">Premium Clinic</span>
-          <div className="hidden gap-4 text-[9px] text-[#6b6259] @md:flex">
+          <div className="hidden gap-4 text-[9px] text-panel @md:flex">
             <span>Services</span>
             <span>Specialists</span>
             <span>Contact</span>
           </div>
-          <span className="rounded-full bg-[#1f1a17] px-3 py-1 text-[8px] text-white @lg:text-[9px]">Book now</span>
+          <span className="rounded-full bg-ground px-3 py-1 text-[8px] text-light @lg:text-[9px]">Book now</span>
         </div>
 
         {/* hero + booking card */}
@@ -383,10 +391,10 @@ function ClinicWebsite() {
             >
               The Art of
               <br />
-              <em className="text-[#6b6259]">Rejuvenation.</em>
+              <em className="text-panel">Rejuvenation.</em>
             </motion.h4>
             <motion.p
-              className="max-w-[15rem] text-[8px] leading-relaxed text-[#6b6259] @lg:text-[10px]"
+              className="max-w-[15rem] text-[8px] leading-relaxed text-panel @lg:text-[10px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.35, duration: 0.7 }}
@@ -394,13 +402,13 @@ function ClinicWebsite() {
               Clinical treatments and advanced dermal care — pick a time and you’re booked, with reminders by email.
             </motion.p>
             <div className="flex gap-2">
-              <span className="rounded-full bg-[#1f1a17] px-2.5 py-1.5 text-[8px] text-white @lg:text-[9px]">Book an appointment</span>
-              <span className="rounded-full border border-[#d9d1c5] px-2.5 py-1.5 text-[8px] @lg:text-[9px]">Our services</span>
+              <span className="rounded-full bg-ground px-2.5 py-1.5 text-[8px] text-light @lg:text-[9px]">Book an appointment</span>
+              <span className="rounded-full border border-ground/20 px-2.5 py-1.5 text-[8px] @lg:text-[9px]">Our services</span>
             </div>
           </div>
 
-          <div className="relative col-span-2 self-center rounded-xl border border-[#e4ddd3] bg-white p-2.5 shadow-sm @lg:p-3">
-            <div className="text-[7px] tracking-[0.2em] text-[#6b6259] uppercase @lg:text-[8px]">Choose a time</div>
+          <div className="relative col-span-2 self-center rounded-xl border border-ground/15 bg-light p-2.5 shadow-[0_1px_3px_rgb(var(--bg-rgb)/0.3)] @lg:p-3">
+            <div className="text-[7px] tracking-[0.2em] text-panel uppercase @lg:text-[8px]">Choose a time</div>
             <div className="mt-2 grid grid-cols-2 gap-1.5">
               {slots.map((slot, i) => {
                 const animated = !reduce && i <= 1;
@@ -408,7 +416,7 @@ function ClinicWebsite() {
                 return (
                   <motion.span
                     key={slot}
-                    className="rounded-md border border-[#e4ddd3] py-1.5 text-center text-[8px] @lg:text-[9px]"
+                    className="rounded-md border border-ground/15 py-1.5 text-center text-[8px] @lg:text-[9px]"
                     style={{
                       backgroundColor: staticPick ? PICKED.bg : NEUTRAL.bg,
                       color: staticPick ? PICKED.fg : NEUTRAL.fg,
@@ -426,7 +434,7 @@ function ClinicWebsite() {
               })}
             </div>
             <motion.div
-              className="mt-2 flex items-center justify-center gap-1 rounded-md bg-[#e8f1ea] py-1.5 text-[8px] font-medium text-[#2f6b45] @lg:text-[9px]"
+              className="mt-2 flex items-center justify-center gap-1 rounded-md bg-panel/20 py-1.5 text-[8px] font-medium text-ground @lg:text-[9px]"
               style={reduce ? { opacity: 1 } : undefined}
               initial={{ opacity: 0 }}
               animate={reduce ? undefined : { opacity: [0, 0, 1, 1, 0, 0], y: [4, 4, 0, 0, 0, 4] }}
@@ -438,7 +446,7 @@ function ClinicWebsite() {
         </div>
 
         {/* services */}
-        <div className="grid grid-cols-3 gap-2 border-t border-[#e4ddd3] px-4 py-2.5 @lg:px-6 @lg:py-3">
+        <div className="grid grid-cols-3 gap-2 border-t border-ground/15 px-4 py-2.5 @lg:px-6 @lg:py-3">
           {[
             ["Clinical treatments", "Book online"],
             ["Advanced dermal", "Book online"],
@@ -446,7 +454,7 @@ function ClinicWebsite() {
           ].map(([name, mins]) => (
             <div key={name} className="min-w-0">
               <div className="truncate font-serif text-[9px] @lg:text-[11px]">{name}</div>
-              <div className="text-[7px] text-[#6b6259] @lg:text-[9px]">{mins}</div>
+              <div className="text-[7px] text-panel @lg:text-[9px]">{mins}</div>
             </div>
           ))}
         </div>
@@ -470,7 +478,7 @@ const appointments = [
 ];
 
 const chipTone: Record<string, string> = {
-  Completed: "bg-cyan/15 text-cyan",
+  Completed: "bg-accent-bright/15 text-accent-bright",
   Confirmed: "bg-accent/30 text-accent-bright",
   Pending: "bg-fg/10 text-muted",
 };
@@ -485,7 +493,7 @@ function ClinicPortal() {
     >
       <div className="grid h-full grid-cols-1 @md:grid-cols-[6rem_1fr] @lg:grid-cols-[7rem_1fr]">
         <PortalSidebar
-          mark={<span className="h-3.5 w-3.5 rounded-full bg-cyan/70" />}
+          mark={<span className="h-3.5 w-3.5 rounded-full bg-accent-bright/70" />}
           name="Premium Clinic"
           items={clinicNav}
           activeIndex={0}
@@ -532,10 +540,10 @@ function ClinicPortal() {
 }
 
 // Wedding — guest website
-const IVORY = "#f6f0e4";
-const PAPER = "#fbf7ee";
-const FOREST = "#1e3b2e";
-const BRASS = "#b98a3e";
+const WED_PAGE = palette.LIGHT;
+const WED_CARD = palette.LIGHT;
+const WED_INK = palette.GROUND;
+const WED_ACCENT = palette.PANEL;
 const wTabs = ["Home", "Memories", "Messages", "Quiz", "RSVP"];
 // sealed -> code entered -> unlocked -> sealed again
 const WEDDING_LOOP = { duration: 9, repeat: Infinity, ease: "linear" as const };
@@ -546,13 +554,13 @@ function WeddingWebsite() {
 
   return (
     <Frame url="demo · wedding website">
-      <div className="absolute inset-0 flex flex-col" style={{ background: IVORY, color: "#17241d" }}>
+      <div className="absolute inset-0 flex flex-col" style={{ background: WED_PAGE, color: palette.GROUND }}>
         {/* top bar */}
         <div className="flex items-center justify-between px-4 py-2.5 @lg:px-6 @lg:py-3">
-          <span className="font-serif text-[10px] tracking-[0.3em] uppercase @lg:text-xs" style={{ color: FOREST }}>
-            N <span style={{ color: BRASS }}>&amp;</span> N
+          <span className="font-serif text-[10px] tracking-[0.3em] uppercase @lg:text-xs" style={{ color: WED_INK }}>
+            N <span style={{ color: WED_ACCENT }}>&amp;</span> N
           </span>
-          <div className="hidden gap-4 text-[9px] @md:flex" style={{ color: "#5b685f" }}>
+          <div className="hidden gap-4 text-[9px] @md:flex" style={{ color: palette.PANEL }}>
             {wTabs.map((t) => (
               <span key={t}>{t}</span>
             ))}
@@ -562,8 +570,8 @@ function WeddingWebsite() {
         {/* invitation card */}
         <div className="relative mx-4 flex flex-1 items-center justify-center @lg:mx-8">
           <div
-            className="relative w-full max-w-[19rem] overflow-hidden rounded-lg border px-4 py-4 text-center shadow-sm @lg:max-w-md @lg:py-10"
-            style={{ background: PAPER, borderColor: "rgba(185,138,62,0.45)" }}
+            className="relative w-full max-w-[19rem] overflow-hidden rounded-lg border px-4 py-4 text-center shadow-[0_1px_3px_rgb(var(--bg-rgb)/0.3)] @lg:max-w-md @lg:py-10"
+            style={{ background: WED_CARD, borderColor: palette.alpha(palette.PANEL, 0.45) }}
           >
             <motion.div
               style={reduce ? undefined : { filter: "blur(6px)" }}
@@ -574,14 +582,14 @@ function WeddingWebsite() {
               }
               transition={{ ...WEDDING_LOOP, times: WEDDING_TIMES }}
             >
-              <div className="text-[7px] tracking-[0.3em] uppercase @lg:text-[10px]" style={{ color: BRASS }}>
+              <div className="text-[7px] tracking-[0.3em] uppercase @lg:text-[10px]" style={{ color: WED_ACCENT }}>
                 You’re invited
               </div>
-              <div className="mt-1.5 font-serif text-xl leading-tight @lg:mt-2 @lg:text-4xl" style={{ color: FOREST }}>
-                Name <span style={{ color: BRASS }}>&amp;</span> Name
+              <div className="mt-1.5 font-serif text-xl leading-tight @lg:mt-2 @lg:text-4xl" style={{ color: WED_INK }}>
+                Name <span style={{ color: WED_ACCENT }}>&amp;</span> Name
               </div>
-              <div className="mx-auto mt-2 h-px w-10" style={{ background: BRASS }} />
-              <div className="mt-2 text-[8px] @lg:mt-3 @lg:text-xs" style={{ color: "#5b685f" }}>
+              <div className="mx-auto mt-2 h-px w-10" style={{ background: WED_ACCENT }} />
+              <div className="mt-2 text-[8px] @lg:mt-3 @lg:text-xs" style={{ color: palette.PANEL }}>
                 Saturday · Venue · 4:00 PM
               </div>
             </motion.div>
@@ -594,14 +602,14 @@ function WeddingWebsite() {
               transition={{ ...WEDDING_LOOP, times: WEDDING_TIMES }}
             >
               <span
-                className="flex h-8 w-8 items-center justify-center rounded-full font-serif text-[10px] text-white shadow-md @lg:h-14 @lg:w-14 @lg:text-sm"
-                style={{ background: `radial-gradient(circle at 35% 30%, #c99a4d, ${BRASS} 60%, #8f6528)` }}
+                className="flex h-8 w-8 items-center justify-center rounded-full font-serif text-[10px] text-light shadow-[0_2px_6px_rgb(var(--bg-rgb)/0.35)] @lg:h-14 @lg:w-14 @lg:text-sm"
+                style={{ background: `radial-gradient(circle at 35% 30%, ${palette.LIGHT}, ${WED_ACCENT} 60%, ${palette.PANEL})` }}
               >
                 N&amp;N
               </span>
               <span
                 className="rounded-full border px-3 py-1 text-[8px] tracking-[0.25em] @lg:px-4 @lg:py-1.5 @lg:text-[11px]"
-                style={{ borderColor: "rgba(30,59,46,0.3)", color: FOREST, background: "rgba(255,255,255,0.7)" }}
+                style={{ borderColor: palette.alpha(palette.GROUND, 0.3), color: WED_INK, background: palette.alpha(palette.LIGHT, 0.7) }}
               >
                 ••••-••••
               </span>
@@ -610,9 +618,9 @@ function WeddingWebsite() {
         </div>
 
         {/* bottom tab bar, as on phones */}
-        <div className="grid grid-cols-5 border-t px-2 py-1.5 text-center text-[7px] @lg:text-[9px]" style={{ borderColor: "rgba(30,59,46,0.15)", color: "#5b685f" }}>
+        <div className="grid grid-cols-5 border-t px-2 py-1.5 text-center text-[7px] @lg:text-[9px]" style={{ borderColor: palette.alpha(palette.GROUND, 0.15), color: palette.PANEL }}>
           {wTabs.map((t, i) => (
-            <span key={t} style={i === 0 ? { color: FOREST, fontWeight: 600 } : undefined}>
+            <span key={t} style={i === 0 ? { color: WED_INK, fontWeight: 600 } : undefined}>
               {t}
             </span>
           ))}
@@ -631,18 +639,18 @@ const guests = [
   { name: "Guest D", table: "Table 4", rsvp: "Declined" },
 ];
 const rsvpTone: Record<string, string> = {
-  Attending: "bg-[#3f7a55]/25 text-[#8fd3a8]",
+  Attending: "bg-accent-bright/25 text-accent-bright",
   Pending: "bg-fg/10 text-muted",
-  Declined: "bg-[#9b3b2e]/25 text-[#e8a397]",
+  Declined: "bg-fg/10 text-muted",
 };
 const QR_HINT_PATTERN = [1, 0, 1, 0, 1, 0, 1, 1, 0];
 
 function Toggle({ on, animate, reduce }: { on: boolean; animate?: boolean; reduce?: boolean | null }) {
   const cycling = animate && !reduce;
   return (
-    <span className="relative inline-block h-3 w-6 shrink-0 rounded-full" style={{ background: on ? BRASS : "rgba(255,255,255,0.15)" }}>
+    <span className="relative inline-block h-3 w-6 shrink-0 rounded-full" style={{ background: on ? WED_ACCENT : palette.alpha(palette.LIGHT, 0.15) }}>
       <motion.span
-        className="absolute top-0.5 left-0.5 h-2 w-2 rounded-full bg-white"
+        className="absolute top-0.5 left-0.5 h-2 w-2 rounded-full bg-light"
         style={{ x: on ? 12 : 0 }}
         animate={cycling ? { x: [0, 0, 12, 12, 0] } : undefined}
         transition={{ duration: 7, repeat: Infinity, times: [0, 0.35, 0.4, 0.9, 1] }}
@@ -658,7 +666,7 @@ function WeddingPortal() {
     <Frame url="demo · couple dashboard" badge={<span className="text-[9px] text-accent-bright">Couple</span>}>
       <div className="grid h-full grid-cols-1 @md:grid-cols-[6rem_1fr] @lg:grid-cols-[7rem_1fr]">
         <PortalSidebar
-          mark={<span className="h-3.5 w-3.5 rounded-full" style={{ background: BRASS }} />}
+          mark={<span className="h-3.5 w-3.5 rounded-full" style={{ background: WED_ACCENT }} />}
           name="Wedding"
           items={wNav.slice(1)}
           activeIndex={0}
@@ -667,7 +675,7 @@ function WeddingPortal() {
         <div className="flex min-w-0 flex-col gap-2 p-3 @lg:gap-3 @lg:p-4">
           <div className="flex items-center justify-between gap-2">
             <span className="truncate text-[10px] font-semibold @lg:text-xs">Guests & access</span>
-            <span className="shrink-0 rounded-full bg-cyan/15 px-2 py-0.5 text-[8px] text-cyan @lg:text-[9px]">Sample data</span>
+            <span className="shrink-0 rounded-full bg-accent-bright/15 px-2 py-0.5 text-[8px] text-accent-bright @lg:text-[9px]">Sample data</span>
           </div>
 
           {/* switches */}
@@ -724,11 +732,11 @@ function WeddingPortal() {
 // sidebar — that app doesn't have one), its own light/blue brand (not
 // ours), and its actual feature set. No "utang" anywhere — the real product
 // doesn't have a credit-tab feature, so neither does this illustration.
-const SARI_BLUE = "#007aff";
-const SARI_BG = "#f8fafc";
-const SARI_BORDER = "#e2e8f0";
-const SARI_TEXT = "#0f172a";
-const SARI_MUTED = "#64748b";
+const SARI_BLUE = palette.PANEL;
+const SARI_BG = palette.LIGHT;
+const SARI_BORDER = palette.alpha(palette.GROUND, 0.15);
+const SARI_TEXT = palette.GROUND;
+const SARI_MUTED = palette.PANEL;
 
 const sariNavItems = [
   { label: "POS", icon: "cart" as const },
@@ -788,7 +796,7 @@ const billItems = [
 
 function SariBill({ reduce }: { reduce?: boolean | null }) {
   return (
-    <div className="hidden w-[34%] shrink-0 flex-col gap-2 rounded-md p-2 @md:flex @lg:w-[30%] @lg:p-2.5" style={{ background: "#fff", border: `1px solid ${SARI_BORDER}` }}>
+    <div className="hidden w-[34%] shrink-0 flex-col gap-2 rounded-md p-2 @md:flex @lg:w-[30%] @lg:p-2.5" style={{ background: palette.LIGHT, border: `1px solid ${SARI_BORDER}` }}>
       <span className="text-[8px] font-bold @lg:text-[10px]" style={{ color: SARI_TEXT }}>
         Bill
       </span>
@@ -832,7 +840,7 @@ function SariBill({ reduce }: { reduce?: boolean | null }) {
           )}
         </span>
       </div>
-      <span className="rounded-md py-1.5 text-center text-[7px] font-semibold text-white @lg:text-[9px]" style={{ background: SARI_BLUE }}>
+      <span className="rounded-md py-1.5 text-center text-[7px] font-semibold text-light @lg:text-[9px]" style={{ background: SARI_BLUE }}>
         Cash
       </span>
     </div>
@@ -843,7 +851,7 @@ function SariProductCard({ p, i, reduce }: { p: (typeof sariProducts)[number]; i
   return (
     <motion.div
       className="relative overflow-hidden rounded-md p-1.5 @lg:p-2"
-      style={{ background: "#fff", border: `1px solid ${SARI_BORDER}` }}
+      style={{ background: palette.LIGHT, border: `1px solid ${SARI_BORDER}` }}
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.25 + i * 0.07 }}
@@ -867,7 +875,7 @@ function SariProductCard({ p, i, reduce }: { p: (typeof sariProducts)[number]; i
       <span className="relative block truncate text-[7px] @lg:text-[9px]" style={{ color: SARI_MUTED }}>
         {p.price}
       </span>
-      {p.out && <span className="relative mt-0.5 block text-[6px] font-medium text-rose-500 @lg:text-[7px]">Out of stock</span>}
+      {p.out && <span className="relative mt-0.5 block text-[6px] font-medium text-panel @lg:text-[7px]">Out of stock</span>}
     </motion.div>
   );
 }
@@ -876,10 +884,10 @@ function SariDesktopView({ reduce }: { reduce?: boolean | null }) {
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-lg" style={{ background: SARI_BG, color: SARI_TEXT }}>
       {/* top navbar — the real app has no sidebar */}
-      <div className="flex items-center justify-between border-b px-2.5 py-2 @lg:px-4 @lg:py-2.5" style={{ borderColor: SARI_BORDER, background: "#fff" }}>
+      <div className="flex items-center justify-between border-b px-2.5 py-2 @lg:px-4 @lg:py-2.5" style={{ borderColor: SARI_BORDER, background: palette.LIGHT }}>
         <div className="flex items-center gap-1.5">
           <span className="flex h-5 w-5 items-center justify-center rounded-md @lg:h-6 @lg:w-6" style={{ background: SARI_BLUE }}>
-            <SariIcon kind="store" className="h-3 w-3 text-white" />
+            <SariIcon kind="store" className="h-3 w-3 text-light" />
           </span>
           <span className="hidden font-semibold @lg:block @lg:text-[11px]">Sari Sari Store</span>
         </div>
@@ -888,7 +896,7 @@ function SariDesktopView({ reduce }: { reduce?: boolean | null }) {
             <span
               key={item.label}
               className="flex items-center gap-1 rounded-md px-1.5 py-1 text-[7px] font-medium @lg:px-2.5 @lg:py-1.5 @lg:text-[9px]"
-              style={i === 0 ? { background: SARI_BLUE, color: "#fff" } : { color: SARI_MUTED }}
+              style={i === 0 ? { background: SARI_BLUE, color: palette.LIGHT } : { color: SARI_MUTED }}
             >
               <SariIcon kind={item.icon} className="h-2.5 w-2.5 @lg:h-3 @lg:w-3" />
               <span className="hidden @lg:inline">{item.label}</span>
@@ -914,7 +922,7 @@ function SariDesktopView({ reduce }: { reduce?: boolean | null }) {
               <span
                 key={c}
                 className="rounded-full px-2 py-0.5 text-[7px] font-medium @lg:px-2.5 @lg:py-1 @lg:text-[8px]"
-                style={i === 0 ? { background: SARI_BLUE, color: "#fff" } : { background: "#fff", border: `1px solid ${SARI_BORDER}`, color: SARI_MUTED }}
+                style={i === 0 ? { background: SARI_BLUE, color: palette.LIGHT } : { background: palette.LIGHT, border: `1px solid ${SARI_BORDER}`, color: SARI_MUTED }}
               >
                 {c}
               </span>
@@ -937,13 +945,13 @@ function SariMobileView({ reduce }: { reduce?: boolean | null }) {
   return (
     <div
       className="flex h-full flex-col overflow-hidden rounded-[1.1rem] border-[3px] @lg:rounded-[1.4rem]"
-      style={{ background: SARI_BG, borderColor: "#1e293b" }}
+      style={{ background: SARI_BG, borderColor: palette.GROUND }}
     >
       {/* header — simplified; nav moves to the bottom tab bar on mobile */}
-      <div className="flex items-center justify-between px-2 py-1.5" style={{ background: "#fff" }}>
+      <div className="flex items-center justify-between px-2 py-1.5" style={{ background: palette.LIGHT }}>
         <div className="flex items-center gap-1">
           <span className="flex h-4 w-4 items-center justify-center rounded" style={{ background: SARI_BLUE }}>
-            <SariIcon kind="store" className="h-2.5 w-2.5 text-white" />
+            <SariIcon kind="store" className="h-2.5 w-2.5 text-light" />
           </span>
           <span className="truncate text-[6px] font-bold @lg:text-[7px]" style={{ color: SARI_TEXT }}>
             Sari Sari Store
@@ -960,8 +968,8 @@ function SariMobileView({ reduce }: { reduce?: boolean | null }) {
           Point of Sale
         </span>
         {/* Products / Bill toggle — mobile has no room for a side-by-side bill panel */}
-        <div className="flex gap-1 rounded-md p-0.5" style={{ background: "#eef2f7" }}>
-          <span className="flex-1 rounded py-1 text-center text-[6px] font-semibold @lg:text-[7px]" style={{ background: "#fff", color: SARI_BLUE }}>
+        <div className="flex gap-1 rounded-md p-0.5" style={{ background: palette.alpha(palette.GROUND, 0.06) }}>
+          <span className="flex-1 rounded py-1 text-center text-[6px] font-semibold @lg:text-[7px]" style={{ background: palette.LIGHT, color: SARI_BLUE }}>
             Products
           </span>
           <span className="flex-1 rounded py-1 text-center text-[6px] @lg:text-[7px]" style={{ color: SARI_MUTED }}>
@@ -974,7 +982,7 @@ function SariMobileView({ reduce }: { reduce?: boolean | null }) {
             <motion.span
               key={c}
               className="shrink-0 rounded-full px-1.5 py-0.5 text-[6px] font-medium"
-              style={i === 0 ? { background: SARI_BLUE, color: "#fff" } : { background: "#fff", border: `1px solid ${SARI_BORDER}`, color: SARI_MUTED }}
+              style={i === 0 ? { background: SARI_BLUE, color: palette.LIGHT } : { background: palette.LIGHT, border: `1px solid ${SARI_BORDER}`, color: SARI_MUTED }}
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + i * 0.06 }}
@@ -988,7 +996,7 @@ function SariMobileView({ reduce }: { reduce?: boolean | null }) {
             <motion.div
               key={p.brand + p.name}
               className="relative overflow-hidden rounded-md px-1.5 py-1"
-              style={{ background: "#fff", border: `1px solid ${SARI_BORDER}` }}
+              style={{ background: palette.LIGHT, border: `1px solid ${SARI_BORDER}` }}
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + i * 0.07 }}
@@ -1016,7 +1024,7 @@ function SariMobileView({ reduce }: { reduce?: boolean | null }) {
       </div>
 
       {/* bottom tab bar, as on the real site's phone view */}
-      <div className="grid grid-cols-4 border-t py-1" style={{ background: "#fff", borderColor: SARI_BORDER }}>
+      <div className="grid grid-cols-4 border-t py-1" style={{ background: palette.LIGHT, borderColor: SARI_BORDER }}>
         {sariNavItems.map((item, i) => (
           <span
             key={item.label}
@@ -1082,7 +1090,7 @@ function FieldRow({
       <span className="w-16 shrink-0 truncate text-[8px] text-muted @lg:w-24 @lg:text-[10px]">{label}</span>
       {kind === "check" ? (
         <motion.span
-          className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[3px] border border-accent-bright/60 text-[8px] text-cyan"
+          className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[3px] border border-accent-bright/60 text-[8px] text-accent-bright"
           initial={{ opacity: 0 }}
           animate={reduce ? { opacity: 1 } : { opacity: [0, 0, 1, 1, 0] }}
           transition={{ duration: 8, repeat: Infinity, delay, times: FIELD_CYCLE_TIMES }}
@@ -1126,7 +1134,7 @@ function PdfFormFillerWebsite() {
             <FieldRow key={f.label} label={f.label} kind={f.kind} delay={i * 0.35} reduce={reduce} />
           ))}
           <motion.span
-            className="mt-1.5 w-fit rounded-full bg-accent px-2.5 py-1.5 text-[8px] font-semibold text-white @lg:text-[9px]"
+            className="mt-1.5 w-fit rounded-full bg-accent px-2.5 py-1.5 text-[8px] font-semibold text-light @lg:text-[9px]"
             animate={reduce ? undefined : pulseGlow(8)}
             transition={PULSE_GLOW_TRANSITION}
           >

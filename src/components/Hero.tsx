@@ -1,16 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import {
-  motion,
-  useMotionValue,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "motion/react";
+import type { MouseEvent } from "react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import { FadeUp, Magnetic, RollText, Shine, Split, useFlickerReplay } from "./Reveal";
-import { site } from "@/data/site";
-import { useLoading, useScrollControls } from "./Providers";
+import { Logo } from "./Logo";
+import { HeroPortal3D } from "./HeroPortal3D";
+import { CELESTIAL_PATTERN } from "@/lib/celestial";
+import { nav, site } from "@/data/site";
+import { useLoading, useMenu, useScrollControls } from "./Providers";
 
 // Signage — the two brand marks, sliding in then drifting gently
 function GlowText({
@@ -36,7 +34,7 @@ function GlowText({
         borderColor: boxed ? color : undefined,
         textShadow: `0 0 6px ${color}, 0 0 20px ${color}`,
         boxShadow: boxed ? `0 0 24px -10px ${color}` : undefined,
-        background: boxed ? "rgba(4,8,22,0.45)" : undefined,
+        background: boxed ? "rgb(var(--bg-rgb)/0.45)" : undefined,
       }}
     >
       {children}
@@ -44,68 +42,41 @@ function GlowText({
   );
 }
 
+// The two neon signs, as on the live site: they slide in from the right,
+// hold, drift, and slide away again on an 11-second loop.
 function Signage({ loaded }: { loaded: boolean }) {
+  const slide = (from: number) => ({
+    initial: { x: from, opacity: 0 },
+    animate: loaded ? { x: [from, 0, 0, from], opacity: [0, 1, 1, 0] } : { x: from, opacity: 0 },
+    transition: loaded
+      ? { duration: 11, times: [0, 0.42, 0.58, 1], delay: 1.6, repeat: Infinity, ease: "easeInOut" as const }
+      : undefined,
+  });
   return (
     <>
       {/* desktop */}
       <motion.div
         aria-hidden
-        className="pointer-events-none absolute top-32 right-6 z-0 hidden lg:block xl:right-12"
-        initial={{ x: 260, opacity: 0 }}
-        animate={
-          loaded
-            ? { x: [260, 0, 0, 260], opacity: [0, 1, 1, 0] }
-            : { x: 260, opacity: 0 }
-        }
-        transition={
-          loaded
-            ? {
-                duration: 11,
-                times: [0, 0.42, 0.58, 1],
-                delay: 1.6,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }
-            : undefined
-        }
+        className="pointer-events-none absolute top-32 right-0 hidden lg:block xl:right-2"
+        {...slide(260)}
       >
         <div className="relative flex animate-[signage-drift_12s_ease-in-out_infinite] flex-col items-end gap-3">
-          <GlowText color="var(--accent-bright)" boxed flicker className="-rotate-2 text-lg">
+          <GlowText color="var(--headline)" boxed flicker className="-rotate-2 text-lg">
             S3
           </GlowText>
-          <GlowText color="var(--neon-pink)" boxed className="rotate-1 text-sm">
+          <GlowText color="var(--sign)" boxed className="rotate-1 text-sm">
             SPACER
           </GlowText>
         </div>
       </motion.div>
 
-      {/* mobile */}
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute right-6 bottom-28 z-0 lg:hidden"
-        initial={{ x: 200, opacity: 0 }}
-        animate={
-          loaded
-            ? { x: [200, 0, 0, 200], opacity: [0, 1, 1, 0] }
-            : { x: 200, opacity: 0 }
-        }
-        transition={
-          loaded
-            ? {
-                duration: 11,
-                times: [0, 0.42, 0.58, 1],
-                delay: 1.6,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }
-            : undefined
-        }
-      >
+      {/* mobile: just under the top bar, clear of the type */}
+      <motion.div aria-hidden className="pointer-events-none absolute top-20 right-0 lg:hidden" {...slide(200)}>
         <div className="relative flex animate-[signage-drift_12s_ease-in-out_infinite] flex-col items-end gap-2">
-          <GlowText color="var(--accent-bright)" boxed flicker className="-rotate-2 text-sm">
+          <GlowText color="var(--headline)" boxed flicker className="-rotate-2 text-sm">
             S3
           </GlowText>
-          <GlowText color="var(--neon-pink)" boxed className="rotate-1 text-xs">
+          <GlowText color="var(--sign)" boxed className="rotate-1 text-xs">
             SPACER
           </GlowText>
         </div>
@@ -114,128 +85,8 @@ function Signage({ loaded }: { loaded: boolean }) {
   );
 }
 
-// Background — grid, video, scrim. Video is a royalty-free Pexels URL,
-// not stored in the repo.
-const HERO_VIDEO_URL = "https://www.pexels.com/download/video/32670643/";
-
-function HeroBackground({ loaded }: { loaded: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { setVideoReady } = useLoading();
-  const gx = useMotionValue(0);
-  const gy = useMotionValue(0);
-  const sx = useSpring(gx, { stiffness: 60, damping: 20 });
-  const sy = useSpring(gy, { stiffness: 60, damping: 20 });
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    gx.set(r.width * 0.5);
-    gy.set(r.height * 0.4);
-
-    const move = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") return;
-      const box = el.getBoundingClientRect();
-      gx.set(e.clientX - box.left);
-      gy.set(e.clientY - box.top);
-    };
-    window.addEventListener("pointermove", move);
-    return () => window.removeEventListener("pointermove", move);
-  }, [gx, gy]);
-
-  return (
-    <div ref={ref} aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* autoplays on mount, hidden behind the preloader curtain */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        onPlaying={() => setVideoReady(true)}
-        onError={() => setVideoReady(true)}
-        className="absolute inset-0 h-full w-full object-cover"
-      >
-        <source src={HERO_VIDEO_URL} type="video/mp4" />
-      </video>
-      {/* scrim — dims the video; extra flat layer below for mobile contrast */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(100deg, rgba(4,8,22,0.88) 0%, rgba(4,8,22,0.72) 40%, rgba(4,8,22,0.58) 70%, rgba(4,8,22,0.45) 100%), rgba(4,8,22,0.35)",
-        }}
-      />
-      <div className="absolute inset-0 bg-bg/55 md:hidden" />
-
-      {/* grid */}
-      <div
-        className="absolute inset-0 animate-[grid-pan_6s_linear_infinite] opacity-70"
-        style={{
-          backgroundImage:
-            "linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px)",
-          backgroundSize: "72px 72px",
-          maskImage:
-            "radial-gradient(ellipse 70% 60% at 50% 45%, #000 20%, transparent 75%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse 70% 60% at 50% 45%, #000 20%, transparent 75%)",
-        }}
-      />
-
-      {/* cursor glow — a soft light that follows the pointer over the video */}
-      <motion.div
-        className="absolute top-0 left-0 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{
-          x: sx,
-          y: sy,
-          background:
-            "radial-gradient(circle, rgba(111,149,255,0.32) 0%, rgba(47,91,255,0.12) 40%, transparent 70%)",
-        }}
-      />
-
-      {/* orbit rings — thin and low-opacity so they read as a motif over the
-          video rather than competing with it */}
-      <svg
-        viewBox="0 0 1000 1000"
-        className="absolute top-1/2 left-1/2 hidden h-[130vh] max-h-[1100px] -translate-x-1/2 -translate-y-1/2 md:block"
-      >
-        <circle
-          cx="500"
-          cy="500"
-          r="490"
-          fill="none"
-          stroke="var(--accent-bright)"
-          strokeOpacity="0.16"
-          strokeDasharray="2 10"
-          className="origin-center animate-[spin_120s_linear_infinite]"
-        />
-        <circle
-          cx="500"
-          cy="500"
-          r="360"
-          fill="none"
-          stroke="var(--accent-bright)"
-          strokeOpacity="0.12"
-          className="origin-center"
-        />
-        <g className="origin-center animate-[spin_40s_linear_infinite]">
-          <circle cx="500" cy="10" r="5" fill="var(--cyan)" />
-        </g>
-        <g className="origin-center animate-[spin_70s_linear_infinite_reverse]">
-          <circle cx="140" cy="500" r="4" fill="var(--accent-bright)" />
-        </g>
-      </svg>
-
-      <Signage loaded={loaded} />
-
-      {/* bottom fade into next section */}
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg to-transparent" />
-    </div>
-  );
-}
-
 // Rotating circular badge
-function Badge() {
+function Badge({ small }: { small?: boolean }) {
   const { scrollTo } = useScrollControls();
   const text = "TAKING NEW PROJECTS • LET’S TALK • ";
   return (
@@ -246,18 +97,19 @@ function Badge() {
           e.preventDefault();
           scrollTo("#contact");
         }}
-        className="group relative flex h-32 w-32 items-center justify-center rounded-full border border-line bg-bg/40 shadow-[0_20px_60px_-24px_rgba(108,207,212,0.45)] backdrop-blur-sm transition-[color,background-color,box-shadow] duration-500 hover:bg-accent md:h-40 md:w-40"
+        className={`group relative flex items-center justify-center rounded-full border border-line-strong bg-bg/40 shadow-[0_20px_60px_-24px_rgb(var(--shadow-rgb)/0.45)] backdrop-blur-sm transition-[color,background-color,box-shadow] duration-500 hover:bg-accent hover:text-light ${
+          small ? "h-24 w-24 md:h-28 md:w-28" : "h-32 w-32 md:h-40 md:w-40"
+        }`}
         aria-label="Taking new projects — get in touch"
       >
-        <svg
-          viewBox="0 0 200 200"
-          className="absolute inset-0 animate-[spin_16s_linear_infinite]"
-          aria-hidden
-        >
+        <svg viewBox="0 0 200 200" className="absolute inset-0 animate-[spin_16s_linear_infinite]" aria-hidden>
           <defs>
             <path id="badge-circle" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" />
           </defs>
-          <text className="fill-fg text-[15px] tracking-[0.22em]" style={{ fontFamily: "var(--font-geist-mono)" }}>
+          <text
+            className="fill-fg text-[15px] tracking-[0.22em] transition-[fill] duration-500 group-hover:fill-light"
+            style={{ fontFamily: "var(--font-geist-mono)" }}
+          >
             <textPath href="#badge-circle">{text}</textPath>
           </text>
         </svg>
@@ -278,133 +130,215 @@ function Badge() {
   );
 }
 
-export function Hero() {
-  const { loaded } = useLoading();
-  const { scrollTo } = useScrollControls();
-  const ref = useRef<HTMLElement>(null);
-  const { ref: flickerRef, cycle: flickerCycle } = useFlickerReplay<HTMLSpanElement>();
+// The celestial pattern, at 10%, behind everything.
+function PatternLayer() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 -z-20 opacity-10 [background-size:340px_340px] md:[background-size:480px_480px]"
+      style={{ backgroundImage: CELESTIAL_PATTERN }}
+    />
+  );
+}
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "28%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
+// Two lines, morphing into a cross when the menu opens (the nav draws the close)
+function Burger({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Open menu"
+      className="group -mr-2 flex h-10 w-10 flex-col items-end justify-center gap-[6px] md:hidden"
+    >
+      <span className="ease-expo h-px w-6 bg-fg transition-[width] duration-500 group-hover:w-4" />
+      <span className="ease-expo h-px w-4 bg-fg transition-[width] duration-500 group-hover:w-6" />
+    </button>
+  );
+}
+
+export function Hero() {
+  const { loaded, setVideoReady } = useLoading();
+  const { scrollTo } = useScrollControls();
+  const { setMenuOpen } = useMenu();
+  const reduce = useReducedMotion();
+  const { ref: flickerRef, cycle: flickerCycle } = useFlickerReplay<HTMLSpanElement>();
+  const trackRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  // nothing to wait for, so the preloader runs on its own clock
+  useEffect(() => {
+    setVideoReady(true);
+  }, [setVideoReady]);
+
+  // A stage taller than the screen (a short phone) pins once its bottom
+  // reaches the bottom of the screen, so nothing in it is ever cut off.
+  const [stickTop, setStickTop] = useState(0);
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const fit = () => setStickTop(Math.min(0, window.innerHeight - el.offsetHeight));
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    window.addEventListener("resize", fit);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", fit);
+    };
+  }, []);
+
+  // The flight: as the track scrolls, the type falls away toward you and the
+  // portal takes the whole screen. Progress is measured here exactly as
+  // HeroPortal3D measures it, so the type and the camera stay in step.
+  const scrollYProgress = useMotionValue(0);
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const measure = () => {
+      const span = el.offsetHeight - window.innerHeight;
+      scrollYProgress.set(span > 0 ? Math.min(1, Math.max(0, -el.getBoundingClientRect().top / span)) : 0);
+    };
+    measure();
+    window.addEventListener("scroll", measure, { passive: true });
+    window.addEventListener("resize", measure);
+    return () => {
+      window.removeEventListener("scroll", measure);
+      window.removeEventListener("resize", measure);
+    };
+  }, [scrollYProgress]);
+  const gone = (v: number, end: number) => Math.min(1, Math.max(0, v / end));
+  const typeOpacity = useTransform(scrollYProgress, (v) => 1 - gone(v, 0.16));
+  const typeY = useTransform(scrollYProgress, (v) => -140 * gone(v, 0.2));
+  const typeScale = useTransform(scrollYProgress, (v) => 1 + 0.12 * gone(v, 0.2));
+  const typeBlur = useTransform(scrollYProgress, (v) => `blur(${12 * gone(v, 0.16)}px)`);
+  const typeEvents = useTransform(scrollYProgress, (v) => (v > 0.12 ? "none" : "auto"));
+  const skyOpacity = useTransform(scrollYProgress, (v) => 1 - gone(v, 0.32));
+
+  const go = (href: string) => (e: MouseEvent) => {
+    e.preventDefault();
+    scrollTo(href);
+  };
 
   return (
-    <section
-      id="top"
-      ref={ref}
-      className="relative flex min-h-svh flex-col justify-between overflow-hidden px-6 pt-24 pb-6 md:px-10"
-    >
-      <HeroBackground loaded={loaded} />
-
-      {/* top meta */}
-      <FadeUp
-        active={loaded}
-        delay={0.15}
-        y={14}
-        className="label relative z-10 flex items-start justify-between text-muted"
+    // the track: one screen of hero, then a long run of scroll for the flight
+    <section ref={trackRef} id="top" className="relative h-[330svh] motion-reduce:h-auto">
+      <div
+        ref={stageRef}
+        style={{ top: stickTop }}
+        className="sticky isolate flex min-h-svh flex-col overflow-hidden bg-bg px-6 pt-6 pb-8 [--hero-fs:calc((100vw-3rem)/5.6)] motion-reduce:static md:px-10 md:pb-10 md:[--hero-fs:calc((100vw-5rem)/5.6)] lg:[--hero-fs:min(calc((100vw-5rem)*0.62/5.5),calc((100vw-29rem)/5.6),18rem)]"
       >
-        <span className="flex items-center gap-3">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inset-0 animate-[ping-soft_2s_cubic-bezier(0,0,0.2,1)_infinite] rounded-full bg-cyan/70" />
-            <span className="relative h-2 w-2 rounded-full bg-cyan" />
-          </span>
-          Taking on new projects
-        </span>
-        <span className="hidden text-right md:block">
-          {site.name} ({site.short})
-          <br />
-          {site.role}
-        </span>
-      </FadeUp>
+        <motion.div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={reduce ? undefined : { opacity: skyOpacity }}>
+          <PatternLayer />
+          {/* a light source in the dark interior, and a cooler pool of it low on the left */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 46% 58% at 76% 30%, rgb(var(--light-rgb)/0.09), transparent 72%), radial-gradient(ellipse 62% 50% at 6% 100%, rgb(var(--panel-rgb)/0.6), transparent 70%)",
+            }}
+          />
+        </motion.div>
+        {/* the portal: big in the sky at rest, then the whole screen */}
+        <HeroPortal3D stage={stageRef} track={trackRef} loaded={loaded} />
 
-      {/* name */}
-      <motion.div className="relative z-10 my-6" style={{ y, opacity, scale }}>
-        <h1 className="display text-[clamp(min(3rem,13vw),14vw,16rem)] uppercase">
-          <span className="relative block">
-            <Split as="span" by="char" active={loaded} delay={0.15}>
-              Websites
-            </Split>
-          </span>
-          <span ref={flickerRef} className="text-outline relative block">
-            <span
-              aria-hidden
-              className="pointer-events-none absolute inset-0 -z-10 animate-[glow-pulse_7s_ease-in-out_infinite] blur-3xl"
-              style={{
-                background:
-                  "radial-gradient(ellipse 60% 70% at 30% 50%, var(--accent-bright), transparent 70%)",
-              }}
-            />
-            <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
-              <Split as="span" by="char" active={loaded} delay={0.3}>
-                & Portals
-              </Split>
-              <Shine delay={0.75} by="char">& Portals</Shine>
-            </span>
-          </span>
-        </h1>
-      </motion.div>
+        <motion.div
+          className="relative z-10 flex flex-1 flex-col"
+          style={
+            reduce
+              ? undefined
+              : { opacity: typeOpacity, y: typeY, scale: typeScale, filter: typeBlur, pointerEvents: typeEvents }
+          }
+        >
+          <Signage loaded={loaded} />
 
-      {/* intro + CTAs */}
-      <div className="relative z-10 flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
-        <div className="max-w-lg">
-          <FadeUp active={loaded} delay={0.3}>
-            <p className="text-lg leading-snug text-muted md:text-xl">
-              <span className="text-fg">{site.name}.</span> {site.intro}
-            </p>
-          </FadeUp>
-          <FadeUp active={loaded} delay={0.4} className="mt-8 flex flex-wrap gap-3">
-            <Magnetic>
-              <a
-                href="#work"
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollTo("#work");
-                }}
-                className="group label inline-flex rounded-full border border-accent-bright/50 bg-accent px-7 py-4 font-bold text-white shadow-[0_14px_40px_-14px_rgba(108,207,212,0.55)] transition-[color,background-color,box-shadow,border-color] duration-300 hover:border-accent-bright hover:bg-accent-bright hover:shadow-[0_18px_50px_-14px_rgba(108,207,212,0.75)]"
-              >
-                <RollText revealClassName="text-white">See our work</RollText>
-              </a>
-            </Magnetic>
-            <Magnetic>
-              <a
-                href="#contact"
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollTo("#contact");
-                }}
-                className="group label inline-flex rounded-full border border-line px-7 py-4 shadow-[0_10px_34px_-16px_rgba(108,207,212,0.3)] transition-[color,border-color,box-shadow] duration-300 hover:border-accent-bright hover:shadow-[0_14px_40px_-16px_rgba(108,207,212,0.45)]"
-              >
-                <RollText>Get in touch</RollText>
-              </a>
-            </Magnetic>
-          </FadeUp>
-        </div>
+          {/* the top bar, ruled: the maker on the left, the way around on the right */}
+          <div data-hero-bar>
+            <FadeUp
+              active={loaded}
+              delay={0.1}
+              y={12}
+              className="flex items-center justify-between gap-4 border-b border-line-strong pb-4"
+            >
+              <span className="flex items-center gap-3">
+                <Logo className="h-8 w-8" />
+                <span className="label hidden text-muted sm:inline">{site.name}</span>
+              </span>
+              <nav aria-label="Sections" className="label hidden gap-9 text-muted md:flex">
+                {nav.map((item) => (
+                  <a key={item.href} href={item.href} onClick={go(item.href)} className="group py-1">
+                    <RollText>{item.label}</RollText>
+                  </a>
+                ))}
+              </nav>
+              <Burger onClick={() => setMenuOpen(true)} />
+            </FadeUp>
+          </div>
 
-        <FadeUp active={loaded} delay={0.5} className="hidden md:block">
-          <Badge />
-        </FadeUp>
+          {/* the wordmark, bottom-left; the small print, bottom-right */}
+          <div
+            data-hero-content
+            className="mt-auto grid items-end gap-10 pt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] lg:gap-12"
+          >
+            <h1 className="display -ml-[0.04em] text-[length:var(--hero-fs)] leading-[0.9] uppercase">
+              <span className="block text-fg">
+                <Split as="span" by="char" active={loaded} delay={0.1}>
+                  Websites
+                </Split>
+              </span>
+              <span ref={flickerRef} className="text-outline relative block text-[length:calc(var(--hero-fs)*0.885)]">
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 -z-10 animate-[glow-pulse_7s_ease-in-out_infinite] blur-3xl"
+                  style={{
+                    background: "radial-gradient(ellipse 60% 70% at 30% 50%, rgb(var(--outline-rgb)/0.3), transparent 70%)",
+                  }}
+                />
+                <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
+                  <Split as="span" by="char" active={loaded} delay={0.3}>
+                    & Portals
+                  </Split>
+                  <Shine delay={0.8} by="char">& Portals</Shine>
+                </span>
+              </span>
+            </h1>
+
+            <div className="flex flex-col gap-5 lg:pb-1">
+              <FadeUp active={loaded} delay={0.7} className="pointer-events-auto">
+                <Badge small />
+              </FadeUp>
+              <FadeUp active={loaded} delay={0.5}>
+                <p className="text-[0.85rem] leading-relaxed text-muted">{site.intro}</p>
+              </FadeUp>
+              <FadeUp active={loaded} delay={0.6} className="flex flex-wrap gap-3">
+                <Magnetic>
+                  <a
+                    href="#work"
+                    onClick={go("#work")}
+                    className="group label inline-flex rounded-full border border-accent-bright bg-accent px-6 py-3.5 font-bold text-light shadow-[0_14px_40px_-14px_rgb(var(--shadow-rgb)/0.55)] transition-[color,background-color,box-shadow,border-color] duration-300 hover:border-accent-bright hover:bg-accent-bright hover:shadow-[0_18px_50px_-14px_rgb(var(--shadow-rgb)/0.75)]"
+                  >
+                    <RollText revealClassName="text-on-bright">See our work</RollText>
+                  </a>
+                </Magnetic>
+                <Magnetic>
+                  <a
+                    href="#contact"
+                    onClick={go("#contact")}
+                    className="group label inline-flex rounded-full border border-line-strong px-6 py-3.5 transition-[color,border-color,box-shadow] duration-300 hover:border-accent-bright"
+                  >
+                    <RollText>Get in touch</RollText>
+                  </a>
+                </Magnetic>
+              </FadeUp>
+              <FadeUp active={loaded} delay={0.8} y={10} className="label flex items-center gap-3 text-muted">
+                <span className="relative block h-7 w-px overflow-hidden bg-line">
+                  <span className="absolute inset-x-0 top-0 h-full animate-[scroll-cue_1.8s_cubic-bezier(0.76,0,0.24,1)_infinite] bg-accent-bright" />
+                </span>
+                Scroll into the portal
+              </FadeUp>
+            </div>
+          </div>
+        </motion.div>
       </div>
-
-      {/* bottom bar */}
-      <FadeUp
-        active={loaded}
-        delay={0.55}
-        y={10}
-        className="label relative z-10 mt-8 flex items-center justify-between border-t border-line pt-5 text-muted"
-      >
-        <span className="flex items-center gap-3">
-          <span className="relative block h-8 w-px overflow-hidden bg-line">
-            <span className="absolute inset-x-0 top-0 h-full animate-[scroll-cue_1.8s_cubic-bezier(0.76,0,0.24,1)_infinite] bg-accent-bright" />
-          </span>
-          Scroll
-        </span>
-        <span className="hidden text-center sm:block">Websites · Portals · Custom software</span>
-        <span className="hidden sm:block">©{site.year}</span>
-      </FadeUp>
     </section>
   );
 }

@@ -1,3 +1,4 @@
+import { AutoScroll } from "@/components/AutoScroll";
 import { Contact } from "@/components/Contact";
 import { Cursor } from "@/components/Cursor";
 import { FAQ } from "@/components/FAQ";
@@ -8,7 +9,6 @@ import { Portal } from "@/components/Portal";
 import { Preloader } from "@/components/Preloader";
 import { Process } from "@/components/Process";
 import { QuoteJourney } from "@/components/QuoteJourney";
-import { ScrollProgress } from "@/components/ScrollProgress";
 import { Services } from "@/components/Services";
 import { Work } from "@/components/Work";
 
@@ -17,7 +17,7 @@ export default function Home() {
     <>
       <Preloader />
       <Cursor />
-      <ScrollProgress />
+      <AutoScroll />
       <QuoteJourney />
       <Nav />
       <main>

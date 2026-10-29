@@ -10,7 +10,7 @@ import {
   S3_MARK_TRANSFORM,
 } from "@/lib/mark";
 
-/** The S3 mark on its cream backing. */
+/** The S3 mark on its light backing. */
 export function Logo({ className = "" }: { className?: string }) {
   const gradId = `s3g-${useId()}`;
   const { x1, y1, x2, y2 } = S3_MARK_GRADIENT_COORDS;

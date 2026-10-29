@@ -1,19 +1,81 @@
 @import "tailwindcss";
 
-:root {
-  --bg: #040816;
-  --bg-elevated: #070d24;
-  --surface: #0a1233;
-  --line: rgba(108, 207, 212, 0.16);
-  --fg: #fffff0;
-  /* body-copy color — keep >=4.5:1 against --bg (WCAG AA) */
-  --muted: #7f8db8;
-  --accent: #031d44;
-  --accent-bright: #6ccfd4;
-  --cyan: #2dd4bf;
-  --white: #fffff0;
-  --neon-pink: #ff3b8d;
+/* Six colors, defined once in src/lib/palette.ts and published on <html> by
+   layout.tsx as --paper, --ground, --panel, --light, --headline, --sign (and
+   their -rgb channels: rgb(var(--panel-rgb) / 0.4)). Nothing in this file is a hex value.
+     paper   the hero's background, and nothing else
+     ground  every section below the hero; the ink on the paper
+     panel   cards, buttons, panes, glows
+     light   text and accents on the dark sections
+     headline  the big outlined headline words, and the hero's S3 neon sign
+     sign    the hero's SPACER neon sign, and nothing else
+   Components use roles, never colors: --bg, --fg, --muted, --line, --accent
+   (filled buttons), --accent-bright (small text, rings, dots, hover fills),
+   --outline (the big outlined headline words), --glow-rgb, --shadow-rgb.
+   Changing the palette never means touching a component. */
+:root,
+[data-theme="dark"] {
+  --bg: var(--ground);
+  --bg-elevated: rgb(var(--panel-rgb) / 0.55); /* cards: a pane of water */
+  --surface: rgb(var(--panel-rgb) / 0.9); /* hover / input / chips */
+  --line: rgb(var(--light-rgb) / 0.18); /* thin rules, dividers */
+  --line-strong: rgb(var(--light-rgb) / 0.45); /* the outline of a control (3:1 or better) */
+  --fg: var(--light);
+  --muted: rgb(var(--light-rgb) / 0.72);
+  --accent: var(--panel); /* filled buttons (light label) */
+  --accent-bright: var(--light); /* small text, rings, dots, hover fills */
+  --on-bright: var(--ground); /* the label on an accent-bright fill */
+  --outline: var(--headline); /* the big outlined headline words */
+  --outline-rgb: var(--headline-rgb);
+  --bg-rgb: var(--ground-rgb);
+  --fg-rgb: var(--light-rgb);
+  --accent-rgb: var(--panel-rgb);
+  --accent-bright-rgb: var(--light-rgb);
+  --glow-rgb: var(--panel-rgb); /* halos */
+  --shadow-rgb: var(--panel-rgb);
   color-scheme: dark;
+}
+
+/* Tailwind ships a built-in #fff as its ring-offset color, and every shadow
+   utility carries it. Pin it to the page ground so no element in the site can
+   inherit pure white. */
+*,
+::before,
+::after,
+::backdrop {
+  --tw-ring-offset-color: var(--bg);
+}
+
+/* A dark scope for anything that sits on dark footage inside the light hero */
+[data-theme="dark"] {
+  color: var(--fg);
+}
+
+/* The hero is the one light room: paper background, ground-colored ink.
+   Anything inside (and the nav while it floats over the hero) re-themes
+   itself. Every token that depends on the ground is re-declared, because
+   custom properties that reference other variables resolve where they are
+   declared. */
+[data-theme="light"] {
+  --bg: var(--paper);
+  --bg-elevated: rgb(var(--panel-rgb) / 0.06);
+  --surface: rgb(var(--panel-rgb) / 0.12);
+  --line: rgb(var(--panel-rgb) / 0.2);
+  --line-strong: rgb(var(--ground-rgb) / 0.55);
+  --fg: var(--ground);
+  --muted: rgb(var(--ground-rgb) / 0.72);
+  --accent: var(--ground); /* filled buttons (light label) */
+  --accent-bright: var(--panel); /* small text, rings, dots, hover fills */
+  --on-bright: var(--light);
+  --outline: var(--headline);
+  --outline-rgb: var(--headline-rgb);
+  --bg-rgb: var(--paper-rgb);
+  --fg-rgb: var(--ground-rgb);
+  --accent-rgb: var(--ground-rgb);
+  --accent-bright-rgb: var(--panel-rgb);
+  --shadow-rgb: var(--ground-rgb); /* on paper, shadows are shadows again */
+  color: var(--fg);
+  color-scheme: light;
 }
 
 @theme inline {
@@ -21,13 +83,20 @@
   --color-elevated: var(--bg-elevated);
   --color-surface: var(--surface);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-fg: var(--fg);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-accent-bright: var(--accent-bright);
-  --color-cyan: var(--cyan);
-  /* overrides Tailwind's default white with the brand ivory */
-  --color-white: var(--white);
+  --color-on-bright: var(--on-bright);
+  --color-paper: var(--paper);
+  --color-ground: var(--ground);
+  --color-panel: var(--panel);
+  --color-light: var(--light);
+  --color-headline: var(--headline);
+  --color-sign: var(--sign);
+  /* pure white is not in the palette: if `white` is ever used, it is the light */
+  --color-white: var(--light);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -38,7 +107,6 @@ html {
 }
 
 body {
-  background: var(--bg);
   color: var(--fg);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   /* mobile browsers can still pan sideways with overflow-x only on html.
@@ -48,25 +116,26 @@ body {
 }
 
 ::selection {
-  background: var(--accent);
-  color: var(--white);
+  background: var(--accent-bright);
+  color: var(--bg);
 }
 
-/* Film grain over everything — adds depth to the flat navy */
+/* Film grain over everything — monochrome, so it adds texture without shifting any color */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 90;
   pointer-events: none;
-  opacity: 0.07;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* Thin, on-theme scrollbar */
 html {
   scrollbar-width: thin;
-  scrollbar-color: var(--accent) var(--bg);
+  scrollbar-color: var(--accent-bright) var(--bg);
 }
 
 :focus-visible {
@@ -97,7 +166,13 @@ html.has-custom-cursor * {
 
 @utility text-outline {
   color: transparent;
-  -webkit-text-stroke: 2px var(--accent-bright);
+  -webkit-text-stroke: 2px var(--outline);
+}
+
+/* the giant numerals far behind each section: a hairline of the light */
+@utility text-ghost {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgb(var(--light-rgb) / 0.09);
 }
 
 @utility ease-expo {

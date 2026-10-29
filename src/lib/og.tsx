@@ -3,6 +3,7 @@
 import { site } from "@/data/site";
 import { S3_MARK_BACKING } from "@/lib/mark";
 import { s3MarkPngDataUri } from "@/lib/mark-server";
+import { alpha, GROUND, HEADLINE, LIGHT, PANEL } from "@/lib/palette";
 
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
@@ -17,9 +18,8 @@ export function OgArt() {
         flexDirection: "column",
         justifyContent: "space-between",
         padding: "72px",
-        background:
-          "radial-gradient(circle at 78% 22%, #142253 0%, #040816 55%), #040816",
-        color: "#fffff0",
+        background: `radial-gradient(circle at 78% 22%, ${alpha(PANEL, 0.95)} 0%, ${alpha(PANEL, 0)} 62%), radial-gradient(circle at 10% 100%, ${alpha(PANEL, 0.8)} 0%, ${alpha(PANEL, 0)} 45%), ${GROUND}`,
+        color: LIGHT,
         fontFamily: "sans-serif",
       }}
     >
@@ -46,7 +46,7 @@ export function OgArt() {
             style={{ width: 52, height: 52 }}
           />
         </div>
-        <div style={{ fontSize: 26, color: "#7f8db8", letterSpacing: 2 }}>
+        <div style={{ fontSize: 26, color: alpha(LIGHT, 0.72), letterSpacing: 2 }}>
           {site.name.toUpperCase()}
         </div>
       </div>
@@ -64,9 +64,9 @@ export function OgArt() {
           }}
         >
           Websites &amp;{" "}
-          <span style={{ color: "#6ccfd4", marginLeft: 20 }}>Portals</span>
+          <span style={{ color: HEADLINE, marginLeft: 20 }}>Portals</span>
         </div>
-        <div style={{ fontSize: 30, color: "#7f8db8", maxWidth: 820 }}>
+        <div style={{ fontSize: 30, color: alpha(LIGHT, 0.72), maxWidth: 820 }}>
           {site.role}
         </div>
       </div>
