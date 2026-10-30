@@ -44,44 +44,31 @@ function GlowText({
 
 // The two neon signs, as on the live site: they slide in from the right,
 // hold, drift, and slide away again on an 11-second loop.
-function Signage({ loaded }: { loaded: boolean }) {
-  const slide = (from: number) => ({
-    initial: { x: from, opacity: 0 },
-    animate: loaded ? { x: [from, 0, 0, from], opacity: [0, 1, 1, 0] } : { x: from, opacity: 0 },
-    transition: loaded
-      ? { duration: 11, times: [0, 0.42, 0.58, 1], delay: 1.6, repeat: Infinity, ease: "easeInOut" as const }
-      : undefined,
-  });
+function Signage({ loaded, small, className }: { loaded: boolean; small?: boolean; className: string }) {
+  const from = small ? 200 : 260;
   return (
-    <>
-      {/* desktop */}
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute top-32 right-0 hidden lg:block xl:right-2"
-        {...slide(260)}
+    <motion.div
+      aria-hidden
+      className={`pointer-events-none ${className}`}
+      initial={{ x: from, opacity: 0 }}
+      animate={loaded ? { x: [from, 0, 0, from], opacity: [0, 1, 1, 0] } : { x: from, opacity: 0 }}
+      transition={
+        loaded
+          ? { duration: 11, times: [0, 0.42, 0.58, 1], delay: 1.6, repeat: Infinity, ease: "easeInOut" }
+          : undefined
+      }
+    >
+      <div
+        className={`relative flex animate-[signage-drift_12s_ease-in-out_infinite] flex-col items-end ${small ? "gap-2" : "gap-3"}`}
       >
-        <div className="relative flex animate-[signage-drift_12s_ease-in-out_infinite] flex-col items-end gap-3">
-          <GlowText color="var(--headline)" boxed flicker className="-rotate-2 text-lg">
-            S3
-          </GlowText>
-          <GlowText color="var(--sign)" boxed className="rotate-1 text-sm">
-            SPACER
-          </GlowText>
-        </div>
-      </motion.div>
-
-      {/* mobile: just under the top bar, clear of the type */}
-      <motion.div aria-hidden className="pointer-events-none absolute top-20 right-0 lg:hidden" {...slide(200)}>
-        <div className="relative flex animate-[signage-drift_12s_ease-in-out_infinite] flex-col items-end gap-2">
-          <GlowText color="var(--headline)" boxed flicker className="-rotate-2 text-sm">
-            S3
-          </GlowText>
-          <GlowText color="var(--sign)" boxed className="rotate-1 text-xs">
-            SPACER
-          </GlowText>
-        </div>
-      </motion.div>
-    </>
+        <GlowText color="var(--headline)" boxed flicker className={`-rotate-2 ${small ? "text-sm" : "text-lg"}`}>
+          S3
+        </GlowText>
+        <GlowText color="var(--sign)" boxed className={`rotate-1 ${small ? "text-xs" : "text-sm"}`}>
+          SPACER
+        </GlowText>
+      </div>
+    </motion.div>
   );
 }
 
@@ -130,12 +117,13 @@ function Badge({ small }: { small?: boolean }) {
   );
 }
 
-// The celestial pattern, at 10%, behind everything.
+// The celestial pattern, quiet, behind everything — and fading away behind the
+// portal, so the ring's fine detail isn't fighting the scallops.
 function PatternLayer() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 -z-20 opacity-10 [background-size:340px_340px] md:[background-size:480px_480px]"
+      className="pointer-events-none absolute inset-0 -z-20 opacity-[0.06] [background-size:340px_340px] [mask-image:radial-gradient(ellipse_34%_40%_at_58%_24%,transparent_35%,black_100%)] md:[background-size:480px_480px] lg:[mask-image:radial-gradient(ellipse_28%_44%_at_65%_38%,transparent_30%,black_100%)]"
       style={{ backgroundImage: CELESTIAL_PATTERN }}
     />
   );
@@ -249,7 +237,7 @@ export function Hero() {
               : { opacity: typeOpacity, y: typeY, scale: typeScale, filter: typeBlur, pointerEvents: typeEvents }
           }
         >
-          <Signage loaded={loaded} />
+          <Signage loaded={loaded} className="absolute top-32 right-0 hidden lg:block xl:right-2" />
 
           {/* the top bar, ruled: the maker on the left, the way around on the right */}
           <div data-hero-bar>
@@ -277,35 +265,47 @@ export function Hero() {
           {/* the wordmark, bottom-left; the small print, bottom-right */}
           <div
             data-hero-content
-            className="mt-auto grid items-end gap-10 pt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] lg:gap-12"
+            // on phones, always leave the portal its room above the wordmark
+            // (the ring reaches about 0.6 of the screen width below the top bar)
+            className="mt-auto grid items-end gap-10 pt-[calc(60vw+1.5rem)] md:pt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] lg:gap-12"
           >
-            <h1 className="display -ml-[0.04em] text-[length:var(--hero-fs)] leading-[0.9] uppercase">
-              <span className="block text-fg">
-                <Split as="span" by="char" active={loaded} delay={0.1}>
-                  Websites
-                </Split>
-              </span>
-              <span ref={flickerRef} className="text-outline relative block text-[length:calc(var(--hero-fs)*0.885)]">
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 -z-10 animate-[glow-pulse_7s_ease-in-out_infinite] blur-3xl"
-                  style={{
-                    background: "radial-gradient(ellipse 60% 70% at 30% 50%, rgb(var(--outline-rgb)/0.3), transparent 70%)",
-                  }}
-                />
-                <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
-                  <Split as="span" by="char" active={loaded} delay={0.3}>
-                    & Portals
-                  </Split>
-                  <Shine delay={0.8} by="char">& Portals</Shine>
-                </span>
-              </span>
-            </h1>
-
-            <div className="flex flex-col gap-5 lg:pb-1">
-              <FadeUp active={loaded} delay={0.7} className="pointer-events-auto">
+            <div className="relative">
+              {/* on desktop the badge rides above the wordmark, off the portal */}
+              <FadeUp active={loaded} delay={0.7} className="absolute bottom-full left-0 mb-8 hidden lg:block">
                 <Badge small />
               </FadeUp>
+              <h1 className="display -ml-[0.04em] text-[length:var(--hero-fs)] leading-[0.9] uppercase">
+                <span className="block text-fg">
+                  <Split as="span" by="char" active={loaded} delay={0.1}>
+                    Websites
+                  </Split>
+                </span>
+                <span ref={flickerRef} className="text-outline relative block text-[length:calc(var(--hero-fs)*0.885)]">
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 -z-10 animate-[glow-pulse_7s_ease-in-out_infinite] blur-3xl"
+                    style={{
+                      background: "radial-gradient(ellipse 60% 70% at 30% 50%, rgb(var(--outline-rgb)/0.3), transparent 70%)",
+                    }}
+                  />
+                  <span key={flickerCycle} className="inline-block animate-[neon-flicker_7s_ease-in-out_infinite]">
+                    <Split as="span" by="char" active={loaded} delay={0.3}>
+                      & Portals
+                    </Split>
+                    <Shine delay={0.8} by="char">& Portals</Shine>
+                  </span>
+                </span>
+              </h1>
+            </div>
+
+            <div className="flex flex-col gap-5 lg:pb-1">
+              <div className="flex items-center justify-between gap-4 lg:hidden">
+                <FadeUp active={loaded} delay={0.7} className="pointer-events-auto">
+                  <Badge small />
+                </FadeUp>
+                {/* on phones the signs sit here, beside the badge, clear of the portal */}
+                <Signage loaded={loaded} small className="mr-1" />
+              </div>
               <FadeUp active={loaded} delay={0.5}>
                 <p className="text-[0.85rem] leading-relaxed text-muted">{site.intro}</p>
               </FadeUp>

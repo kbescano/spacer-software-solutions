@@ -410,7 +410,7 @@ export function HeroPortal3D({ stage, track, loaded }: Props) {
           // (perspective makes the tilted ring's near edge reach further
           // than its radius, hence the extra 15%)
           size = Math.min(H * 0.82, W * 0.52, band / ((RING_OUTER / MODEL_RADIUS) * 1.15));
-          cx = W * 0.7;
+          cx = W * 0.65;
           cy = top + band * 0.47;
         } else if (W >= 768) {
           size = Math.min(H * 0.6, W * 0.78);
