@@ -265,9 +265,9 @@ export function Hero() {
           {/* the wordmark, bottom-left; the small print, bottom-right */}
           <div
             data-hero-content
-            // on phones, always leave the portal its room above the wordmark
-            // (the ring reaches about 0.6 of the screen width below the top bar)
-            className="mt-auto grid items-end gap-10 pt-[calc(60vw+1.5rem)] md:pt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] lg:gap-12"
+            // on phones, keep a minimum of room for the portal above the
+            // wordmark, but little enough that the intro is on the first screen
+            className="mt-auto grid items-end gap-6 pt-[calc(44vw+1.5rem)] md:gap-10 md:pt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] lg:gap-12"
           >
             <div className="relative">
               {/* on desktop the badge rides above the wordmark, off the portal */}
@@ -299,13 +299,6 @@ export function Hero() {
             </div>
 
             <div className="flex flex-col gap-5 lg:pb-1">
-              <div className="flex items-center justify-between gap-4 lg:hidden">
-                <FadeUp active={loaded} delay={0.7} className="pointer-events-auto">
-                  <Badge small />
-                </FadeUp>
-                {/* on phones the signs sit here, beside the badge, clear of the portal */}
-                <Signage loaded={loaded} small className="mr-1" />
-              </div>
               <FadeUp active={loaded} delay={0.5}>
                 <p className="text-[0.85rem] leading-relaxed text-muted">{site.intro}</p>
               </FadeUp>
@@ -329,6 +322,15 @@ export function Hero() {
                   </a>
                 </Magnetic>
               </FadeUp>
+              {/* phones and tablets: the badge and signs come after the buttons, so the
+                  intro follows the wordmark straight away */}
+              <div className="flex items-center justify-between gap-4 lg:hidden">
+                <FadeUp active={loaded} delay={0.7} className="pointer-events-auto">
+                  <Badge small />
+                </FadeUp>
+                {/* the signs sit here, beside the badge, clear of the portal */}
+                <Signage loaded={loaded} small className="mr-1" />
+              </div>
               <FadeUp active={loaded} delay={0.8} y={10} className="label flex items-center gap-3 text-muted">
                 <span className="relative block h-7 w-px overflow-hidden bg-line">
                   <span className="absolute inset-x-0 top-0 h-full animate-[scroll-cue_1.8s_cubic-bezier(0.76,0,0.24,1)_infinite] bg-accent-bright" />

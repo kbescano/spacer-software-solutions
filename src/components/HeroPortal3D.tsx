@@ -417,8 +417,12 @@ export function HeroPortal3D({ stage, track, loaded }: Props) {
           cx = W * 0.6;
           cy = top + (bottom - top) * 0.5;
         } else {
-          size = W * 0.86;
-          cx = W * 0.58;
+          // phones: as big as the room above the wordmark allows (the ring's
+          // bottom edge lands about 0.7 of `size` below its top), centred
+          const h1 = host.querySelector("[data-hero-content] h1")?.getBoundingClientRect();
+          const ceiling = (h1 ? h1.top : hr.top + H * 0.4) - hr.top - 10;
+          size = Math.min(W * 0.86, Math.max(120, ceiling - top) / 0.7);
+          cx = W * 0.5;
           cy = top + size * 0.36;
         }
 
