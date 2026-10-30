@@ -122,8 +122,8 @@ export const projects: Project[] = [
     portal: {
       kind: "portal",
       label: "Portal",
-      status: "private",
-      statusLabel: "Confidential",
+      status: "live",
+      statusLabel: "Live demo",
       headline: "The system the team runs on.",
       description:
         "An internal portal that carries every quote from first inquiry to delivered order. It holds live client data, so the production portal stays private.",
@@ -136,9 +136,9 @@ export const projects: Project[] = [
         "Product, client and supplier records in a CMS",
         "Facebook post import for inquiries",
       ],
-      cta: { label: "Request the live demo", href: null },
-      note: "To show what we built without exposing anything private, we made ConstructX — a demo with the same workflows and sample data only.",
-      caption: "Illustration only — production portal is confidential",
+      cta: { label: "Try the ConstructX demo", href: "https://constructx-demo.netlify.app/" },
+      note: "To show what we built without exposing anything private, we made ConstructX — a public demo with the same workflows and sample data only. Pick a role (Sales, Admin, or Marketing & Logistics); no password needed.",
+      caption: "Illustration — the production portal is confidential",
     },
   },
   {

@@ -130,7 +130,9 @@ function FacetPanel({ facet, slug, dir }: { facet: Facet; slug: string; dir: 1 |
           </ClipReveal>
         </Scroll3D>
         <p className="label mt-4 text-center text-[0.65rem] text-muted">
-          {screenshots[slug]?.[facet.kind] ? "Real screenshot of the live site" : facet.caption}
+          {screenshots[slug]?.[facet.kind]
+            ? (screenshots[slug]![facet.kind]!.caption ?? "Real screenshot of the live site")
+            : facet.caption}
         </p>
       </div>
     </motion.div>
